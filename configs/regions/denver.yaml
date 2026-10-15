@@ -1,0 +1,62 @@
+# DeFlockMigration region configuration - Denver pilot
+# STATUS: proposed in Milestone 0 (2026-10-15); becomes active only when M1 loads it.
+# Three boundaries are kept separately on purpose. None of them claims camera coverage.
+
+region_id: denver
+display_name: "Denver, Colorado (pilot)"
+config_version: 1
+
+service_boundary:
+  id: denver-service-v1
+  file: data/boundaries/denver_service_boundary_v1.geojson
+  source: "City and County of Denver Open Data Catalog, 'County Boundary' layer 40, features with COUNTY='Denver'"
+  retrieved_at: "2026-10-15T20:28:12Z"
+  source_layer_last_edit: "2026-04-09T23:27:23Z"
+  area_km2: 400.47
+  geometry_notes:
+    - "MultiPolygon with 2 parts; the main part has 10 interior rings (enclaves such as Glendale and Holly Hills are outside the service area)."
+    - "The Denver International Airport annexation is part of the main exterior ring, so airport trips are inside the service area."
+    - "A 0.04 km2 second part exists in the source data; it is kept as delivered."
+  purpose: "Where trip origins and destinations may be placed."
+
+camera_data_envelope:
+  id: denver-envelope-v1-20km
+  file: data/boundaries/denver_camera_envelope_v1.geojson
+  based_on: denver-service-v1
+  buffer_m: 20000
+  buffer_method: "metric buffer in EPSG:26913, simplified 25 m, reprojected to EPSG:4326"
+  bbox_wsen: [-105.34301, 39.4341, -104.36565, 40.09437]
+  area_km2: 4385.4
+  purpose: "Every route candidate is assessed against all camera records inside this envelope. A candidate leaving it is not ranked for privacy."
+  review_note: "M0 compared 10/15/20 km: 968 / 1,181 / 1,325 mapped records in the 2026-10-15 snapshot. 20 km retained so that detours around the city edge stay inside the assessed area."
+
+camera_source:
+  adapter: overpass_bounded
+  endpoint: https://overpass-api.de/api/interpreter
+  query_file: data/raw/overpass/denver_alpr_envelope_query.overpassql
+  query_bbox_swne: [39.40, -105.40, 40.12, -104.35]   # contains the 20 km envelope with margin
+  refresh_interval_hours: 6
+  min_pause_after_429_seconds: 30
+  user_agent: "DeFlockMigration/<version> (local camera sync; fixed Denver envelope)"
+  later_adapter: geofabrik_colorado_extract_with_daily_diffs
+
+routing_graph:
+  id: colorado-geofabrik-2026-10-14
+  extract_url: https://download.geofabrik.de/north-america/us/colorado-latest.osm.pbf
+  extract_data_timestamp: "2026-10-14T20:21:12Z"
+  extract_sha256: "4619ce93ddc8f2d3a365f4b2e492bb66f889a1c65a44bd72304b1c0cc39873cb"
+  engine_image: ghcr.io/valhalla/valhalla:3.9.1
+  coverage_note: "Extract outline contains the 20 km envelope with a 102 km margin; the graph covering Colorado does not widen the service boundary."
+  rebuild_cadence: weekly_staged
+
+basemap:
+  id: protomaps-20261015-denver-envelope-z15
+  file: data/raw/basemap/denver_envelope_z15_20261015.pmtiles
+  build: "https://build.protomaps.com/20261015.pmtiles (Protomaps Basemap 4.15.2)"
+  bbox_wsen: [-105.34301, 39.4341, -104.36565, 40.09437]
+  max_zoom: 15
+  attribution: "Protomaps © OpenStreetMap"
+
+geocoder:
+  provider: self_hosted_nominatim_colorado   # pending owner approval; see docs/FEASIBILITY_REPORT.md
+  external_fallback: none

@@ -1,0 +1,261 @@
+{
+  "label": "2026-10-15",
+  "source_boundary_file": "data/boundaries/raw/denver_county_boundary_4326_raw.geojson",
+  "retrieved_at": "2026-10-15T20:28:12Z",
+  "feature_counts_by_county": {
+    "Jefferson": 3,
+    "Arapahoe": 7,
+    "Denver": 2
+  },
+  "service_boundary": {
+    "geometry_type": "MultiPolygon",
+    "polygon_count": 2,
+    "parts": [
+      {
+        "exterior_vertices": 10,
+        "interior_rings": 0,
+        "area_km2": 0.04,
+        "bbox": [
+          -104.93407,
+          39.6984,
+          -104.93172,
+          39.70022
+        ]
+      },
+      {
+        "exterior_vertices": 1012,
+        "interior_rings": 10,
+        "area_km2": 400.43,
+        "bbox": [
+          -105.10997,
+          39.61431,
+          -104.59958,
+          39.91418
+        ]
+      }
+    ],
+    "total_area_km2": 400.47,
+    "total_area_sq_mi": 154.62,
+    "bbox_west_south_east_north": [
+      -105.10997,
+      39.61431,
+      -104.59958,
+      39.91418
+    ],
+    "is_valid": true
+  },
+  "enclaves_in_source": [
+    {
+      "objectid": 1,
+      "county": "Jefferson",
+      "area_km2": 0.004,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 2,
+      "county": "Jefferson",
+      "area_km2": 0.01,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 3,
+      "county": "Jefferson",
+      "area_km2": 0.005,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 4,
+      "county": "Arapahoe",
+      "area_km2": 0.018,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 5,
+      "county": "Arapahoe",
+      "area_km2": 0.177,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 6,
+      "county": "Arapahoe",
+      "area_km2": 1.304,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 7,
+      "county": "Arapahoe",
+      "area_km2": 0.057,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 8,
+      "county": "Arapahoe",
+      "area_km2": 0.043,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 9,
+      "county": "Arapahoe",
+      "area_km2": 1.475,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    },
+    {
+      "objectid": 10,
+      "county": "Arapahoe",
+      "area_km2": 0.004,
+      "overlap_with_service_km2": 0.0,
+      "surrounded_by_service_boundary": true
+    }
+  ],
+  "probe_points": [
+    {
+      "name": "Denver Union Station",
+      "lat": 39.753,
+      "lon": -105.0002,
+      "expected": "inside",
+      "actual": "inside",
+      "agrees": true
+    },
+    {
+      "name": "Colorado State Capitol",
+      "lat": 39.7393,
+      "lon": -104.9848,
+      "expected": "inside",
+      "actual": "inside",
+      "agrees": true
+    },
+    {
+      "name": "Denver Zoo",
+      "lat": 39.7503,
+      "lon": -104.95,
+      "expected": "inside",
+      "actual": "inside",
+      "agrees": true
+    },
+    {
+      "name": "DEN Jeppesen Terminal (airport arm)",
+      "lat": 39.8494,
+      "lon": -104.6737,
+      "expected": "inside",
+      "actual": "inside",
+      "agrees": true
+    },
+    {
+      "name": "Glendale city centre (enclave)",
+      "lat": 39.7047,
+      "lon": -104.9339,
+      "expected": "outside",
+      "actual": "outside",
+      "agrees": true
+    },
+    {
+      "name": "Holly Hills (enclave)",
+      "lat": 39.6686,
+      "lon": -104.9178,
+      "expected": "outside",
+      "actual": "outside",
+      "agrees": true
+    },
+    {
+      "name": "Aurora city centre",
+      "lat": 39.7294,
+      "lon": -104.8319,
+      "expected": "outside",
+      "actual": "outside",
+      "agrees": true
+    },
+    {
+      "name": "Lakewood Belmar",
+      "lat": 39.7047,
+      "lon": -105.0814,
+      "expected": "outside",
+      "actual": "outside",
+      "agrees": true
+    },
+    {
+      "name": "Englewood civic centre",
+      "lat": 39.6478,
+      "lon": -104.9878,
+      "expected": "outside",
+      "actual": "outside",
+      "agrees": true
+    },
+    {
+      "name": "Red Rocks Amphitheatre",
+      "lat": 39.6654,
+      "lon": -105.2057,
+      "expected": "outside",
+      "actual": "outside",
+      "agrees": true
+    }
+  ],
+  "envelopes": {
+    "10km": {
+      "area_km2": 2179.4,
+      "bbox_west_south_east_north": [
+        -105.22649,
+        39.52421,
+        -104.48261,
+        40.0042
+      ]
+    },
+    "15km": {
+      "area_km2": 3208.3,
+      "bbox_west_south_east_north": [
+        -105.28475,
+        39.47915,
+        -104.42413,
+        40.04932
+      ]
+    },
+    "20km": {
+      "area_km2": 4385.4,
+      "bbox_west_south_east_north": [
+        -105.34301,
+        39.4341,
+        -104.36565,
+        40.09437
+      ]
+    }
+  },
+  "camera_record_counts_by_zone": {
+    "envelope_10km": {
+      "total": 968,
+      "flock": 770,
+      "non_flock_or_unknown": 198
+    },
+    "envelope_15km": {
+      "total": 1181,
+      "flock": 962,
+      "non_flock_or_unknown": 219
+    },
+    "envelope_20km": {
+      "total": 1325,
+      "flock": 1078,
+      "non_flock_or_unknown": 247
+    },
+    "service_boundary": {
+      "total": 196,
+      "flock": 119,
+      "non_flock_or_unknown": 77
+    },
+    "in_query_bbox_but_outside_envelope_20km": 266
+  },
+  "overpass_query_bbox_contains_envelope_20km": true,
+  "colorado_extract_contains_envelope_20km": true,
+  "min_distance_envelope_20km_to_colorado_edge_km": 102.2,
+  "notes": [
+    "Areas computed in EPSG:26913 (UTM zone 13N). Buffers are metric, never degree-based.",
+    "Service boundary = union of the source polygons with COUNTY='Denver'; enclave rings are preserved as holes.",
+    "The envelope defines where a snapshot was assessed; it is not a claim of camera coverage."
+  ]
+}

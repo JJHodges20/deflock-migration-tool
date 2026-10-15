@@ -1,0 +1,371 @@
+{
+  "label": "2026-10-15",
+  "base": "http://127.0.0.1:8002",
+  "tests": {
+    "t1_reference": {
+      "time_s": 730.711,
+      "length_km": 12.414,
+      "units": "kilometers",
+      "has_highway": true,
+      "has_toll": false,
+      "maneuver_count": 12,
+      "shape_points": 355,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.307 km, 29.859 s)",
+        "kRight: Turn right onto 19th Street. (0.106 km, 16.987 s)",
+        "kLeft: Turn left onto Wazee Street. (0.152 km, 17.853 s)",
+        "kLeft: Turn left onto 20th Street. (0.771 km, 54.674 s)",
+        "kRampRight: Take the I 25 North ramp on the right toward Fort Collins. (1.453 km, 63.626 s)",
+        "kExitRight: Take exit 214A on the right onto I 70 toward Limon/Grand Junction. (1.855 km, 69.445 s)",
+        "kStayLeft: Keep left to take I 70. (3.114 km, 127.303 s)",
+        "kExitRight: Take exit 276B on the right onto CO 2 toward Colorado Boulevard/Dahlia Street. (0.434 km, 20.283 s)",
+        "kRight: Turn right onto North Colorado Boulevard/CO 2. (3.222 km, 205.731 s)",
+        "kRight: Turn right onto East 23rd Avenue. (0.861 km, 73.618 s)",
+        "kLeft: Turn left. (0.136 km, 51.326 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "maneuver_problems": [],
+      "warnings": [],
+      "name": "t1_reference",
+      "http_status": 200,
+      "elapsed_ms": 67.8,
+      "response_bytes": 8903
+    },
+    "t2_exclude_locations": {
+      "http_status": 200,
+      "name": "t2_exclude_locations",
+      "elapsed_ms": 80.0,
+      "response_bytes": 6742,
+      "time_s": 627.375,
+      "length_km": 6.373,
+      "units": "kilometers",
+      "has_highway": false,
+      "has_toll": false,
+      "maneuver_count": 10,
+      "shape_points": 240,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.307 km, 29.859 s)",
+        "kRight: Turn right onto 19th Street. (0.316 km, 40.088 s)",
+        "kLeft: Turn left onto Market Street. (0.441 km, 48.115 s)",
+        "kRight: Turn right onto West 22nd Street. (0.598 km, 74.211 s)",
+        "kStayLeft: Keep left to take East 22nd Street. (0.039 km, 2.985 s)",
+        "kLeft: Turn left onto Stout Street. (2.653 km, 221.397 s)",
+        "kRight: Turn right onto North York Street. (1.116 km, 97.463 s)",
+        "kLeft: Turn left onto East 23rd Avenue. (0.772 km, 62.235 s)",
+        "kRight: Turn right. (0.128 km, 51.018 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "maneuver_problems": [],
+      "warnings": [],
+      "min_distance_to_target_m": 2140.0,
+      "overlap_with_reference_fraction": 0.146,
+      "route_changed": true,
+      "extra_time_s": -103.3,
+      "extra_length_km": -6.041
+    },
+    "t3_exclude_polygon": {
+      "http_status": 200,
+      "name": "t3_exclude_polygon",
+      "elapsed_ms": 71.4,
+      "response_bytes": 6740,
+      "time_s": 627.375,
+      "length_km": 6.373,
+      "units": "kilometers",
+      "has_highway": false,
+      "has_toll": false,
+      "maneuver_count": 10,
+      "shape_points": 240,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.307 km, 29.859 s)",
+        "kRight: Turn right onto 19th Street. (0.316 km, 40.088 s)",
+        "kLeft: Turn left onto Market Street. (0.441 km, 48.115 s)",
+        "kRight: Turn right onto West 22nd Street. (0.598 km, 74.211 s)",
+        "kStayLeft: Keep left to take East 22nd Street. (0.039 km, 2.985 s)",
+        "kLeft: Turn left onto Stout Street. (2.653 km, 221.397 s)",
+        "kRight: Turn right onto North York Street. (1.116 km, 97.463 s)",
+        "kLeft: Turn left onto East 23rd Avenue. (0.772 km, 62.235 s)",
+        "kRight: Turn right. (0.128 km, 51.018 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "maneuver_problems": [],
+      "warnings": [],
+      "min_distance_to_target_m": 2140.0,
+      "overlap_with_reference_fraction": 0.146,
+      "route_changed": true,
+      "extra_time_s": -103.3,
+      "extra_length_km": -6.041
+    },
+    "t4_linear_cost_factor_1": {
+      "http_status": 200,
+      "name": "t4_linear_cost_factor_1",
+      "elapsed_ms": 61.3,
+      "response_bytes": 8914,
+      "time_s": 730.711,
+      "length_km": 12.414,
+      "units": "kilometers",
+      "has_highway": true,
+      "has_toll": false,
+      "maneuver_count": 12,
+      "shape_points": 355,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.307 km, 29.859 s)",
+        "kRight: Turn right onto 19th Street. (0.106 km, 16.987 s)",
+        "kLeft: Turn left onto Wazee Street. (0.152 km, 17.853 s)",
+        "kLeft: Turn left onto 20th Street. (0.771 km, 54.674 s)",
+        "kRampRight: Take the I 25 North ramp on the right toward Fort Collins. (1.453 km, 63.626 s)",
+        "kExitRight: Take exit 214A on the right onto I 70 toward Limon/Grand Junction. (1.855 km, 69.445 s)",
+        "kStayLeft: Keep left to take I 70. (3.114 km, 127.303 s)",
+        "kExitRight: Take exit 276B on the right onto CO 2 toward Colorado Boulevard/Dahlia Street. (0.434 km, 20.283 s)",
+        "kRight: Turn right onto North Colorado Boulevard/CO 2. (3.222 km, 205.731 s)",
+        "kRight: Turn right onto East 23rd Avenue. (0.861 km, 73.618 s)",
+        "kLeft: Turn left. (0.136 km, 51.326 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "maneuver_problems": [],
+      "warnings": [],
+      "min_distance_to_target_m": 0.0,
+      "overlap_with_reference_fraction": 1.0,
+      "route_changed": false,
+      "extra_time_s": 0.0,
+      "extra_length_km": 0.0
+    },
+    "t4_linear_cost_factor_50": {
+      "http_status": 200,
+      "name": "t4_linear_cost_factor_50",
+      "elapsed_ms": 61.9,
+      "response_bytes": 6746,
+      "time_s": 627.375,
+      "length_km": 6.373,
+      "units": "kilometers",
+      "has_highway": false,
+      "has_toll": false,
+      "maneuver_count": 10,
+      "shape_points": 240,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.307 km, 29.859 s)",
+        "kRight: Turn right onto 19th Street. (0.316 km, 40.088 s)",
+        "kLeft: Turn left onto Market Street. (0.441 km, 48.115 s)",
+        "kRight: Turn right onto West 22nd Street. (0.598 km, 74.211 s)",
+        "kStayLeft: Keep left to take East 22nd Street. (0.039 km, 2.985 s)",
+        "kLeft: Turn left onto Stout Street. (2.653 km, 221.397 s)",
+        "kRight: Turn right onto North York Street. (1.116 km, 97.463 s)",
+        "kLeft: Turn left onto East 23rd Avenue. (0.772 km, 62.235 s)",
+        "kRight: Turn right. (0.128 km, 51.018 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "maneuver_problems": [],
+      "warnings": [],
+      "min_distance_to_target_m": 2140.0,
+      "overlap_with_reference_fraction": 0.146,
+      "route_changed": true,
+      "extra_time_s": -103.3,
+      "extra_length_km": -6.041
+    },
+    "t5_eta_contamination": {
+      "factor_1": {
+        "time_s": 420.987,
+        "length_km": 6.382
+      },
+      "factor_1000": {
+        "time_s": 420.987,
+        "length_km": 6.382
+      },
+      "same_geometry": true,
+      "reported_time_equal": true
+    },
+    "t6_alternates": {
+      "http_status": 200,
+      "alternates_returned": 2,
+      "alternates": [
+        {
+          "time_s": 627.375,
+          "length_km": 6.373,
+          "overlap_with_reference_fraction": 0.146,
+          "min_distance_to_target_m": 2140.0
+        },
+        {
+          "time_s": 618.118,
+          "length_km": 6.423,
+          "overlap_with_reference_fraction": 0.056,
+          "min_distance_to_target_m": 3311.0
+        }
+      ],
+      "name": "t6_alternates",
+      "elapsed_ms": 89.4,
+      "response_bytes": 22180
+    },
+    "t7_warnings": {
+      "http_status": 200,
+      "warnings": [
+        {
+          "code": 208,
+          "text": "Hard exclusions are not allowed on this server, ignoring hard excludes"
+        }
+      ],
+      "name": "t7_warnings",
+      "elapsed_ms": 73.0,
+      "response_bytes": 6830
+    },
+    "t8_limit_exclude_locations_51": {
+      "http_status": 400,
+      "error": {
+        "error_code": 157,
+        "error": "Exceeded max avoid locations: 50",
+        "status_code": 400
+      },
+      "name": "t8_limit_exclude_locations",
+      "elapsed_ms": 1.8,
+      "response_bytes": 102
+    },
+    "t8_limit_exclude_polygon_12km_perimeter": {
+      "http_status": 400,
+      "error": {
+        "error_code": 167,
+        "error": "Exceeded maximum circumference for exclude_polygons: 10000 meters",
+        "status_code": 400
+      },
+      "name": "t8_limit_exclude_polygon",
+      "elapsed_ms": 23.6,
+      "response_bytes": 135
+    },
+    "t9_long_union_to_den": {
+      "http_status": 200,
+      "name": "t9_long_union_to_den",
+      "elapsed_ms": 73.5,
+      "response_bytes": 11881,
+      "time_s": 1669.242,
+      "length_km": 40.308,
+      "units": "kilometers",
+      "has_highway": true,
+      "has_toll": false,
+      "maneuver_count": 14,
+      "shape_points": 778,
+      "maneuver_problems": [],
+      "warnings": []
+    },
+    "t9_capitol_to_washington_park": {
+      "http_status": 200,
+      "name": "t9_capitol_to_washington_park",
+      "elapsed_ms": 30.3,
+      "response_bytes": 8144,
+      "time_s": 590.208,
+      "length_km": 6.233,
+      "units": "kilometers",
+      "has_highway": false,
+      "has_toll": false,
+      "maneuver_count": 12,
+      "shape_points": 237,
+      "maneuver_problems": [],
+      "warnings": []
+    },
+    "t10_outside_graph": {
+      "http_status": 400,
+      "error": {
+        "error_code": 171,
+        "error": "No suitable edges near location",
+        "status_code": 400
+      },
+      "name": "t10_outside_graph",
+      "elapsed_ms": 7.0,
+      "response_bytes": 101
+    }
+  },
+  "synthetic_target": {
+    "lat": 39.779969,
+    "lon": -104.966795,
+    "shape_index": 173,
+    "reference_length_m": 12405
+  },
+  "calls": [
+    {
+      "name": "t0_cold_reference",
+      "http_status": 200,
+      "elapsed_ms": 419.2,
+      "response_bytes": 8903
+    },
+    {
+      "name": "t1_reference",
+      "http_status": 200,
+      "elapsed_ms": 67.8,
+      "response_bytes": 8903
+    },
+    {
+      "name": "t2_exclude_locations",
+      "http_status": 200,
+      "elapsed_ms": 80.0,
+      "response_bytes": 6742
+    },
+    {
+      "name": "t3_exclude_polygon",
+      "http_status": 200,
+      "elapsed_ms": 71.4,
+      "response_bytes": 6740
+    },
+    {
+      "name": "t4_linear_cost_factor_1",
+      "http_status": 200,
+      "elapsed_ms": 61.3,
+      "response_bytes": 8914
+    },
+    {
+      "name": "t4_linear_cost_factor_50",
+      "http_status": 200,
+      "elapsed_ms": 61.9,
+      "response_bytes": 6746
+    },
+    {
+      "name": "t5_forced_factor_1",
+      "http_status": 200,
+      "elapsed_ms": 29.2,
+      "response_bytes": 4563
+    },
+    {
+      "name": "t5_forced_factor_1000",
+      "http_status": 200,
+      "elapsed_ms": 32.1,
+      "response_bytes": 4563
+    },
+    {
+      "name": "t6_alternates",
+      "http_status": 200,
+      "elapsed_ms": 89.4,
+      "response_bytes": 22180
+    },
+    {
+      "name": "t7_warnings",
+      "http_status": 200,
+      "elapsed_ms": 73.0,
+      "response_bytes": 6830
+    },
+    {
+      "name": "t8_limit_exclude_locations",
+      "http_status": 400,
+      "elapsed_ms": 1.8,
+      "response_bytes": 102
+    },
+    {
+      "name": "t8_limit_exclude_polygon",
+      "http_status": 400,
+      "elapsed_ms": 23.6,
+      "response_bytes": 135
+    },
+    {
+      "name": "t9_long_union_to_den",
+      "http_status": 200,
+      "elapsed_ms": 73.5,
+      "response_bytes": 11881
+    },
+    {
+      "name": "t9_capitol_to_washington_park",
+      "http_status": 200,
+      "elapsed_ms": 30.3,
+      "response_bytes": 8144
+    },
+    {
+      "name": "t10_outside_graph",
+      "http_status": 400,
+      "elapsed_ms": 7.0,
+      "response_bytes": 101
+    }
+  ]
+}

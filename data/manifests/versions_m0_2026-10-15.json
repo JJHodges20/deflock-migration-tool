@@ -1,0 +1,84 @@
+{
+  "manifest_id": "deflockmigration-m0-versions-2026-10-15",
+  "milestone": "M0",
+  "created_at": "2026-10-15",
+  "status": "feasibility artifacts; nothing here is a production release",
+  "host": {
+    "os": "Windows 11 Home 10.0.22631",
+    "cpu": "AMD Ryzen 7 5700X, 8 cores / 16 threads",
+    "ram_gb": 15.9,
+    "disk_free_gb_c": 224,
+    "docker": "Docker Desktop, engine 29.8.2, Compose v5.5.1, 16 CPUs and 8.29 GB allocated",
+    "git": "2.55.0.windows.2",
+    "python_host": "3.14.6 (development scripts only; not required to run the app)",
+    "node_host": "not installed (not required; frontend builds inside Docker)"
+  },
+  "container_images": {
+    "valhalla": {"ref": "ghcr.io/valhalla/valhalla:3.9.1", "digest": "sha256:4fd114eb1d26b8fc2f43bcb3df234c1b63a0bf13c277405e5943d5361dc575de", "size_bytes": 927568629, "created": "2026-10-06T11:12:28Z"},
+    "nominatim_spike": {"ref": "mediagis/nominatim:5.3.2", "size_bytes": 1525221590, "created": "2026-06-23T09:04:35Z"},
+    "pmtiles_cli": {"ref": "protomaps/go-pmtiles:v1.31.2"}
+  },
+  "camera_snapshot": {
+    "snapshot_id": "overpass-alpr-denver-envelope-2026-10-15",
+    "manifest": "data/manifests/overpass_snapshot_2026-10-15.json",
+    "timestamp_osm_base": "2026-10-15T20:18:00Z",
+    "element_count": 1591,
+    "raw_sha256": "6ffd2e807cdf200b2a87b7fd0e51b6a0ad6c663d3055eb22772cbce12802c79d",
+    "fixture": "data/fixtures/overpass_alpr_sample_2026-10-15.json"
+  },
+  "road_graph": {
+    "graph_id": "valhalla-3.9.1-colorado-2026-10-14",
+    "extract": "colorado-latest.osm.pbf",
+    "extract_data_timestamp": "2026-10-14T20:21:12Z",
+    "extract_bytes": 384780419,
+    "extract_sha256": "4619ce93ddc8f2d3a365f4b2e492bb66f889a1c65a44bd72304b1c0cc39873cb",
+    "extract_md5_verified": "39e228e284bb5224fcb1440636078978",
+    "tileset_last_modified": "2026-10-15T20:28:48Z",
+    "tile_count": 599,
+    "tiles_bytes_approx": 505000000,
+    "build_seconds": {"config": 0, "timezones": 8, "admins": 12, "tiles": 105, "extract": 2},
+    "build_peak_memory_gib": 3.03,
+    "docker_volume": "deflock_valhalla_spike"
+  },
+  "boundaries": {
+    "service_boundary_id": "denver-service-v1",
+    "service_source_retrieved_at": "2026-10-15T20:28:12Z",
+    "service_source_sha256": "487d6cd42d48b1a92f5825b0006fbe47a586e89587be7b6cfe36172fbb02fbec",
+    "envelope_id": "denver-envelope-v1-20km",
+    "config": "configs/regions/denver.yaml"
+  },
+  "basemap": {
+    "basemap_id": "protomaps-20261015-denver-envelope-z15",
+    "file": "data/raw/basemap/denver_envelope_z15_20261015.pmtiles",
+    "bytes": 90280588,
+    "tile_entries": 9616,
+    "source_build": "https://build.protomaps.com/20261015.pmtiles",
+    "basemap_version": "4.15.2",
+    "osm_replication_time": "2026-10-15T04:00:00Z"
+  },
+  "geocoder_spike": {
+    "image": "mediagis/nominatim:5.3.2",
+    "extract": "colorado-latest.osm.pbf",
+    "data_updated_per_status": "2026-10-14T20:20:43Z",
+    "import_style": "full",
+    "tiger": false,
+    "wikipedia": false,
+    "import_started": "2026-10-15T20:42:52Z",
+    "api_ready": "2026-10-15T20:59:47Z",
+    "import_seconds_total": 1015,
+    "osm2pgsql_seconds": 299,
+    "peak_memory_gib": 5.19,
+    "db_volume_bytes_approx": 9766000000,
+    "docker_volume": "deflock_nominatim_spike_db",
+    "results": "spikes/nominatim/results/queries_2026-10-15.json"
+  },
+  "public_source_calls_made_in_m0": [
+    {"service": "overpass-api.de", "calls": 2, "note": "first returned HTTP 502, second succeeded"},
+    {"service": "download.geofabrik.de", "calls": 4, "note": "HEAD, PBF, .md5, .poly"},
+    {"service": "services1.arcgis.com / www.arcgis.com (Denver Open Data)", "calls": 3, "note": "boundary GeoJSON, layer metadata, item metadata"},
+    {"service": "build.protomaps.com", "calls": 99, "note": "49 range requests for a dry run, 50 for the real extract"},
+    {"service": "api.github.com / hub.docker.com / build-metadata.protomaps.dev", "calls": 5, "note": "release and tag metadata"},
+    {"service": "ghcr.io / docker.io", "calls": 3, "note": "image pulls"},
+    {"service": "documentation pages", "calls": "about 40", "note": "read by research agents; no data downloads"}
+  ]
+}

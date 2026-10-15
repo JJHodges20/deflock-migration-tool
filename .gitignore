@@ -1,0 +1,46 @@
+# DeFlockMigration - local-only data and artifacts
+# Large public-source downloads and derived graphs stay out of git.
+data/raw/osm/
+data/raw/overpass/*_raw.json
+data/raw/overpass/*_headers.txt
+data/road_graphs/
+data/processed/
+spikes/**/tiles/
+spikes/**/*.tar
+spikes/**/*.sqlite
+spikes/**/*.pbf
+spikes/**/output/
+*.log
+
+# Secrets and local config
+.env
+.env.*
+!.env.example
+
+# Dependencies and builds
+node_modules/
+.next/
+dist/
+build/
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Databases
+*.db
+*.sqlite3
+pgdata/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Basemap archives (large, downloaded)
+data/raw/basemap/
+*.pmtiles

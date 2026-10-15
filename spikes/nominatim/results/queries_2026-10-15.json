@@ -1,0 +1,266 @@
+{
+  "label": "2026-10-15",
+  "base": "http://127.0.0.1:8081",
+  "status": {
+    "http": 200,
+    "payload": {
+      "status": 0,
+      "message": "OK",
+      "data_updated": "2026-10-14T20:20:43+00:00",
+      "software_version": "5.3.2",
+      "database_version": "5.3.2-0"
+    },
+    "ms": 56.0
+  },
+  "queries": [
+    {
+      "kind": "search",
+      "query": "Union Station, Denver, CO",
+      "http": 200,
+      "ms": 42.3,
+      "result_count": 3,
+      "top": {
+        "display_name": "Union Station, 1701, Wynkoop Street, 16th Street Mall, Denver, 80202, United States",
+        "lat": "39.7532277",
+        "lon": "-105.0000944",
+        "category": "tourism",
+        "type": "attraction",
+        "addresstype": "tourism",
+        "importance": 9.99999999995449e-06,
+        "name": "Union Station"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Denver Zoo",
+      "http": 200,
+      "ms": 26.5,
+      "result_count": 2,
+      "top": {
+        "display_name": "Denver Zoo, 2300, Steele Street, Denver, 80205, United States",
+        "lat": "39.7492422",
+        "lon": "-104.9504100",
+        "category": "tourism",
+        "type": "zoo",
+        "addresstype": "tourism",
+        "importance": 9.99999999995449e-06,
+        "name": "Denver Zoo"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Colorado State Capitol, Denver",
+      "http": 200,
+      "ms": 36.1,
+      "result_count": 3,
+      "top": {
+        "display_name": "Colorado State Capitol Annex Building, 1375, Sherman Street, Sherman Street Historic District, Capitol Hill, Denver, 80203, United States",
+        "lat": "39.7379617",
+        "lon": "-104.9853061",
+        "category": "building",
+        "type": "civic",
+        "addresstype": "building",
+        "importance": 9.99999999995449e-06,
+        "name": "Colorado State Capitol Annex Building"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Denver International Airport",
+      "http": 200,
+      "ms": 28.0,
+      "result_count": 3,
+      "top": {
+        "display_name": "Denver International Airport, 8500, Pe\u00f1a Boulevard, Denver, 80249, United States",
+        "lat": "39.8606676",
+        "lon": "-104.6853673",
+        "category": "aeroway",
+        "type": "aerodrome",
+        "addresstype": "aeroway",
+        "importance": 9.99999999995449e-06,
+        "name": "Denver International Airport"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Red Rocks Amphitheatre",
+      "http": 200,
+      "ms": 30.4,
+      "result_count": 1,
+      "top": {
+        "display_name": "Red Rocks Amphitheatre, 18300, West Alameda Parkway, Morrison, Jefferson County, 80465, United States",
+        "lat": "39.6653917",
+        "lon": "-105.2057171",
+        "category": "amenity",
+        "type": "theatre",
+        "addresstype": "amenity",
+        "importance": 9.99999999995449e-06,
+        "name": "Red Rocks Amphitheatre"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "1437 Bannock St, Denver, CO",
+      "http": 200,
+      "ms": 25.6,
+      "result_count": 1,
+      "top": {
+        "display_name": "Denver City & County Building, 1437, Bannock Street, Civic Center, Denver, 80202, United States",
+        "lat": "39.7391847",
+        "lon": "-104.9910938",
+        "category": "amenity",
+        "type": "courthouse",
+        "addresstype": "amenity",
+        "importance": 9.99999999995449e-06,
+        "name": "Denver City & County Building"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "200 E Colfax Ave, Denver, CO 80203",
+      "http": 200,
+      "ms": 61.1,
+      "result_count": 3,
+      "top": {
+        "display_name": "Governors' Portraits, 200, East Colfax Avenue, Denver, 80203, United States",
+        "lat": "39.7392278",
+        "lon": "-104.9845771",
+        "category": "tourism",
+        "type": "artwork",
+        "addresstype": "tourism",
+        "importance": 9.99999999995449e-06,
+        "name": "Governors' Portraits"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "1701 Wynkoop St, Denver, CO",
+      "http": 200,
+      "ms": 48.2,
+      "result_count": 3,
+      "top": {
+        "display_name": "The Crawford Hotel, 1701, Wynkoop Street, 16th Street Mall, Denver, 80202, United States",
+        "lat": "39.7533400",
+        "lon": "-105.0000554",
+        "category": "tourism",
+        "type": "hotel",
+        "addresstype": "tourism",
+        "importance": 9.99999999995449e-06,
+        "name": "The Crawford Hotel"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "2300 Steele St, Denver, CO",
+      "http": 200,
+      "ms": 51.9,
+      "result_count": 3,
+      "top": {
+        "display_name": "Denver Zoo, 2300, Steele Street, Denver, 80205, United States",
+        "lat": "39.7492422",
+        "lon": "-104.9504100",
+        "category": "tourism",
+        "type": "zoo",
+        "addresstype": "tourism",
+        "importance": 9.99999999995449e-06,
+        "name": "Denver Zoo"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Washington Park, Denver",
+      "http": 200,
+      "ms": 15.7,
+      "result_count": 1,
+      "top": {
+        "display_name": "Washington Park, Denver, United States",
+        "lat": "39.7020811",
+        "lon": "-104.9710337",
+        "category": "leisure",
+        "type": "park",
+        "addresstype": "park",
+        "importance": 0.08000999999999997,
+        "name": "Washington Park"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Glendale, Colorado",
+      "http": 200,
+      "ms": 42.1,
+      "result_count": 2,
+      "top": {
+        "display_name": "South Colorado Boulevard, Glendale, Arapahoe County, 80246, United States",
+        "lat": "39.7046714",
+        "lon": "-104.9406282",
+        "category": "highway",
+        "type": "primary",
+        "addresstype": "road",
+        "importance": 0.0533433333333333,
+        "name": "South Colorado Boulevard"
+      },
+      "error": null
+    },
+    {
+      "kind": "search",
+      "query": "Nonexistent Street 99999, Denver",
+      "http": 200,
+      "ms": 30.5,
+      "result_count": 0,
+      "top": null,
+      "error": []
+    },
+    {
+      "kind": "reverse",
+      "query": [
+        39.7393,
+        -104.9848
+      ],
+      "http": 200,
+      "ms": 40.7,
+      "result_count": 1,
+      "top": {
+        "display_name": "Colorado Cattlemen's Plaque, 200, East Colfax Avenue, Denver, 80203, United States",
+        "lat": "39.7392822",
+        "lon": "-104.9848230",
+        "category": "tourism",
+        "type": "artwork",
+        "addresstype": "tourism",
+        "importance": 9.99999999995449e-06,
+        "name": "Colorado Cattlemen's Plaque"
+      },
+      "error": null
+    },
+    {
+      "kind": "reverse",
+      "query": [
+        39.8494,
+        -104.6737
+      ],
+      "http": 200,
+      "ms": 28.9,
+      "result_count": 1,
+      "top": {
+        "display_name": "8500, Pe\u00f1a Boulevard, Denver, 80249, United States",
+        "lat": "39.8493797",
+        "lon": "-104.6736475",
+        "category": "highway",
+        "type": "elevator",
+        "addresstype": "highway",
+        "importance": 9.99999999995449e-06,
+        "name": ""
+      },
+      "error": null
+    }
+  ]
+}

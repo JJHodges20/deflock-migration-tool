@@ -1,0 +1,21 @@
+{
+  "snapshot_id": "overpass-alpr-denver-envelope-2026-10-15",
+  "source": "OpenStreetMap via Overpass API",
+  "endpoint": "https://overpass-api.de/api/interpreter",
+  "query_file": "data/raw/overpass/denver_alpr_envelope_query.overpassql",
+  "query_sha256": "373affbb4b8c1c858822a6e166b828a0f00ed710d0512ca61932d7d828fccb5f",
+  "query_bbox_south_west_north_east": "39.40,-105.40,40.12,-104.35",
+  "generator": "Overpass API 0.7.62.11 87bfad18",
+  "timestamp_osm_base": "2026-10-15T20:18:00Z",
+  "downloaded_at_start": "2026-10-15T20:19:15Z",
+  "downloaded_at_end": "2026-10-15T20:20:26Z",
+  "raw_file": "data/raw/overpass/denver_alpr_envelope_raw.json",
+  "raw_sha256": "6ffd2e807cdf200b2a87b7fd0e51b6a0ad6c663d3055eb22772cbce12802c79d",
+  "raw_bytes": 785686,
+  "element_count": 1591,
+  "remark": null,
+  "license": "ODbL 1.0 (OpenStreetMap contributors)",
+  "copyright_statement_from_response": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "parser_version": "m0-inspection-0.1",
+  "note": "First attempt at 20:18:05Z returned HTTP 502 from the main instance; second attempt succeeded. One bounded query; no per-route queries."
+}

@@ -1,0 +1,537 @@
+{
+  "label": "2026-10-15",
+  "p1_reference_quality": {
+    "union_to_zoo": {
+      "default_with_alternates": {
+        "primary": {
+          "time_s": 730.711,
+          "length_km": 12.414,
+          "has_highway": true,
+          "maneuvers": 12
+        },
+        "alternates": [
+          {
+            "time_s": 627.375,
+            "length_km": 6.373,
+            "has_highway": false,
+            "maneuvers": 10
+          },
+          {
+            "time_s": 618.118,
+            "length_km": 6.423,
+            "has_highway": false,
+            "maneuvers": 9
+          }
+        ],
+        "fastest_is_primary": false,
+        "elapsed_ms": 145.9
+      },
+      "default": {
+        "time_s": 730.711,
+        "length_km": 12.414,
+        "has_highway": true,
+        "maneuvers": 12,
+        "warnings": [],
+        "elapsed_ms": 59.9
+      },
+      "disable_hierarchy_pruning": {
+        "time_s": 730.711,
+        "length_km": 12.414,
+        "has_highway": true,
+        "maneuvers": 12,
+        "warnings": [],
+        "elapsed_ms": 97.9
+      },
+      "use_highways_0.3": {
+        "time_s": 627.375,
+        "length_km": 6.373,
+        "has_highway": false,
+        "maneuvers": 10,
+        "warnings": [],
+        "elapsed_ms": 63.1
+      },
+      "use_highways_0.0": {
+        "time_s": 627.375,
+        "length_km": 6.373,
+        "has_highway": false,
+        "maneuvers": 10,
+        "warnings": [],
+        "elapsed_ms": 69.0
+      },
+      "shortest": {
+        "time_s": 542.906,
+        "length_km": 4.994,
+        "has_highway": false,
+        "maneuvers": 15,
+        "warnings": [],
+        "elapsed_ms": 26.3
+      }
+    },
+    "zoo_to_union": {
+      "default_with_alternates": {
+        "primary": {
+          "time_s": 687.114,
+          "length_km": 7.312,
+          "has_highway": false,
+          "maneuvers": 9
+        },
+        "alternates": [
+          {
+            "time_s": 581.057,
+            "length_km": 5.886,
+            "has_highway": false,
+            "maneuvers": 9
+          },
+          {
+            "time_s": 643.371,
+            "length_km": 6.523,
+            "has_highway": false,
+            "maneuvers": 10
+          }
+        ],
+        "fastest_is_primary": false,
+        "elapsed_ms": 90.0
+      },
+      "default": {
+        "time_s": 687.114,
+        "length_km": 7.312,
+        "has_highway": false,
+        "maneuvers": 9,
+        "warnings": [],
+        "elapsed_ms": 38.4
+      },
+      "disable_hierarchy_pruning": {
+        "time_s": 687.114,
+        "length_km": 7.312,
+        "has_highway": false,
+        "maneuvers": 9,
+        "warnings": [],
+        "elapsed_ms": 35.3
+      },
+      "use_highways_0.3": {
+        "time_s": 687.114,
+        "length_km": 7.312,
+        "has_highway": false,
+        "maneuvers": 9,
+        "warnings": [],
+        "elapsed_ms": 42.4
+      },
+      "use_highways_0.0": {
+        "time_s": 687.114,
+        "length_km": 7.312,
+        "has_highway": false,
+        "maneuvers": 9,
+        "warnings": [],
+        "elapsed_ms": 31.8
+      },
+      "shortest": {
+        "time_s": 536.302,
+        "length_km": 5.07,
+        "has_highway": false,
+        "maneuvers": 12,
+        "warnings": [],
+        "elapsed_ms": 19.4
+      }
+    },
+    "capitol_to_zoo": {
+      "default_with_alternates": {
+        "primary": {
+          "time_s": 448.117,
+          "length_km": 4.436,
+          "has_highway": false,
+          "maneuvers": 8
+        },
+        "alternates": [],
+        "fastest_is_primary": true,
+        "elapsed_ms": 44.9
+      },
+      "default": {
+        "time_s": 448.117,
+        "length_km": 4.436,
+        "has_highway": false,
+        "maneuvers": 8,
+        "warnings": [],
+        "elapsed_ms": 17.8
+      },
+      "disable_hierarchy_pruning": {
+        "time_s": 448.117,
+        "length_km": 4.436,
+        "has_highway": false,
+        "maneuvers": 8,
+        "warnings": [],
+        "elapsed_ms": 21.6
+      },
+      "use_highways_0.3": {
+        "time_s": 448.117,
+        "length_km": 4.436,
+        "has_highway": false,
+        "maneuvers": 8,
+        "warnings": [],
+        "elapsed_ms": 39.1
+      },
+      "use_highways_0.0": {
+        "time_s": 448.117,
+        "length_km": 4.436,
+        "has_highway": false,
+        "maneuvers": 8,
+        "warnings": [],
+        "elapsed_ms": 17.9
+      },
+      "shortest": {
+        "time_s": 480.125,
+        "length_km": 4.221,
+        "has_highway": false,
+        "maneuvers": 12,
+        "warnings": [],
+        "elapsed_ms": 38.5
+      }
+    },
+    "union_to_washington_park": {
+      "default_with_alternates": {
+        "primary": {
+          "time_s": 655.069,
+          "length_km": 7.702,
+          "has_highway": false,
+          "maneuvers": 10
+        },
+        "alternates": [
+          {
+            "time_s": 656.889,
+            "length_km": 10.686,
+            "has_highway": true,
+            "maneuvers": 16
+          },
+          {
+            "time_s": 685.96,
+            "length_km": 7.448,
+            "has_highway": false,
+            "maneuvers": 11
+          }
+        ],
+        "fastest_is_primary": true,
+        "elapsed_ms": 55.1
+      },
+      "default": {
+        "time_s": 655.069,
+        "length_km": 7.702,
+        "has_highway": false,
+        "maneuvers": 10,
+        "warnings": [],
+        "elapsed_ms": 26.5
+      },
+      "disable_hierarchy_pruning": {
+        "time_s": 655.069,
+        "length_km": 7.702,
+        "has_highway": false,
+        "maneuvers": 10,
+        "warnings": [],
+        "elapsed_ms": 27.2
+      },
+      "use_highways_0.3": {
+        "time_s": 655.069,
+        "length_km": 7.702,
+        "has_highway": false,
+        "maneuvers": 10,
+        "warnings": [],
+        "elapsed_ms": 25.3
+      },
+      "use_highways_0.0": {
+        "time_s": 655.069,
+        "length_km": 7.702,
+        "has_highway": false,
+        "maneuvers": 10,
+        "warnings": [],
+        "elapsed_ms": 25.2
+      },
+      "shortest": {
+        "time_s": 685.96,
+        "length_km": 7.448,
+        "has_highway": false,
+        "maneuvers": 11,
+        "warnings": [],
+        "elapsed_ms": 54.2
+      }
+    }
+  },
+  "p2_local_detour": {
+    "reference": {
+      "time_s": 627.375,
+      "length_km": 6.373,
+      "has_highway": false,
+      "maneuvers": 10,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.307 km, 29.859 s)",
+        "kRight: Turn right onto 19th Street. (0.316 km, 40.088 s)",
+        "kLeft: Turn left onto Market Street. (0.441 km, 48.115 s)",
+        "kRight: Turn right onto West 22nd Street. (0.598 km, 74.211 s)",
+        "kStayLeft: Keep left to take East 22nd Street. (0.039 km, 2.985 s)",
+        "kLeft: Turn left onto Stout Street. (2.653 km, 221.397 s)",
+        "kRight: Turn right onto North York Street. (1.116 km, 97.463 s)",
+        "kLeft: Turn left onto East 23rd Avenue. (0.772 km, 62.235 s)",
+        "kRight: Turn right. (0.128 km, 51.018 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "target": {
+        "lat": 39.760752,
+        "lon": -104.969787
+      },
+      "length_m": 6364
+    },
+    "exclude_locations": {
+      "time_s": 618.118,
+      "length_km": 6.423,
+      "has_highway": false,
+      "maneuvers": 9,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.014 km, 1.353 s)",
+        "kRight: Turn right onto 17th Street. (1.493 km, 146.053 s)",
+        "kRight: Turn right onto North Broadway. (0.374 km, 34.922 s)",
+        "kLeft: Turn left onto East Colfax Avenue/I 70 BUS/US 40/US 287. (2.441 km, 215.42 s)",
+        "kLeft: Turn left onto North Josephine Street. (0.538 km, 49.693 s)",
+        "kSlightRight: Bear right onto North York Street. (0.661 km, 54.131 s)",
+        "kRight: Turn right onto East 23rd Avenue. (0.772 km, 65.524 s)",
+        "kRight: Turn right. (0.128 km, 51.018 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "warnings": [],
+      "min_distance_to_target_m": 1408.4,
+      "overlap_with_reference_fraction": 0.147,
+      "extra_time_s": -9.3,
+      "extra_length_km": 0.05,
+      "elapsed_ms": 55.9
+    },
+    "linear_factor_10": {
+      "time_s": 618.118,
+      "length_km": 6.423,
+      "has_highway": false,
+      "maneuvers": 9,
+      "instructions": [
+        "kStartLeft: Drive northeast on Wynkoop Street. (0.014 km, 1.353 s)",
+        "kRight: Turn right onto 17th Street. (1.493 km, 146.053 s)",
+        "kRight: Turn right onto North Broadway. (0.374 km, 34.922 s)",
+        "kLeft: Turn left onto East Colfax Avenue/I 70 BUS/US 40/US 287. (2.441 km, 215.42 s)",
+        "kLeft: Turn left onto North Josephine Street. (0.538 km, 49.693 s)",
+        "kSlightRight: Bear right onto North York Street. (0.661 km, 54.131 s)",
+        "kRight: Turn right onto East 23rd Avenue. (0.772 km, 65.524 s)",
+        "kRight: Turn right. (0.128 km, 51.018 s)",
+        "kDestination: You have arrived at your destination. (0.0 km, 0.0 s)"
+      ],
+      "warnings": [],
+      "min_distance_to_target_m": 1408.4,
+      "overlap_with_reference_fraction": 0.147,
+      "extra_time_s": -9.3,
+      "extra_length_km": 0.05,
+      "elapsed_ms": 58.5
+    }
+  },
+  "p3_legality": {
+    "p2_exclude_locations": {
+      "edge_count": 246,
+      "traversability_counts": {
+        "both": 43,
+        "forward": 203
+      },
+      "use_counts": {
+        "road": 241,
+        "driveway": 5
+      },
+      "sample_edge_keys": [
+        "drive_on_right",
+        "length",
+        "names",
+        "road_class",
+        "source_percent_along",
+        "toll",
+        "traversability",
+        "use"
+      ],
+      "note": "edge_walk matching of the engine's own route shape; traversability is relative to the matched direction"
+    },
+    "p2_linear_factor_10": {
+      "edge_count": 246,
+      "traversability_counts": {
+        "both": 43,
+        "forward": 203
+      },
+      "use_counts": {
+        "road": 241,
+        "driveway": 5
+      },
+      "sample_edge_keys": [
+        "drive_on_right",
+        "length",
+        "names",
+        "road_class",
+        "source_percent_along",
+        "toll",
+        "traversability",
+        "use"
+      ],
+      "note": "edge_walk matching of the engine's own route shape; traversability is relative to the matched direction"
+    }
+  },
+  "calls": [
+    {
+      "name": "p1_union_to_zoo_alternates",
+      "http_status": 200,
+      "elapsed_ms": 145.9,
+      "response_bytes": 22170
+    },
+    {
+      "name": "p1_union_to_zoo_default",
+      "http_status": 200,
+      "elapsed_ms": 59.9,
+      "response_bytes": 8883
+    },
+    {
+      "name": "p1_union_to_zoo_disable_hierarchy_pruning",
+      "http_status": 200,
+      "elapsed_ms": 97.9,
+      "response_bytes": 8883
+    },
+    {
+      "name": "p1_union_to_zoo_use_highways_0.3",
+      "http_status": 200,
+      "elapsed_ms": 63.1,
+      "response_bytes": 6714
+    },
+    {
+      "name": "p1_union_to_zoo_use_highways_0.0",
+      "http_status": 200,
+      "elapsed_ms": 69.0,
+      "response_bytes": 6714
+    },
+    {
+      "name": "p1_union_to_zoo_shortest",
+      "http_status": 200,
+      "elapsed_ms": 26.3,
+      "response_bytes": 9742
+    },
+    {
+      "name": "p1_zoo_to_union_alternates",
+      "http_status": 200,
+      "elapsed_ms": 90.0,
+      "response_bytes": 19496
+    },
+    {
+      "name": "p1_zoo_to_union_default",
+      "http_status": 200,
+      "elapsed_ms": 38.4,
+      "response_bytes": 6689
+    },
+    {
+      "name": "p1_zoo_to_union_disable_hierarchy_pruning",
+      "http_status": 200,
+      "elapsed_ms": 35.3,
+      "response_bytes": 6689
+    },
+    {
+      "name": "p1_zoo_to_union_use_highways_0.3",
+      "http_status": 200,
+      "elapsed_ms": 42.4,
+      "response_bytes": 6689
+    },
+    {
+      "name": "p1_zoo_to_union_use_highways_0.0",
+      "http_status": 200,
+      "elapsed_ms": 31.8,
+      "response_bytes": 6689
+    },
+    {
+      "name": "p1_zoo_to_union_shortest",
+      "http_status": 200,
+      "elapsed_ms": 19.4,
+      "response_bytes": 8045
+    },
+    {
+      "name": "p1_capitol_to_zoo_alternates",
+      "http_status": 200,
+      "elapsed_ms": 44.9,
+      "response_bytes": 5577
+    },
+    {
+      "name": "p1_capitol_to_zoo_default",
+      "http_status": 200,
+      "elapsed_ms": 17.8,
+      "response_bytes": 5577
+    },
+    {
+      "name": "p1_capitol_to_zoo_disable_hierarchy_pruning",
+      "http_status": 200,
+      "elapsed_ms": 21.6,
+      "response_bytes": 5577
+    },
+    {
+      "name": "p1_capitol_to_zoo_use_highways_0.3",
+      "http_status": 200,
+      "elapsed_ms": 39.1,
+      "response_bytes": 5577
+    },
+    {
+      "name": "p1_capitol_to_zoo_use_highways_0.0",
+      "http_status": 200,
+      "elapsed_ms": 17.9,
+      "response_bytes": 5577
+    },
+    {
+      "name": "p1_capitol_to_zoo_shortest",
+      "http_status": 200,
+      "elapsed_ms": 38.5,
+      "response_bytes": 7803
+    },
+    {
+      "name": "p1_union_to_washington_park_alternates",
+      "http_status": 200,
+      "elapsed_ms": 55.1,
+      "response_bytes": 26874
+    },
+    {
+      "name": "p1_union_to_washington_park_default",
+      "http_status": 200,
+      "elapsed_ms": 26.5,
+      "response_bytes": 7376
+    },
+    {
+      "name": "p1_union_to_washington_park_disable_hierarchy_pruning",
+      "http_status": 200,
+      "elapsed_ms": 27.2,
+      "response_bytes": 7376
+    },
+    {
+      "name": "p1_union_to_washington_park_use_highways_0.3",
+      "http_status": 200,
+      "elapsed_ms": 25.3,
+      "response_bytes": 7376
+    },
+    {
+      "name": "p1_union_to_washington_park_use_highways_0.0",
+      "http_status": 200,
+      "elapsed_ms": 25.2,
+      "response_bytes": 7376
+    },
+    {
+      "name": "p1_union_to_washington_park_shortest",
+      "http_status": 200,
+      "elapsed_ms": 54.2,
+      "response_bytes": 7852
+    },
+    {
+      "name": "p2_surface_reference",
+      "http_status": 200,
+      "elapsed_ms": 36.5,
+      "response_bytes": 6714
+    },
+    {
+      "name": "p2_exclude_locations",
+      "http_status": 200,
+      "elapsed_ms": 55.9,
+      "response_bytes": 6556
+    },
+    {
+      "name": "p2_linear_factor_10",
+      "http_status": 200,
+      "elapsed_ms": 58.5,
+      "response_bytes": 6556
+    }
+  ]
+}
