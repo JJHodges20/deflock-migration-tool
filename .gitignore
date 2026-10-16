@@ -44,3 +44,6 @@ Thumbs.db
 # Basemap archives (large, downloaded)
 data/raw/basemap/
 *.pmtiles
+
+# Python build artifacts from editable installs
+*.egg-info/

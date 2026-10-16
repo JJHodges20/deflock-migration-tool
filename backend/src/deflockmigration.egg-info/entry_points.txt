@@ -1,4 +1,0 @@
-[console_scripts]
-deflock-basemap-assets = deflockmigration.workers.basemap_assets:main
-deflock-camera-sync = deflockmigration.workers.camera_sync:main
-deflock-osm-download = deflockmigration.workers.osm_download:main
