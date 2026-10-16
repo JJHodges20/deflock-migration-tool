@@ -1,0 +1,11 @@
+# Normalize line endings: LF in the repository and in working copies.
+# Shell scripts and configs are executed inside Linux containers and must stay LF.
+* text=auto eol=lf
+*.sh text eol=lf
+*.ps1 text eol=lf
+*.png binary
+*.jpg binary
+*.pmtiles binary
+*.pbf binary
+*.sqlite binary
+*.tar binary

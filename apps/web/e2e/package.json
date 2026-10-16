@@ -1,0 +1,9 @@
+{
+  "name": "deflockmigration-e2e",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Browser smoke tests run against the Compose stack (mcr.microsoft.com/playwright image).",
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  }
+}

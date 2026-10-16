@@ -1,0 +1,27 @@
+# Provider adapters and their limits. Only approved providers appear here (decisions 0001 and 0002).
+camera_source:
+  adapter: overpass_bounded
+  endpoint: https://overpass-api.de/api/interpreter
+  timeout_seconds: 180              # Overpass default run-time limit
+  pause_after_rate_limit_seconds: 30  # policy: pause 30 s after HTTP 429/406
+  max_attempts: 3
+  backoff_seconds: 5
+
+routing:
+  provider: valhalla
+  image: ghcr.io/valhalla/valhalla:3.9.1
+  alternates: 2                     # service default max_alternates
+  max_exclude_locations: 50         # error 157 above this
+  max_exclude_polygons_length_m: 10000  # error 167 above this
+
+geocoding:
+  provider: nominatim_local         # self-hosted on the Colorado extract; never the public OSMF service
+  search_limit: 5
+  countrycodes: us
+
+basemap:
+  provider: pmtiles_local
+  path: /basemap/denver.pmtiles
+  fonts_path: /basemap/fonts
+  sprite_path: /basemap/sprites/v4/light
+  attribution: "Protomaps © OpenStreetMap"

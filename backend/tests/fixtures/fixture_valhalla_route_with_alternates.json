@@ -1,0 +1,826 @@
+{
+ "trip": {
+  "locations": [
+   {
+    "type": "break",
+    "lat": 39.753,
+    "lon": -105.0002,
+    "side_of_street": "left",
+    "original_index": 0
+   },
+   {
+    "type": "break",
+    "lat": 39.7503,
+    "lon": -104.95,
+    "original_index": 1
+   }
+  ],
+  "legs": [
+   {
+    "maneuvers": [
+     {
+      "type": 3,
+      "instruction": "Drive northeast on Wynkoop Street.",
+      "verbal_succinct_transition_instruction": "Drive northeast. Then, in 300 meters, Turn right onto 19th Street.",
+      "verbal_pre_transition_instruction": "Drive northeast on Wynkoop Street. Then, in 300 meters, Turn right onto 19th Street.",
+      "verbal_post_transition_instruction": "Continue for 300 meters.",
+      "street_names": [
+       "Wynkoop Street"
+      ],
+      "bearing_after": 44,
+      "time": 29.859,
+      "length": 0.307,
+      "cost": 63.69,
+      "begin_shape_index": 0,
+      "end_shape_index": 15,
+      "verbal_multi_cue": true,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 10,
+      "instruction": "Turn right onto 19th Street.",
+      "verbal_transition_alert_instruction": "Turn right onto 19th Street.",
+      "verbal_succinct_transition_instruction": "Turn right. Then Turn left onto Wazee Street.",
+      "verbal_pre_transition_instruction": "Turn right onto 19th Street. Then Turn left onto Wazee Street.",
+      "verbal_post_transition_instruction": "Continue for 100 meters.",
+      "street_names": [
+       "19th Street"
+      ],
+      "bearing_before": 45,
+      "bearing_after": 135,
+      "time": 16.987,
+      "length": 0.106,
+      "cost": 53.436,
+      "begin_shape_index": 15,
+      "end_shape_index": 19,
+      "verbal_multi_cue": true,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 15,
+      "instruction": "Turn left onto Wazee Street.",
+      "verbal_transition_alert_instruction": "Turn left onto Wazee Street.",
+      "verbal_succinct_transition_instruction": "Turn left.",
+      "verbal_pre_transition_instruction": "Turn left onto Wazee Street.",
+      "verbal_post_transition_instruction": "Continue for 200 meters.",
+      "street_names": [
+       "Wazee Street"
+      ],
+      "bearing_before": 135,
+      "bearing_after": 46,
+      "time": 17.853,
+      "length": 0.152,
+      "cost": 39.368,
+      "begin_shape_index": 19,
+      "end_shape_index": 25,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 15,
+      "instruction": "Turn left onto 20th Street.",
+      "verbal_transition_alert_instruction": "Turn left onto 20th Street.",
+      "verbal_succinct_transition_instruction": "Turn left.",
+      "verbal_pre_transition_instruction": "Turn left onto 20th Street.",
+      "verbal_post_transition_instruction": "Continue for 800 meters.",
+      "street_names": [
+       "20th Street"
+      ],
+      "bearing_before": 45,
+      "bearing_after": 330,
+      "time": 54.674,
+      "length": 0.771,
+      "cost": 107.794,
+      "begin_shape_index": 25,
+      "end_shape_index": 41,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 18,
+      "instruction": "Take the I 25 North ramp on the right toward Fort Collins.",
+      "verbal_transition_alert_instruction": "Take the I 25 North ramp on the right.",
+      "verbal_pre_transition_instruction": "Take the I 25 North ramp on the right toward Fort Collins.",
+      "verbal_post_transition_instruction": "Continue for 1.5 kilometers.",
+      "street_names": [
+       "I 25 North",
+       "North Valley Highway"
+      ],
+      "bearing_before": 304,
+      "bearing_after": 314,
+      "time": 63.626,
+      "length": 1.453,
+      "cost": 153.171,
+      "begin_shape_index": 41,
+      "end_shape_index": 94,
+      "highway": true,
+      "sign": {
+       "exit_branch_elements": [
+        {
+         "text": "I 25 North",
+         "consecutive_count": 1
+        }
+       ],
+       "exit_toward_elements": [
+        {
+         "text": "Fort Collins"
+        }
+       ]
+      },
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 20,
+      "instruction": "Take exit 214A on the right onto I 70 toward Limon/Grand Junction.",
+      "verbal_transition_alert_instruction": "Take exit 214A on the right.",
+      "verbal_pre_transition_instruction": "Take exit 214A on the right onto I 70 toward Limon, Grand Junction.",
+      "verbal_post_transition_instruction": "Continue for 2 kilometers.",
+      "street_names": [
+       "Grand Army of the Republic Highway"
+      ],
+      "bearing_before": 61,
+      "bearing_after": 73,
+      "time": 69.445,
+      "length": 1.855,
+      "cost": 109.181,
+      "begin_shape_index": 94,
+      "end_shape_index": 151,
+      "highway": true,
+      "sign": {
+       "exit_number_elements": [
+        {
+         "text": "214A"
+        }
+       ],
+       "exit_branch_elements": [
+        {
+         "text": "I 70"
+        }
+       ],
+       "exit_toward_elements": [
+        {
+         "text": "Limon"
+        },
+        {
+         "text": "Grand Junction"
+        }
+       ]
+      },
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 24,
+      "instruction": "Keep left to take I 70.",
+      "verbal_transition_alert_instruction": "Keep left to take I 70.",
+      "verbal_pre_transition_instruction": "Keep left to take I 70.",
+      "verbal_post_transition_instruction": "Continue for 3 kilometers.",
+      "street_names": [
+       "I 70"
+      ],
+      "bearing_before": 91,
+      "bearing_after": 88,
+      "time": 127.303,
+      "length": 3.114,
+      "cost": 191.27,
+      "begin_shape_index": 151,
+      "end_shape_index": 195,
+      "highway": true,
+      "sign": {
+       "exit_branch_elements": [
+        {
+         "text": "I 70"
+        }
+       ]
+      },
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 20,
+      "instruction": "Take exit 276B on the right onto CO 2 toward Colorado Boulevard/Dahlia Street.",
+      "verbal_transition_alert_instruction": "Take exit 276B on the right.",
+      "verbal_pre_transition_instruction": "Take exit 276B on the right onto CO 2 toward Colorado Boulevard, Dahlia Street.",
+      "verbal_post_transition_instruction": "Continue for 400 meters.",
+      "street_names": [
+       "East 46th South Avenue"
+      ],
+      "bearing_before": 88,
+      "bearing_after": 108,
+      "time": 20.283,
+      "length": 0.434,
+      "cost": 41.571,
+      "begin_shape_index": 195,
+      "end_shape_index": 215,
+      "sign": {
+       "exit_number_elements": [
+        {
+         "text": "276B"
+        }
+       ],
+       "exit_branch_elements": [
+        {
+         "text": "CO 2"
+        }
+       ],
+       "exit_toward_elements": [
+        {
+         "text": "Colorado Boulevard"
+        },
+        {
+         "text": "Dahlia Street"
+        }
+       ]
+      },
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 10,
+      "instruction": "Turn right onto North Colorado Boulevard/CO 2.",
+      "verbal_transition_alert_instruction": "Turn right onto North Colorado Boulevard.",
+      "verbal_succinct_transition_instruction": "Turn right.",
+      "verbal_pre_transition_instruction": "Turn right onto North Colorado Boulevard, CO 2.",
+      "verbal_post_transition_instruction": "Continue for 3 kilometers.",
+      "street_names": [
+       "North Colorado Boulevard",
+       "CO 2"
+      ],
+      "bearing_before": 95,
+      "bearing_after": 179,
+      "time": 205.731,
+      "length": 3.222,
+      "cost": 308.784,
+      "begin_shape_index": 215,
+      "end_shape_index": 316,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 10,
+      "instruction": "Turn right onto East 23rd Avenue.",
+      "verbal_transition_alert_instruction": "Turn right onto East 23rd Avenue.",
+      "verbal_succinct_transition_instruction": "Turn right.",
+      "verbal_pre_transition_instruction": "Turn right onto East 23rd Avenue.",
+      "verbal_post_transition_instruction": "Continue for 900 meters.",
+      "street_names": [
+       "East 23rd Avenue"
+      ],
+      "bearing_before": 180,
+      "bearing_after": 290,
+      "time": 73.618,
+      "length": 0.861,
+      "cost": 152.354,
+      "begin_shape_index": 316,
+      "end_shape_index": 340,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 15,
+      "instruction": "Turn left.",
+      "verbal_transition_alert_instruction": "Turn left.",
+      "verbal_succinct_transition_instruction": "Turn left.",
+      "verbal_pre_transition_instruction": "Turn left.",
+      "verbal_post_transition_instruction": "Continue for 100 meters.",
+      "bearing_before": 269,
+      "bearing_after": 176,
+      "time": 51.326,
+      "length": 0.136,
+      "cost": 710.476,
+      "begin_shape_index": 340,
+      "end_shape_index": 354,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     },
+     {
+      "type": 4,
+      "instruction": "You have arrived at your destination.",
+      "verbal_transition_alert_instruction": "You will arrive at your destination.",
+      "verbal_pre_transition_instruction": "You have arrived at your destination.",
+      "bearing_before": 93,
+      "time": 0.0,
+      "length": 0.0,
+      "cost": 0.0,
+      "begin_shape_index": 354,
+      "end_shape_index": 354,
+      "travel_mode": "drive",
+      "travel_type": "car"
+     }
+    ],
+    "summary": {
+     "has_time_restrictions": false,
+     "has_toll": false,
+     "has_highway": true,
+     "has_ferry": false,
+     "min_lat": 39.75047,
+     "min_lon": -105.003866,
+     "max_lat": 39.780251,
+     "max_lon": -104.940635,
+     "time": 730.711,
+     "length": 12.414,
+     "cost": 1931.098
+    },
+    "shape": "gaiyjApytggEc@k@k@w@uBmCwBwCm@w@sn@w|@k@s@}AkCo@aA}@qAu@cAi@q@s]sh@qPuU{BaDbCmDtOyThPsUxB_DmAgBy@kA{Uw\\gDwEkT{Z{E{GuH`Fgu@fgA_sApeBkQlUwD`FoFjH_g@|q@eD~EiDrFqDrGeCzE_CbFyChHmX`q@oPna@eBfEiCxDS^eA~BaDlGkDfHcE`JeDrHcGpOkX~s@wArDo@vAg@jAOVYd@]^o@p@k@Zm@HK@_@?q@Gy@Oy@Ym@c@y@q@qCqCeRa\\}FiIwPmRaP_MccBoy@gg@i[aa@}W{LcIqI{GuIaJaG{G}FuHoGcJwGsKuEcIsEgJsD_I_EsJ}DuK_F_OgIyXsMof@iKw\\ga@}uA}CgKmSor@uKs\\gHmg@aB_GqCuIyBoGiBqE}AoDsByE_BoD}L}UsMqQsEuF{QaWkd@u`@gReN_QoLmRoKuPcIaSoImQ_HyR{GgTuFmWuFyOyC{OoCcR}BsUwBeSoAcUy@gS]eRAoa@FsrAMoJOkJk@eFg@gGcAaIqB{KcFaG_D{DuCiEmDoEcEkE{EoD{EmEgHmCmFmByF{AkG{AoHgAqIi@sIS}IIeNLkf@Ho`@Na[n@ghCWg[RmQ^sRbA{\\hAu\\`AiZ`AsZZ}QP}IPsUFeRCe_@g@m~@oCgM]mXoCepByBi`AuBepAmGqdD]}QwEsiC_Aee@}GerCcAc]{@ya@q@sfAYqe@CokC?wTD}j@@iLDok@\\yvBt@{fB@yk@CqLCkoAc@alBCqXYohA]o[AqEKkLs@iy@|BmNbA_f@HgDZgPV_LZcNhAka@nAi_@~@ag@NmGXoGf@aGj@iF|AyKr@_Kr@gJh@eI^mHLuEJgEtBuIj@}Ab@iA\\s@h@}@v@eAx@w@~@s@`B{@bG}ClF?fFGnFMhGg@`G_@zMiAlQiB`Hs@bGi@lc@cEzFi@zE[tEUdEM|FKvGAfk@@jF?nDCpHQhQUvIQ|GUfTo@vJM|GKrGE|SGnO@zF?x@?fVCp@@bH?pF@nABfA?hzENdcANzg@Fn`@HbU?~QAh]@vC?~B?tLBht@FpD@|CAvE@pL?hPBl@?djBNhE@bG?~E?|L?ni@Brf@BxoAFh]@zC@zBA~UBhJ@`]@dN@|I?bN@fC?dC?dZBhb@DjW@pLHjIHR@xFDdCPlAFzCTnAHlGRrHF|MHp{@TdhAAxZAbG@mAzGSjDI~E_Alh@MbEMbE_@hOSrTw@n{@EnGe@rj@a@tk@Gze@E~_BEjSAt]Axa@?~A?dE?tG?`HAfKKl_AJb_@tCElBI`A@jI[hAExEQlG]nCUbA_@f@_AXcADqAF_Ad@q^"
+   }
+  ],
+  "summary": {
+   "has_time_restrictions": false,
+   "has_toll": false,
+   "has_highway": true,
+   "has_ferry": false,
+   "min_lat": 39.75047,
+   "min_lon": -105.003866,
+   "max_lat": 39.780251,
+   "max_lon": -104.940635,
+   "time": 730.711,
+   "length": 12.414,
+   "cost": 1931.098
+  },
+  "status_message": "Found route between points",
+  "status": 0,
+  "units": "kilometers",
+  "language": "en-US"
+ },
+ "alternates": [
+  {
+   "trip": {
+    "locations": [
+     {
+      "type": "break",
+      "lat": 39.753,
+      "lon": -105.0002,
+      "side_of_street": "left",
+      "original_index": 0
+     },
+     {
+      "type": "break",
+      "lat": 39.7503,
+      "lon": -104.95,
+      "original_index": 1
+     }
+    ],
+    "legs": [
+     {
+      "maneuvers": [
+       {
+        "type": 3,
+        "instruction": "Drive northeast on Wynkoop Street.",
+        "verbal_succinct_transition_instruction": "Drive northeast. Then, in 300 meters, Turn right onto 19th Street.",
+        "verbal_pre_transition_instruction": "Drive northeast on Wynkoop Street. Then, in 300 meters, Turn right onto 19th Street.",
+        "verbal_post_transition_instruction": "Continue for 300 meters.",
+        "street_names": [
+         "Wynkoop Street"
+        ],
+        "bearing_after": 44,
+        "time": 29.859,
+        "length": 0.307,
+        "cost": 63.69,
+        "begin_shape_index": 0,
+        "end_shape_index": 15,
+        "verbal_multi_cue": true,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right onto 19th Street.",
+        "verbal_transition_alert_instruction": "Turn right onto 19th Street.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right onto 19th Street.",
+        "verbal_post_transition_instruction": "Continue for 300 meters.",
+        "street_names": [
+         "19th Street"
+        ],
+        "bearing_before": 45,
+        "bearing_after": 135,
+        "time": 40.088,
+        "length": 0.316,
+        "cost": 130.839,
+        "begin_shape_index": 15,
+        "end_shape_index": 31,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 15,
+        "instruction": "Turn left onto Market Street.",
+        "verbal_transition_alert_instruction": "Turn left onto Market Street.",
+        "verbal_succinct_transition_instruction": "Turn left.",
+        "verbal_pre_transition_instruction": "Turn left onto Market Street.",
+        "verbal_post_transition_instruction": "Continue for 400 meters.",
+        "street_names": [
+         "Market Street"
+        ],
+        "bearing_before": 135,
+        "bearing_after": 43,
+        "time": 48.115,
+        "length": 0.441,
+        "cost": 88.62,
+        "begin_shape_index": 31,
+        "end_shape_index": 44,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right onto West 22nd Street.",
+        "verbal_transition_alert_instruction": "Turn right onto West 22nd Street.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right onto West 22nd Street.",
+        "verbal_post_transition_instruction": "Continue for 600 meters.",
+        "street_names": [
+         "West 22nd Street"
+        ],
+        "bearing_before": 43,
+        "bearing_after": 136,
+        "time": 74.211,
+        "length": 0.598,
+        "cost": 182.679,
+        "begin_shape_index": 44,
+        "end_shape_index": 74,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 24,
+        "instruction": "Keep left to take East 22nd Street.",
+        "verbal_transition_alert_instruction": "Keep left to take East 22nd Street.",
+        "verbal_pre_transition_instruction": "Keep left to take East 22nd Street. Then Turn left onto Stout Street.",
+        "verbal_post_transition_instruction": "Continue for 40 meters.",
+        "street_names": [
+         "East 22nd Street"
+        ],
+        "bearing_before": 137,
+        "bearing_after": 127,
+        "time": 2.985,
+        "length": 0.039,
+        "cost": 5.349,
+        "begin_shape_index": 74,
+        "end_shape_index": 76,
+        "verbal_multi_cue": true,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 15,
+        "instruction": "Turn left onto Stout Street.",
+        "verbal_transition_alert_instruction": "Turn left onto Stout Street.",
+        "verbal_succinct_transition_instruction": "Turn left.",
+        "verbal_pre_transition_instruction": "Turn left onto Stout Street.",
+        "verbal_post_transition_instruction": "Continue for 2.5 kilometers.",
+        "street_names": [
+         "Stout Street"
+        ],
+        "bearing_before": 135,
+        "bearing_after": 44,
+        "time": 221.397,
+        "length": 2.653,
+        "cost": 546.679,
+        "begin_shape_index": 76,
+        "end_shape_index": 166,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right onto North York Street.",
+        "verbal_transition_alert_instruction": "Turn right onto North York Street.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right onto North York Street.",
+        "verbal_post_transition_instruction": "Continue for 1 kilometer.",
+        "street_names": [
+         "North York Street"
+        ],
+        "bearing_before": 90,
+        "bearing_after": 180,
+        "time": 97.463,
+        "length": 1.116,
+        "cost": 186.374,
+        "begin_shape_index": 166,
+        "end_shape_index": 195,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 15,
+        "instruction": "Turn left onto East 23rd Avenue.",
+        "verbal_transition_alert_instruction": "Turn left onto East 23rd Avenue.",
+        "verbal_succinct_transition_instruction": "Turn left.",
+        "verbal_pre_transition_instruction": "Turn left onto East 23rd Avenue.",
+        "verbal_post_transition_instruction": "Continue for 800 meters.",
+        "street_names": [
+         "East 23rd Avenue"
+        ],
+        "bearing_before": 180,
+        "bearing_after": 90,
+        "time": 62.235,
+        "length": 0.772,
+        "cost": 145.927,
+        "begin_shape_index": 195,
+        "end_shape_index": 226,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right.",
+        "verbal_transition_alert_instruction": "Turn right.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right.",
+        "verbal_post_transition_instruction": "Continue for 100 meters.",
+        "bearing_before": 90,
+        "bearing_after": 176,
+        "time": 51.018,
+        "length": 0.128,
+        "cost": 698.197,
+        "begin_shape_index": 226,
+        "end_shape_index": 239,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 4,
+        "instruction": "You have arrived at your destination.",
+        "verbal_transition_alert_instruction": "You will arrive at your destination.",
+        "verbal_pre_transition_instruction": "You have arrived at your destination.",
+        "bearing_before": 93,
+        "time": 0.0,
+        "length": 0.0,
+        "cost": 0.0,
+        "begin_shape_index": 239,
+        "end_shape_index": 239,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       }
+      ],
+      "summary": {
+       "has_time_restrictions": false,
+       "has_toll": false,
+       "has_highway": false,
+       "has_ferry": false,
+       "min_lat": 39.75047,
+       "min_lon": -104.999849,
+       "max_lat": 39.76076,
+       "max_lon": -104.950099,
+       "time": 627.375,
+       "length": 6.373,
+       "cost": 2048.358
+      },
+      "shape": "gaiyjApytggEc@k@k@w@uBmCwBwCm@w@sn@w|@k@s@}AkCo@aA}@qAu@cAi@q@s]sh@qPuU{BaDbCmDtOyThPsUxB_DnBqCnPoUtFcIzGuJlCqDj@y@fAyA`PkUpEoGdEaGtByChCsDoAaBaAsAsh@eu@cCqDcCiDqDaFqDiFyCeEsi@mv@yB_DcCqBgr@{_AmCmD~AyBdAyAbP}TpOeT~CkEtByC`PeUlOkTnCyDr@eA`AsAbPgUtOuTn@}@|A{BfCmDzO_UvAqB~CoEzFgIlDaFfGuIvE}GnDqF~PcVjBoC`BaCjPwUzBgDx@eAjHmOvCeEiA{AkOaT}GoJmWi^iCoDmCuDkPoUSYi_@sh@iCsDeCkDwp@g_AqCyDeCkDyL{Pcc@qm@gCoDkCsDyn@w|@aAsAeCmDeCkDsHoKog@es@gCoDcCgD}QoWmFsHeV}\\EEmCwDkCsD_`@qi@}CmEwJcNoCyDeCkDyp@g_AgCqDgCmD}h@_u@{@mAsAuBa@y@o@gB_@iBWiBImACcBEcE?yB@gF?yEB_^@_^?aG?kFBk^@c]?kG?_F@a]@s^@qF?oF@w^@s]@mF?yF@c^@k]@qG?eF?eF@{V@q]@sF?aF@q^@s]?yFAye@Csg@Agf@Awd@@se@@qe@@ee@@g^?cF~R?~h@@`J@tD?rO?bi@ApL?`E?jD?lK@bu@B`E?tD?pz@?bF?|D?lD?vHAxg@BpO@fE?xC@zcADlCAnMCl~@Odi@E|\\IvD??sG@yQn@aQBuDCcDEkCiByXoEio@]aFe@_Gu@gHmBwLg@oJg@}JiEo{@UaF_@}I]}KEmBSiIKiKKmMCuMCiGGu}@?kAIig@^wWNeRFyRGke@lBI`A@jI[hAExEQlG]nCUbA_@f@_AXcADqAF_Ad@q^"
+     }
+    ],
+    "summary": {
+     "has_time_restrictions": false,
+     "has_toll": false,
+     "has_highway": false,
+     "has_ferry": false,
+     "min_lat": 39.75047,
+     "min_lon": -104.999849,
+     "max_lat": 39.76076,
+     "max_lon": -104.950099,
+     "time": 627.375,
+     "length": 6.373,
+     "cost": 2048.358
+    },
+    "status_message": "Found route between points",
+    "status": 0,
+    "units": "kilometers",
+    "language": "en-US"
+   }
+  },
+  {
+   "trip": {
+    "locations": [
+     {
+      "type": "break",
+      "lat": 39.753,
+      "lon": -105.0002,
+      "side_of_street": "left",
+      "original_index": 0
+     },
+     {
+      "type": "break",
+      "lat": 39.7503,
+      "lon": -104.95,
+      "original_index": 1
+     }
+    ],
+    "legs": [
+     {
+      "maneuvers": [
+       {
+        "type": 3,
+        "instruction": "Drive northeast on Wynkoop Street.",
+        "verbal_succinct_transition_instruction": "Drive northeast. Then Turn right onto 17th Street.",
+        "verbal_pre_transition_instruction": "Drive northeast on Wynkoop Street. Then Turn right onto 17th Street.",
+        "verbal_post_transition_instruction": "Continue for 20 meters.",
+        "street_names": [
+         "Wynkoop Street"
+        ],
+        "bearing_after": 44,
+        "time": 1.353,
+        "length": 0.014,
+        "cost": 1.636,
+        "begin_shape_index": 0,
+        "end_shape_index": 3,
+        "verbal_multi_cue": true,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right onto 17th Street.",
+        "verbal_transition_alert_instruction": "Turn right onto 17th Street.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right onto 17th Street.",
+        "verbal_post_transition_instruction": "Continue for 1.5 kilometers.",
+        "street_names": [
+         "17th Street"
+        ],
+        "bearing_before": 43,
+        "bearing_after": 135,
+        "time": 146.053,
+        "length": 1.493,
+        "cost": 472.833,
+        "begin_shape_index": 3,
+        "end_shape_index": 77,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right onto North Broadway.",
+        "verbal_transition_alert_instruction": "Turn right onto North Broadway.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right onto North Broadway.",
+        "verbal_post_transition_instruction": "Continue for 400 meters.",
+        "street_names": [
+         "North Broadway"
+        ],
+        "bearing_before": 135,
+        "bearing_after": 180,
+        "time": 34.922,
+        "length": 0.374,
+        "cost": 105.861,
+        "begin_shape_index": 77,
+        "end_shape_index": 101,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 15,
+        "instruction": "Turn left onto East Colfax Avenue/I 70 BUS/US 40/US 287.",
+        "verbal_transition_alert_instruction": "Turn left onto East Colfax Avenue.",
+        "verbal_succinct_transition_instruction": "Turn left.",
+        "verbal_pre_transition_instruction": "Turn left onto East Colfax Avenue, I 70 BUS.",
+        "verbal_post_transition_instruction": "Continue for 2.5 kilometers.",
+        "street_names": [
+         "East Colfax Avenue",
+         "I 70 BUS",
+         "US 40",
+         "US 287"
+        ],
+        "bearing_before": 180,
+        "bearing_after": 90,
+        "time": 215.42,
+        "length": 2.441,
+        "cost": 352.427,
+        "begin_shape_index": 101,
+        "end_shape_index": 241,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 15,
+        "instruction": "Turn left onto North Josephine Street.",
+        "verbal_transition_alert_instruction": "Turn left onto North Josephine Street.",
+        "verbal_succinct_transition_instruction": "Turn left.",
+        "verbal_pre_transition_instruction": "Turn left onto North Josephine Street.",
+        "verbal_post_transition_instruction": "Continue for 500 meters.",
+        "street_names": [
+         "North Josephine Street"
+        ],
+        "bearing_before": 82,
+        "bearing_after": 0,
+        "time": 49.693,
+        "length": 0.538,
+        "cost": 140.178,
+        "begin_shape_index": 241,
+        "end_shape_index": 289,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 9,
+        "instruction": "Bear right onto North York Street.",
+        "verbal_transition_alert_instruction": "Bear right onto North York Street.",
+        "verbal_succinct_transition_instruction": "Bear right.",
+        "verbal_pre_transition_instruction": "Bear right onto North York Street.",
+        "verbal_post_transition_instruction": "Continue for 700 meters.",
+        "street_names": [
+         "North York Street"
+        ],
+        "bearing_before": 325,
+        "bearing_after": 0,
+        "time": 54.131,
+        "length": 0.661,
+        "cost": 104.321,
+        "begin_shape_index": 289,
+        "end_shape_index": 309,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right onto East 23rd Avenue.",
+        "verbal_transition_alert_instruction": "Turn right onto East 23rd Avenue.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right onto East 23rd Avenue.",
+        "verbal_post_transition_instruction": "Continue for 800 meters.",
+        "street_names": [
+         "East 23rd Avenue"
+        ],
+        "bearing_before": 0,
+        "bearing_after": 90,
+        "time": 65.524,
+        "length": 0.772,
+        "cost": 179.177,
+        "begin_shape_index": 309,
+        "end_shape_index": 340,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 10,
+        "instruction": "Turn right.",
+        "verbal_transition_alert_instruction": "Turn right.",
+        "verbal_succinct_transition_instruction": "Turn right.",
+        "verbal_pre_transition_instruction": "Turn right.",
+        "verbal_post_transition_instruction": "Continue for 100 meters.",
+        "bearing_before": 90,
+        "bearing_after": 176,
+        "time": 51.018,
+        "length": 0.128,
+        "cost": 698.197,
+        "begin_shape_index": 340,
+        "end_shape_index": 353,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       },
+       {
+        "type": 4,
+        "instruction": "You have arrived at your destination.",
+        "verbal_transition_alert_instruction": "You will arrive at your destination.",
+        "verbal_pre_transition_instruction": "You have arrived at your destination.",
+        "bearing_before": 93,
+        "time": 0.0,
+        "length": 0.0,
+        "cost": 0.0,
+        "begin_shape_index": 353,
+        "end_shape_index": 353,
+        "travel_mode": "drive",
+        "travel_type": "car"
+       }
+      ],
+      "summary": {
+       "has_time_restrictions": false,
+       "has_toll": false,
+       "has_highway": false,
+       "has_ferry": false,
+       "min_lat": 39.739954,
+       "min_lon": -104.999849,
+       "max_lat": 39.752839,
+       "max_lon": -104.950099,
+       "time": 618.118,
+       "length": 6.423,
+       "cost": 2054.635
+      },
+      "shape": "gaiyjApytggEc@k@k@w@uBmCl@{@lBoCfPoUzO{T|BeDxB_DdBcCpHoKpC{DtMgRfA}Ab@m@vAqB`AuAp@_ApAmBpMyQtOqTtCcEhBkChPyUzEaHlHkKxCkExB}C~D{FfOeThFqHpBkC|CsEfA}Ad@s@`V_]tJmNt@cAdAwApBuC|Ve^rGeJ|CmExB}CtOyTfPqUjCsD~BeDtOuT~OeUhA{ArAiBjBoC`PcUnG_JtF}H~BeDhAaBh@u@jEkGjJsMlPoUvBaDxB}CpM}QzAuB`PaU|BcDvByChPqUvO_UdCiDnBsC~O{TnOgTz@uAjFoHxHAnJ@v\\AnDA|N?|BApRIX?hAArD@~AE~CD~B@`D@lA?vC?fLDdL@bIDjD@nH@rOD`C?rG??}GDcXGyb@?qHCoEKa`@JiGIqUCwGAqFFq^AyD?yWBoHDaEBw`@@wGByU@mE@mEBmV@kE@sA@oKD{Q@yE?sE?aU@iI?wM?aNBkD?}DZi_@BsP@wIEkE?kD?iZEiIK}TB}E?cDNsU@_MNk\\?oPAmPF{TCmN?_X?gFKmI@cEBuV@yRCsU@}DEyT@aCGwEBgE?aJFg[CoOGgS?cN?yBJ}RAuFEgD@yBBiO?sEBeHCa[?cH?eVB{`@AgJ@eE@oY?aDAgAAsE?aUA_G?mF@iHJ_NAcE?iDBoC?_L?eIAkD?wDG}OBwN@wB@iIDqPF}EG}F@cN?}B@kLEaRBaMCaF@}FJ{VCgE@q^AqFAsE@c_@AkH@kT?kFEqE@qH?uL@}GAuIEkQ?oAB}E?uDGgAAwCMcDQaCS{CO_BGaAi@}GUcDe@}HQiDsDQcAGoA@y@BuBNkDX_D`@iDp@gXpLkC~@cE|@mEb@kEF_ED_EA{A?qA?kAAiB?cD@_l@DoG@aMA{C@qB@iDFqCHgADoCPeDZwD\\mXzIkEhA{Ct@iB`@qDr@_JvA_Cb@aATyA`@eBj@WJs@^s@b@g@\\eAx@e@`@sCvCaH?yVBqK?eH?oT@mJ@w`@@iE?}G@wfAMiDAgA@}DAax@QwGAeE?_EAqq@YuNMmE??sG@yQn@aQBuDCcDEkCiByXoEio@]aFe@_Gu@gHmBwLg@oJg@}JiEo{@UaF_@}I]}KEmBSiIKiKKmMCuMCiGGu}@?kAIig@^wWNeRFyRGke@lBI`A@jI[hAExEQlG]nCUbA_@f@_AXcADqAF_Ad@q^"
+     }
+    ],
+    "summary": {
+     "has_time_restrictions": false,
+     "has_toll": false,
+     "has_highway": false,
+     "has_ferry": false,
+     "min_lat": 39.739954,
+     "min_lon": -104.999849,
+     "max_lat": 39.752839,
+     "max_lon": -104.950099,
+     "time": 618.118,
+     "length": 6.423,
+     "cost": 2054.635
+    },
+    "status_message": "Found route between points",
+    "status": 0,
+    "units": "kilometers",
+    "language": "en-US"
+   }
+  }
+ ],
+ "id": "t6"
+}

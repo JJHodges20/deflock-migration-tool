@@ -1,0 +1,27 @@
+# Implementation plan and milestone status
+
+Milestones follow roadmap section 15. One milestone at a time; each ends with a report and an approval gate.
+
+| Milestone | Scope | Status |
+|---|---|---|
+| M0 | Source, geography, and routing feasibility | **Complete, approved 2026-10-15** (commit `4476da0`) |
+| M1 | Repository, contracts, Docker Compose stack, visible application shell | **Built and verified 2026-10-16; awaiting the owner's gate approval** (evidence in `docs/DEVELOPMENT_LOG.md`) |
+| M2 | Public camera inventory: quarantine review, lifecycle handling, diff history, searchable map overlay polish | not started (the sync pipeline, snapshot contract, atomic promotion, and bbox overlay already exist from M1) |
+| M3 | Standard route and usable address entry: approved geocoder wired into the UI with candidate confirmation, Denver address test cases, cancellation polish | not started (coordinate entry, map pins, standard routing, and the Nominatim adapter exist from M1) |
+| M4 | Encounter assessment and road-association validation (PostGIS geography, fixtures for parallel roads, overpasses, 25/50/100 m sensitivity) | not started |
+| M5 | Camera-aware route generation and comparison (linear cost factors, exclusions, bounded candidate search, honest partial states) | not started |
+| M6 | Complete trip-planning experience (route cards, mobile sheet polish, camera details, print view, accessibility pass) | not started |
+| M7 | Scheduled updates, resilience, operating instructions (rollback, graph swap, outage behaviour over time) | not started |
+| M8 | Denver pilot audit and v1 release candidate | not started |
+
+## M1 deliverables (what exists after M1)
+
+- `compose.yaml` with edge (nginx), web (Next.js), api (FastAPI), camera-sync worker, db (PostGIS), valhalla (pinned 3.9.1), geocoder (pinned Nominatim 5.3.2); setup-profile jobs for migrations, extract download, graph build, basemap extract and assets, first camera snapshot; test-profile services for backend, frontend, and browser tests; named volumes for every persistent dataset; healthchecks and localhost-only ports.
+- Backend: validated configuration, redacted logging, region/health/plan/geocode/cameras endpoints with explicit error codes, Valhalla adapter using only documented parameters, Standard route chosen by reported time (D6), self-hosted Nominatim adapter with a public-service guard, policy-aware Overpass client, normalizer implementing D8, snapshot/record/sync-job schema (Alembic 0001), atomic snapshot promotion with quarantine and last-good retention, scheduler worker.
+- Frontend: responsive planner shell (desktop panel + map, mobile bottom sheet), typed inputs with Search/Confirm, coordinate entry, map pins, swap, route preference and camera scope controls, detour limits, route cards with honest "not assessed" states, engine directions, camera overlay from the local snapshot, Data Health panel, disclaimers and attributions, map-failure fallback.
+- Scripts: `bootstrap.ps1`, `import_region.ps1`, `sync_cameras.ps1`, `smoke_test.ps1`.
+- Docs: user guide (first-time setup vs everyday startup), test plan, development log, engineering rules.
+
+## Next gate (M1 to M2)
+
+Owner reviews the M1 report: Compose bring-up from a clean clone, service readiness, restart persistence, the browser-to-backend routing request, test results, and known limitations. Approval starts M2.

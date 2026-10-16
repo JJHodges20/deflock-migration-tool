@@ -1,0 +1,16 @@
+# Test plan
+
+All suites run inside containers (`docker compose --profile test ...`). Ordinary tests never call a public provider; the only live calls happen in the `camera-sync` worker and the setup jobs.
+
+| Suite | Command | What it proves | Needs |
+|---|---|---|---|
+| Backend unit | `docker compose --profile test run --rm api-tests` (part) | normalization rules (decision 0001 D8) against the real M0 fixture, polyline codec, candidate selection (D6), config validation, boundary containment, Overpass policy behaviour (429 pause, 502 retry, HTML/remark rejection), Valhalla and geocoder adapters with mocked transports | nothing |
+| Backend contract | same | every endpoint's success and error envelopes with fake providers: region, health, plan (standard only, null counts, not_assessed), OUTSIDE_SERVICE_AREA, VALIDATION_ERROR, ROUTER_UNAVAILABLE, NO_DRIVABLE_ROUTE, geocode coordinates/not configured, cameras unavailable/bad bbox, oversized body | nothing |
+| Backend privacy | same | redaction of coordinates, keyed values, query strings, JSON keys; access log disabled; a plan request leaves no coordinates in logs | nothing |
+| Backend regression | same | production code never imports tests/fixtures; layer dependency rules; requirements.txt matches pyproject; fixture files are labelled | nothing |
+| Backend integration | same (auto-skips without `DEFLOCK_TEST_DATABASE_URL`) | sync lifecycle on PostGIS: promote, identical snapshot skip, quarantine on a large drop, failure keeps the last good snapshot, bbox query | `db` service (test database created by `infra/database/initdb`) |
+| Frontend unit | `docker compose --profile test run --rm web-tests` | type check; planner reducer (confirmation, swap, late-response discard, cancel, pins, clear trip, no-match state, bounded controls); format helpers; Planner shell with mocked fetch (typed input persists, coordinate confirmation, geocoder-not-configured state, scope controls) | nothing |
+| Browser smoke | `docker compose --profile test run --rm e2e` (stack must be up) | at 390/768/1440 px: page loads, coordinates confirm, one real routing request through edge -> api -> valhalla returns a standard route with directions and null camera counts; outside-pilot trip shows OUTSIDE_SERVICE_AREA; Data Health shows snapshot and graph | running stack with graph and snapshot |
+| Compose smoke | `scripts/smoke_test.ps1 [-CheckRestart]` | every service healthy, data health, routing request, basemap range support and fonts, restart keeps snapshot and graph | running stack |
+
+Not covered yet (later milestones): camera-road association fixtures (M4), synthetic avoidance graphs (M5), full browser flows with address search (M6), outage/backoff/graph swap behaviour over time (M7).

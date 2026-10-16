@@ -1,0 +1,21 @@
+# Route preferences (roadmap section 10.4). Thresholds are UI defaults; both the absolute and the
+# relative constraint apply. The Standard route is the fastest baseline candidate by reported time
+# (decision 0001 D6), never a guaranteed globally fastest path.
+profiles:
+  standard:
+    label: "Standard route"
+    description: "Fastest baseline candidate by the engine's reported time, with no camera preference."
+  balanced:
+    label: "Balanced"
+    description: "Fewest mapped encounters among candidates within min(T0 + 600 s, 1.5 x T0)."
+    max_extra_seconds: 600
+    max_relative_factor: 1.5
+  fewest_mapped:
+    label: "Fewest mapped cameras found"
+    description: "Fewest mapped encounters among candidates within min(T0 + 1200 s, 1.75 x T0)."
+    max_extra_seconds: 1200
+    max_relative_factor: 1.75
+
+search_budget:
+  max_routing_calls_per_trip: 8
+  planning_deadline_seconds: 20

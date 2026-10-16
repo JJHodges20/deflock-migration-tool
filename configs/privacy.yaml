@@ -1,0 +1,8 @@
+# Privacy posture (roadmap section 13). Every flag must stay false; the config loader refuses to
+# start in production otherwise.
+log_request_bodies: false
+log_query_strings: false
+persist_trips: false
+external_geocoder_enabled: false
+external_tiles_enabled: false
+analytics_enabled: false

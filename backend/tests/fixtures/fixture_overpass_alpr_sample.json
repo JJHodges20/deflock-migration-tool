@@ -1,0 +1,510 @@
+{
+  "fixture_note": "Sanitized sample of real OpenStreetMap records (ODbL) selected for parser coverage. Contributor user/uid/changeset fields removed. Not a complete inventory. Coordinates are as mapped, not field-verified by this project.",
+  "snapshot_id": "overpass-alpr-denver-envelope-2026-10-15",
+  "timestamp_osm_base": "2026-10-15T20:18:00Z",
+  "bucket_sizes": {
+    "flock_direction": 1268,
+    "manufacturer_absent": 178,
+    "flock_camera_direction": 17,
+    "direction_conflict": 5,
+    "other_manufacturer": 120,
+    "flock_no_direction": 8,
+    "unusual_direction": 107,
+    "lifecycle": 0
+  },
+  "elements": [
+    {
+      "type": "node",
+      "id": 6372826020,
+      "lat": 39.7260506,
+      "lon": -105.0326163,
+      "timestamp": "2025-12-23T00:00:57Z",
+      "version": 3,
+      "tags": {
+        "camera:direction": "155",
+        "camera:mount": "street_lamp",
+        "camera:type": "fixed",
+        "highway": "street_lamp",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance": "outdoor",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "flock_camera_direction"
+    },
+    {
+      "type": "node",
+      "id": 9817697097,
+      "lat": 39.7038556,
+      "lon": -104.8285433,
+      "timestamp": "2026-03-31T13:49:23Z",
+      "version": 2,
+      "tags": {
+        "camera:direction": "335",
+        "camera:type": "fixed",
+        "direction": "180",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "flock_camera_direction"
+    },
+    {
+      "type": "node",
+      "id": 12621519932,
+      "lat": 40.0124042,
+      "lon": -105.0933858,
+      "timestamp": "2025-05-11T23:53:40Z",
+      "version": 2,
+      "tags": {
+        "camera:direction": "170",
+        "camera:type": "fixed",
+        "direction": "165",
+        "man_made": "surveillance",
+        "manufacturer": "Flock",
+        "mount": "pole",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "flock_camera_direction"
+    },
+    {
+      "type": "node",
+      "id": 13069171250,
+      "lat": 39.7218649,
+      "lon": -104.6786535,
+      "timestamp": "2025-08-15T00:12:52Z",
+      "version": 2,
+      "tags": {
+        "camera:direction": "245",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "250",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "flock_camera_direction"
+    },
+    {
+      "type": "node",
+      "id": 2083971640,
+      "lat": 39.7117838,
+      "lon": -105.0711565,
+      "timestamp": "2026-06-25T19:18:32Z",
+      "version": 5,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "140",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "operator": "The Home Depot",
+        "operator:type": "private",
+        "operator:wikidata": "Q864407",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "entrance"
+      },
+      "_fixture_bucket": "flock_direction"
+    },
+    {
+      "type": "node",
+      "id": 4533912487,
+      "lat": 39.4997807,
+      "lon": -104.7417653,
+      "timestamp": "2025-09-20T14:37:40Z",
+      "version": 3,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "45",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "flock_direction"
+    },
+    {
+      "type": "node",
+      "id": 4888220579,
+      "lat": 39.8897069,
+      "lon": -105.0745821,
+      "timestamp": "2026-07-02T17:10:14Z",
+      "version": 2,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "206",
+        "highway": "street_lamp",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "flock_direction"
+    },
+    {
+      "type": "node",
+      "id": 11165302603,
+      "lat": 39.6770914,
+      "lon": -105.0801412,
+      "timestamp": "2025-11-09T03:36:15Z",
+      "version": 2,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "45",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "flock_direction"
+    },
+    {
+      "type": "node",
+      "id": 12669246554,
+      "lat": 39.4122836,
+      "lon": -104.8640413,
+      "timestamp": "2025-03-16T02:12:59Z",
+      "version": 1,
+      "tags": {
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "flock_no_direction"
+    },
+    {
+      "type": "node",
+      "id": 12981450993,
+      "lat": 39.6098707,
+      "lon": -104.9656373,
+      "timestamp": "2025-07-06T01:25:49Z",
+      "version": 1,
+      "tags": {
+        "camera:type": "fixed",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "flock_no_direction"
+    },
+    {
+      "type": "node",
+      "id": 12981450994,
+      "lat": 39.6115838,
+      "lon": -104.9602687,
+      "timestamp": "2025-07-06T01:25:49Z",
+      "version": 1,
+      "tags": {
+        "camera:type": "fixed",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "flock_no_direction"
+    },
+    {
+      "type": "node",
+      "id": 13118659689,
+      "lat": 39.4914786,
+      "lon": -104.8709744,
+      "timestamp": "2025-09-04T04:10:42Z",
+      "version": 1,
+      "tags": {
+        "camera:type": "fixed",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "flock_no_direction"
+    },
+    {
+      "type": "node",
+      "id": 12337864743,
+      "lat": 39.74002,
+      "lon": -104.9036072,
+      "timestamp": "2026-06-09T22:36:34Z",
+      "version": 4,
+      "tags": {
+        "brand": "Flock Safety",
+        "brand:wikidata": "Q108485435",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "155",
+        "man_made": "surveillance",
+        "manufacturer": "Axon Enterprise",
+        "manufacturer:wikidata": "Q690604",
+        "operator": "Flock Safety",
+        "operator:wikidata": "Q108485435",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "other_manufacturer"
+    },
+    {
+      "type": "node",
+      "id": 12337885060,
+      "lat": 39.7400498,
+      "lon": -104.9033755,
+      "timestamp": "2026-06-09T22:32:37Z",
+      "version": 3,
+      "tags": {
+        "brand": "Flock Safety",
+        "brand:wikidata": "Q108485435",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "70",
+        "man_made": "surveillance",
+        "manufacturer": "Axon Enterprise",
+        "manufacturer:wikidata": "Q690604",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "other_manufacturer"
+    },
+    {
+      "type": "node",
+      "id": 12337886558,
+      "lat": 39.740304,
+      "lon": -104.9033121,
+      "timestamp": "2026-06-09T22:32:20Z",
+      "version": 3,
+      "tags": {
+        "brand": "Flock Safety",
+        "brand:wikidata": "Q108485435",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "345",
+        "man_made": "surveillance",
+        "manufacturer": "Axon Enterprise",
+        "manufacturer:wikidata": "Q690604",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "other_manufacturer"
+    },
+    {
+      "type": "node",
+      "id": 12337948990,
+      "lat": 39.7117461,
+      "lon": -104.9405868,
+      "timestamp": "2026-07-11T16:42:36Z",
+      "version": 3,
+      "tags": {
+        "direction": "355",
+        "man_made": "surveillance",
+        "manufacturer": "Axon Enterprise",
+        "manufacturer:wikidata": "Q690604",
+        "operator": "Denver Police Department",
+        "operator:type": "government",
+        "operator:wikidata": "Q3023375",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "other_manufacturer"
+    },
+    {
+      "type": "node",
+      "id": 5069561593,
+      "lat": 39.7250044,
+      "lon": -105.0252188,
+      "timestamp": "2025-09-20T09:37:27Z",
+      "version": 5,
+      "tags": {
+        "brand": "Neology, Inc.",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "crossing": "traffic_signals",
+        "direction": "160",
+        "highway": "crossing",
+        "man_made": "surveillance",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "manufacturer_absent"
+    },
+    {
+      "type": "node",
+      "id": 7277162165,
+      "lat": 39.7700564,
+      "lon": -105.0251547,
+      "timestamp": "2024-11-15T20:17:27Z",
+      "version": 2,
+      "tags": {
+        "brand": "Flock Safety",
+        "brand:wikidata": "Q108485435",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "345",
+        "man_made": "surveillance",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "manufacturer_absent"
+    },
+    {
+      "type": "node",
+      "id": 11137423682,
+      "lat": 39.9140581,
+      "lon": -105.1662634,
+      "timestamp": "2026-08-23T04:11:27Z",
+      "version": 3,
+      "tags": {
+        "brand": "Flock Safety",
+        "brand:wikidata": "Q108485435",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "check_date": "2026-08-22",
+        "direction": "190",
+        "man_made": "surveillance",
+        "maxspeed": "45 mph",
+        "note": "Camera moved from separate pole onto the same pole as the speed limit sign :(",
+        "operator": "Boulder County Sheriff's Office",
+        "operator:wikidata": "Q132203037",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic",
+        "traffic_sign": "maxspeed"
+      },
+      "_fixture_bucket": "manufacturer_absent"
+    },
+    {
+      "type": "node",
+      "id": 12294183847,
+      "lat": 39.9869407,
+      "lon": -105.09791,
+      "timestamp": "2024-10-28T15:46:22Z",
+      "version": 1,
+      "tags": {
+        "brand": "Flock Safety",
+        "brand:wikidata": "Q108485435",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "95",
+        "man_made": "surveillance",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "manufacturer_absent"
+    },
+    {
+      "type": "node",
+      "id": 12952567591,
+      "lat": 39.9443653,
+      "lon": -104.9923714,
+      "timestamp": "2026-02-28T22:06:11Z",
+      "version": 3,
+      "tags": {
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "26-96",
+        "lamp_mount": "bent_mast",
+        "man_made": "surveillance",
+        "support": "pole",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "entrance"
+      },
+      "_fixture_bucket": "unusual_direction"
+    },
+    {
+      "type": "node",
+      "id": 13043854536,
+      "lat": 39.6935308,
+      "lon": -104.8652622,
+      "timestamp": "2025-08-02T23:27:08Z",
+      "version": 1,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "90;160",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance": "public",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "traffic"
+      },
+      "_fixture_bucket": "unusual_direction"
+    },
+    {
+      "type": "node",
+      "id": 13070204918,
+      "lat": 39.5821831,
+      "lon": -104.6722837,
+      "timestamp": "2025-08-29T06:27:56Z",
+      "version": 2,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "30;150",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "unusual_direction"
+    },
+    {
+      "type": "node",
+      "id": 13071979838,
+      "lat": 39.6826118,
+      "lon": -104.7129862,
+      "timestamp": "2025-08-15T07:04:56Z",
+      "version": 1,
+      "tags": {
+        "camera:type": "fixed",
+        "direction": "155;140",
+        "man_made": "surveillance",
+        "manufacturer": "Flock Safety",
+        "manufacturer:wikidata": "Q108485435",
+        "surveillance:type": "ALPR"
+      },
+      "_fixture_bucket": "unusual_direction"
+    },
+    {
+      "type": "node",
+      "id": 12947280038,
+      "lat": 39.9457776,
+      "lon": -104.9921257,
+      "timestamp": "2025-10-16T20:45:24Z",
+      "version": 2,
+      "tags": {
+        "camera:direction": "90",
+        "camera:mount": "pole",
+        "camera:type": "fixed",
+        "direction": "15",
+        "lamp_mount": "bent_mast",
+        "man_made": "surveillance",
+        "support": "pole",
+        "surveillance": "traffic",
+        "surveillance:type": "ALPR",
+        "surveillance:zone": "street"
+      },
+      "_fixture_bucket": "direction_conflict"
+    }
+  ]
+}

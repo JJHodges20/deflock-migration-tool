@@ -1,0 +1,285 @@
+# DeFlockMigration - Docker Compose is the primary runtime (decision 0002).
+# Everyday use:      docker compose up            (after first-time setup, see docs/USER_GUIDE.md)
+# First-time setup:  scripts/bootstrap.ps1        (runs the "setup" profile jobs in order)
+# Tests:             docker compose --profile test run --rm api-tests | web-tests | e2e
+name: deflockmigration
+
+x-backend-image: &backend-image
+  image: deflockmigration/backend:0.1.0
+  build:
+    context: .
+    dockerfile: backend/Dockerfile
+
+x-backend-env: &backend-env
+  DEFLOCK_APP_ENV: ${DEFLOCK_APP_ENV:-development}
+  DEFLOCK_LOG_LEVEL: ${DEFLOCK_LOG_LEVEL:-INFO}
+  DEFLOCK_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-deflock}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-deflock}
+  DEFLOCK_VALHALLA_URL: http://valhalla:8002
+  DEFLOCK_GEOCODER_URL: ${DEFLOCK_GEOCODER_URL:-http://geocoder:8080}
+  DEFLOCK_USER_AGENT: ${DEFLOCK_USER_AGENT:-DeFlockMigration/0.1 (local pilot; fixed-region camera sync)}
+
+services:
+  # ---- long-running services (started by `docker compose up`) ----
+  edge:
+    image: nginx:1.28-alpine
+    ports:
+      - "127.0.0.1:${DEFLOCK_PORT:-3000}:3000"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - basemap:/srv/basemap:ro
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/healthz >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+
+  web:
+    image: deflockmigration/web:0.1.0
+    build:
+      context: ./apps/web
+      target: runner
+    environment:
+      NEXT_TELEMETRY_DISABLED: "1"
+      PORT: "3000"
+      HOSTNAME: "0.0.0.0"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  api:
+    <<: *backend-image
+    environment:
+      <<: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+      valhalla:
+        condition: service_started
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  camera-sync:
+    <<: *backend-image
+    command: ["python", "-m", "deflockmigration.workers.camera_sync"]
+    environment:
+      <<: *backend-env
+    volumes:
+      - camera_snapshots:/var/lib/deflock/snapshots
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      disable: true   # the worker serves no HTTP; the image's API healthcheck does not apply
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-deflock}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-deflock}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/database/initdb:/docker-entrypoint-initdb.d:ro
+    shm_size: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  valhalla:
+    image: ghcr.io/valhalla/valhalla:3.9.1
+    entrypoint: ["/bin/bash", "/opt/deflock/serve.sh"]
+    environment:
+      VALHALLA_THREADS: ${VALHALLA_THREADS:-2}
+    volumes:
+      - valhalla_tiles:/data
+      - ./infra/valhalla:/opt/deflock:ro
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1:8002/status >/dev/null || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+
+  geocoder:
+    # Self-hosted Nominatim on the Colorado extract (decision 0001 D10). The first start imports
+    # the extract (about 17 minutes, 5.2 GiB peak on the pilot machine); later starts serve at once.
+    image: mediagis/nominatim:5.3.2
+    environment:
+      PBF_PATH: /pbf/colorado-latest.osm.pbf
+      IMPORT_STYLE: full
+      IMPORT_WIKIPEDIA: "false"
+      IMPORT_US_POSTCODES: "false"
+      IMPORT_TIGER_ADDRESSES: ${GEOCODER_IMPORT_TIGER:-false}
+      UPDATE_MODE: none
+      THREADS: ${GEOCODER_THREADS:-8}
+      NOMINATIM_PASSWORD: ${NOMINATIM_PASSWORD:?set NOMINATIM_PASSWORD in .env}
+      POSTGRES_SHARED_BUFFERS: 1GB
+      POSTGRES_MAINTENANCE_WORK_MEM: 1GB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 3GB
+      POSTGRES_WORK_MEM: 32MB
+      POSTGRES_AUTOVACUUM_WORK_MEM: 512MB
+    volumes:
+      - geocoder_db:/var/lib/postgresql/16/main
+      - osm_extracts:/pbf:ro
+    shm_size: 1g
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request,sys; sys.exit(0 if b'OK' in urllib.request.urlopen('http://127.0.0.1:8080/status', timeout=4).read() else 1)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40m
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+
+  # ---- one-time setup jobs (profile "setup"; run by scripts/bootstrap.ps1 in this order) ----
+  db-migrate:
+    <<: *backend-image
+    profiles: ["setup"]
+    command: ["alembic", "upgrade", "head"]
+    environment:
+      <<: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  osm-download:
+    <<: *backend-image
+    profiles: ["setup"]
+    user: "0:0"
+    command: ["deflock-osm-download", "--url", "${OSM_EXTRACT_URL:-https://download.geofabrik.de/north-america/us/colorado-latest.osm.pbf}", "--dest-dir", "/pbf"]
+    environment:
+      <<: *backend-env
+    volumes:
+      - osm_extracts:/pbf
+
+  graph-build:
+    image: ghcr.io/valhalla/valhalla:3.9.1
+    profiles: ["setup"]
+    entrypoint: ["/bin/bash", "/opt/deflock/build_graph.sh"]
+    environment:
+      CONCURRENCY: ${GRAPH_BUILD_CONCURRENCY:-8}
+      PBF: /pbf/colorado-latest.osm.pbf
+      FORCE_REBUILD: ${GRAPH_FORCE_REBUILD:-0}
+    volumes:
+      - valhalla_tiles:/data
+      - osm_extracts:/pbf:ro
+      - ./infra/valhalla:/opt/deflock:ro
+    deploy:
+      resources:
+        limits:
+          memory: 6G
+
+  basemap-extract:
+    image: protomaps/go-pmtiles:v1.31.2
+    profiles: ["setup"]
+    command: ["extract", "${PROTOMAPS_BUILD_URL:-https://build.protomaps.com/20261015.pmtiles}", "/basemap/denver.pmtiles", "--bbox=${BASEMAP_BBOX:--105.34301,39.4341,-104.36565,40.09437}", "--maxzoom=15"]
+    volumes:
+      - basemap:/basemap
+
+  basemap-assets:
+    <<: *backend-image
+    profiles: ["setup"]
+    user: "0:0"
+    command: ["deflock-basemap-assets", "--commit", "${PROTOMAPS_ASSETS_COMMIT:-028c18f713baecad011301ff7a69acc39bcc2ae7}", "--dest-dir", "/basemap"]
+    environment:
+      <<: *backend-env
+    volumes:
+      - basemap:/basemap
+
+  camera-sync-once:
+    <<: *backend-image
+    profiles: ["setup"]
+    command: ["python", "-m", "deflockmigration.workers.camera_sync", "--once", "--trigger", "setup"]
+    environment:
+      <<: *backend-env
+    volumes:
+      - camera_snapshots:/var/lib/deflock/snapshots
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # ---- tests (profile "test") ----
+  api-tests:
+    <<: *backend-image
+    profiles: ["test"]
+    command: ["pytest", "-q"]
+    environment:
+      <<: *backend-env
+      DEFLOCK_APP_ENV: test
+      DEFLOCK_TEST_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-deflock}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/deflock_test
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web-tests:
+    image: deflockmigration/web-test:0.1.0
+    profiles: ["test"]
+    build:
+      context: ./apps/web
+      target: test
+
+  e2e:
+    image: mcr.microsoft.com/playwright:v1.64.1-noble
+    profiles: ["test"]
+    working_dir: /e2e
+    environment:
+      DEFLOCK_BASE_URL: ${DEFLOCK_E2E_BASE_URL:-http://edge:3000}
+    volumes:
+      - ./apps/web/e2e:/e2e
+      - e2e_node_modules:/e2e/node_modules
+    command: ["sh", "-c", "npm ci --no-audit --no-fund && npx playwright test"]
+    depends_on:
+      edge:
+        condition: service_healthy
+
+volumes:
+  pgdata:
+  valhalla_tiles:
+  osm_extracts:
+  basemap:
+  geocoder_db:
+  camera_snapshots:
+  e2e_node_modules:

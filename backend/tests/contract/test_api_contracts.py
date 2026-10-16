@@ -1,0 +1,109 @@
+"""API contract tests with fake providers. No network, no database."""
+
+from __future__ import annotations
+
+from fastapi.testclient import TestClient
+
+from deflockmigration.api.app import create_app
+from deflockmigration.geocoding.provider import NullGeocoder
+from tests.conftest import FakeRoutingProvider
+
+UNION_STATION = {"lat": 39.7530, "lon": -105.0002}
+ZOO = {"lat": 39.7503, "lon": -104.9500}
+GLENDALE = {"lat": 39.7047, "lon": -104.9339}
+
+
+def test_region_contract(client: TestClient):
+    resp = client.get("/api/v1/region")
+    assert resp.status_code == 200 and resp.headers["X-Request-ID"]
+    body = resp.json()
+    assert body["region_id"] == "denver" and body["service_boundary"]["id"] == "denver-service-v1"
+    assert body["service_boundary"]["geometry"]["type"] in ("Polygon", "MultiPolygon")
+    assert body["camera_data_envelope"]["buffer_m"] == 20000
+    assert body["capabilities"]["geocoder_configured"] is False and body["capabilities"]["map_pins"] is True
+    assert set(body["profiles"]) == {"standard", "balanced", "fewest_mapped"}
+    assert body["camera_scopes"] == ["all_alpr", "flock_only"]
+    assert "surveillance-free" in body["disclaimer"] and any("OpenStreetMap" in a for a in body["attributions"])
+
+
+def test_health_endpoints(client: TestClient):
+    assert client.get("/api/v1/health/live").json()["status"] == "ok"
+    data = client.get("/api/v1/health/data").json()
+    assert data["database"] == {"available": False, "message": "database not configured"}
+    assert data["router"]["available"] is True and data["router"]["graph_id"].startswith("colorado-geofabrik")
+    assert data["geocoder"]["configured"] is False
+    assert data["snapshot"] is None and data["staleness"] == {}
+
+
+def test_plan_returns_standard_route_without_camera_claims(client: TestClient, fake_routing: FakeRoutingProvider):
+    resp = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO})
+    assert resp.status_code == 200, resp.text
+    body = resp.json()
+    assert body["search_status"] == "completed" and body["assessment_coverage_status"] == "not_assessed"
+    assert len(body["options"]) == 1
+    option = body["options"][0]
+    assert option["profiles"] == ["standard"]
+    assert option["matched_camera_record_count"] is None and option["uncertain_nearby_camera_count"] is None
+    assert option["camera_snapshot_id"] is None
+    assert option["geometry"]["type"] == "LineString" and len(option["geometry"]["coordinates"]) > 50
+    assert option["maneuvers"][0]["type_name"].startswith("start") and option["maneuvers"][-1]["type_name"].startswith("destination")
+    assert all(m["instruction"] for m in option["maneuvers"])
+    assert option["road_graph_version"].startswith("colorado-geofabrik")
+    # Decision 0001 D6: the fixture's primary is slower than its alternates, so Standard is an alternate.
+    assert option["engine_candidate"].startswith("alternate")
+    assert any("fastest baseline candidate" in w for w in body["warnings"])
+    assert fake_routing.calls[0]["alternates"] == 2
+    assert "surveillance-free" in body["disclaimer"]
+
+
+def test_plan_outside_service_area(client: TestClient):
+    resp = client.post("/api/v1/routes/plan", json={"origin": GLENDALE, "destination": ZOO})
+    assert resp.status_code == 422
+    body = resp.json()
+    assert body["error"]["code"] == "OUTSIDE_SERVICE_AREA" and body["error"]["details"]["outside"] == ["origin"]
+    assert body["request_id"]
+
+
+def test_plan_validation_errors(client: TestClient):
+    resp = client.post("/api/v1/routes/plan", json={"origin": {"lat": 100, "lon": 0}, "destination": ZOO})
+    assert resp.status_code == 400 and resp.json()["error"]["code"] == "VALIDATION_ERROR"
+    assert "origin.lat" in resp.json()["error"]["details"]["fields"]
+    resp = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO, "surprise": 1})
+    assert resp.status_code == 400
+    resp = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO, "region_id": "boulder"})
+    assert resp.status_code == 400 and resp.json()["error"]["details"]["region_id"] == "boulder"
+
+
+def test_router_unavailable_and_no_route(settings, app_config, valhalla_fixture_payload):
+    for mode, code, status in (("unavailable", "ROUTER_UNAVAILABLE", 503), ("no_route", "NO_DRIVABLE_ROUTE", 422)):
+        app = create_app(settings, config=app_config, routing=FakeRoutingProvider(valhalla_fixture_payload, mode=mode), geocoder=NullGeocoder())
+        resp = TestClient(app).post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO})
+        assert resp.status_code == status and resp.json()["error"]["code"] == code
+
+
+def test_geocode_coordinates_bypass_provider(client: TestClient):
+    resp = client.post("/api/v1/geocode", json={"query": "39.7530, -105.0002"})
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["query_kind"] == "coordinates" and body["candidates"][0]["inside_service_boundary"] is True
+    resp = client.post("/api/v1/geocode", json={"query": "39.7047, -104.9339"})
+    assert resp.json()["candidates"][0]["inside_service_boundary"] is False
+
+
+def test_geocode_not_configured(client: TestClient):
+    resp = client.post("/api/v1/geocode", json={"query": "Union Station"})
+    assert resp.status_code == 503 and resp.json()["error"]["code"] == "GEOCODER_NOT_CONFIGURED"
+    assert client.post("/api/v1/geocode", json={"query": ""}).status_code == 400
+
+
+def test_cameras_without_database_and_bad_bbox(client: TestClient):
+    resp = client.get("/api/v1/cameras", params={"bbox": "-105.0,39.7,-104.9,39.8"})
+    assert resp.status_code == 503 and resp.json()["error"]["code"] == "CAMERA_DATA_UNAVAILABLE"
+    assert client.get("/api/v1/cameras", params={"bbox": "1,2,3"}).status_code == 400
+    assert client.get("/api/v1/cameras", params={"bbox": "-105,39,-103,41"}).status_code == 400
+    assert client.get("/api/v1/cameras", params={"bbox": "-104.9,39.8,-105.0,39.7"}).status_code == 400
+
+
+def test_oversized_body_is_rejected(client: TestClient):
+    resp = client.post("/api/v1/routes/plan", content=b"{}", headers={"Content-Type": "application/json", "Content-Length": str(70 * 1024)})
+    assert resp.status_code == 413
