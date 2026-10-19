@@ -11,7 +11,7 @@ from __future__ import annotations
 import argparse
 import sys
 
-from deflockmigration.application.review import ReviewError, accept_snapshot, list_snapshots, reject_snapshot
+from deflockmigration.application.review import ReviewError, accept_snapshot, list_snapshots, reject_snapshot, rollback_snapshot
 from deflockmigration.core.config_loader import load_app_config
 from deflockmigration.core.logging import configure_logging
 from deflockmigration.core.settings import Settings
@@ -29,6 +29,9 @@ def main(argv: list[str] | None = None) -> int:
     rej = sub.add_parser("reject", help="mark a quarantined snapshot as rejected")
     rej.add_argument("snapshot_id")
     rej.add_argument("--note", required=True)
+    rb = sub.add_parser("rollback", help="make a previously active snapshot active again (default: the one the active snapshot replaced)")
+    rb.add_argument("snapshot_id", nargs="?", default=None)
+    rb.add_argument("--note", required=True)
     args = parser.parse_args(argv)
 
     settings = Settings()
@@ -50,6 +53,8 @@ def main(argv: list[str] | None = None) -> int:
                 print(f"{item.promotion_state:11} {item.snapshot_id} created {item.created_at} elements={item.element_count} alpr={item.alpr_count}{reason}{note}")
         elif args.command == "accept":
             print(accept_snapshot(session_factory, region_id, args.snapshot_id, args.note))
+        elif args.command == "rollback":
+            print(rollback_snapshot(session_factory, region_id, args.snapshot_id, args.note))
         else:
             print(reject_snapshot(session_factory, region_id, args.snapshot_id, args.note))
     except ReviewError as exc:

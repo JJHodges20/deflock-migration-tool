@@ -1,4 +1,4 @@
-# User guide (Denver pilot, M6 build)
+# User guide (Denver pilot, M7 build)
 
 DeFlockMigration runs entirely in Docker. The host needs Docker Desktop (Compose v2) and Git; nothing else is installed on the computer.
 
@@ -70,12 +70,15 @@ docker compose up
 
 | Task | Command |
 |---|---|
-| Refresh the camera inventory now | `powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1` (the worker also runs every 6 hours while the stack is up) |
+| Refresh the camera inventory now | `powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1` (the worker also runs every 6 hours while the stack is up; operator refreshes share a 30 min cooldown, `-Force` overrides it) |
+| Roll the camera inventory back to a previous snapshot | `powershell -ExecutionPolicy Bypass -File scripts\review_snapshot.ps1 rollback -Note "<why>"` (or `rollback <snapshot_id> -Note ...`); nothing is deleted, and the replaced snapshot can be restored the same way |
+| Put the previous routing graph back | `powershell -ExecutionPolicy Bypass -File scripts\rollback_graph.ps1` (the rebuild keeps the last-good graph in the volume; running it again undoes the rollback) |
+| See the operating state and service metrics | the Data health panel in the app, or `GET http://127.0.0.1:3000/api/v1/health/data`, `.../health/metrics`, `.../cameras/diffs`; the full runbook is `docs/OPERATIONS.md` |
 | Review a quarantined snapshot | `powershell -ExecutionPolicy Bypass -File scripts\review_snapshot.ps1 list`, then `... accept <snapshot_id> -Note "<what you corroborated>"` or `... reject <snapshot_id> -Note "<why>"`. A snapshot is quarantined when the source returns an empty result or the mapped ALPR count drops by more than half; the last good snapshot stays active until you decide. |
 | Refresh the camera road-association cache (after a new snapshot or graph) | `powershell -ExecutionPolicy Bypass -File scripts\associate_cameras.ps1` (routes still assess correctly without it; uncached records are looked up live) |
 | Look up one camera record's history | `GET http://127.0.0.1:3000/api/v1/cameras/record?source_key=osm:node:<id>` returns the current record and its versions across retained snapshots |
 | After updating the code | `docker compose build`, then `docker compose --profile setup run --rm db-migrate`, then `docker compose up -d` (migrations are never applied silently) |
-| Refresh road data and rebuild the graph | `powershell -ExecutionPolicy Bypass -File scripts\import_region.ps1` (add `-Force` to rebuild an unchanged extract) |
+| Refresh road data and rebuild the graph | `powershell -ExecutionPolicy Bypass -File scripts\import_region.ps1` (add `-Force` to rebuild an unchanged extract); the script validates the new graph through the running app, refreshes the camera road associations, and keeps the previous graph for `scripts\rollback_graph.ps1` |
 | Verify the stack, including a restart persistence check | `powershell -ExecutionPolicy Bypass -File scripts\smoke_test.ps1 -CheckRestart` |
 | Follow the geocoder import | `docker compose logs -f geocoder` |
 | Run the test suites | `docker compose --profile test run --rm api-tests`, `... web-tests`, `... e2e` (the last one needs the stack running) |

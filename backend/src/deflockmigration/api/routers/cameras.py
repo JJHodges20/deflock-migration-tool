@@ -152,3 +152,43 @@ def camera_record(request: Request, source_key: str = Query(..., max_length=60))
         ],
         "meaning": "Versions are OpenStreetMap edits seen by this project's snapshots; they are not field inspections.",
     }
+
+
+@router.get("/cameras/diffs")
+def camera_diffs(request: Request, limit: int = Query(20, ge=1, le=100)) -> dict:
+    """Diff history across retained snapshots: what each sync changed versus the snapshot it replaced (roadmap M7)."""
+    state = request.app.state
+    if state.session_factory is None:
+        raise AppError(CAMERA_DATA_UNAVAILABLE, "The camera inventory database is not configured.")
+    region_id = state.config.region.region_id
+    try:
+        with state.session_factory() as session:
+            pairs = SnapshotRepository(session).list_diffs(region_id, limit=limit)
+            items = [
+                {
+                    "snapshot_id": snapshot.snapshot_id,
+                    "previous_snapshot_id": diff.previous_snapshot_id,
+                    "snapshot_state": snapshot.promotion_state,
+                    "source_as_of": _iso(snapshot.timestamp_osm_base),
+                    "downloaded_at": _iso(snapshot.downloaded_at_end),
+                    "promoted_at": _iso(snapshot.promoted_at),
+                    "added": diff.added_count,
+                    "changed": diff.changed_count,
+                    "missing": diff.missing_count,
+                    "reappeared": diff.reappeared_count,
+                    "carried": diff.carried_count,
+                    "expired": diff.expired_count,
+                    "alpr_count": snapshot.alpr_count,
+                    "in_envelope_alpr_count": snapshot.in_envelope_alpr_count,
+                    "review_note": snapshot.review_note,
+                }
+                for diff, snapshot in pairs
+            ]
+    except Exception as exc:  # noqa: BLE001
+        log.warning("camera diff history query failed: %s", type(exc).__name__)
+        raise AppError(CAMERA_DATA_UNAVAILABLE, "The camera inventory is temporarily unavailable.") from exc
+    return {
+        "region_id": region_id,
+        "diffs": items,
+        "meaning": "Added means newly mapped records in the source, not cameras installed that day; missing means absent from a later source query, not physically removed.",
+    }

@@ -85,16 +85,28 @@ if [ "$TILE_COUNT" -lt 1 ] || [ ! -s "$STAGE/tiles.tar" ]; then
   exit 3
 fi
 
-# Promote: swap staging into place (old graph removed only after the new one is complete).
-rm -rf "$D/tiles.old" "$D/tiles.tar.old"
-[ -d "$D/tiles" ] && mv "$D/tiles" "$D/tiles.old"
-[ -f "$D/tiles.tar" ] && mv "$D/tiles.tar" "$D/tiles.tar.old"
+# Promote: swap staging into place. The graph being replaced is kept as the last-good graph in $D/previous
+# (tar, config, manifest, and databases; its tile directory is dropped, the tar is what the service reads), so
+# rollback_graph.sh can put it back without a rebuild. A running valhalla keeps serving the files it already
+# opened until it is restarted, so routes computed during this promotion are unaffected.
+rm -rf "$D/previous.new"
+mkdir -p "$D/previous.new"
+for f in tiles.tar valhalla.json graph_manifest.json timezones.sqlite admins.sqlite; do
+  [ -f "$D/$f" ] && mv "$D/$f" "$D/previous.new/$f"
+done
+rm -rf "$D/tiles"
 mv "$STAGE/tiles" "$D/tiles"
 mv "$STAGE/tiles.tar" "$D/tiles.tar"
 mv "$STAGE/timezones.sqlite" "$D/timezones.sqlite"
 mv "$STAGE/admins.sqlite" "$D/admins.sqlite"
 mv "$STAGE/valhalla.json" "$D/valhalla.json"
-rm -rf "$D/tiles.old" "$D/tiles.tar.old" "$STAGE"
+if [ -f "$D/previous.new/graph_manifest.json" ]; then
+  rm -rf "$D/previous"
+  mv "$D/previous.new" "$D/previous"
+else
+  rm -rf "$D/previous.new"
+fi
+rm -rf "$D/rolled_back" "$STAGE"
 
 python3 - "$MANIFEST" "$PBF" "$PBF_SHA" "$TILE_COUNT" "$(( $(date +%s) - BUILD_START ))" "$CONC" <<'PY'
 import json, sys, datetime, subprocess

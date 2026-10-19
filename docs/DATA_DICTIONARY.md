@@ -66,11 +66,13 @@ Associations are explanations, not truths: the route assessment reports why a re
 
 | Column | Meaning |
 |---|---|
-| `trigger` | `scheduled`, `manual`, `setup`, or `review` |
-| `status` | `running`, `succeeded`, `failed`, `quarantined` |
+| `trigger` | `scheduled`, `manual`, `setup`, `review`, or `rollback` |
+| `status` | `running`, `succeeded`, `failed`, `quarantined`, `skipped` |
 | `http_status`, `attempts` | upstream response and retries (502/429 are routine) |
 | `added_count`, `changed_count`, `no_longer_present_count` | diff summary for the fetched snapshot |
 | `message` | sanitized outcome; never payload content |
+
+M7 additions: `status = skipped` records a manual refresh refused by the shared cooldown (with the active snapshot id and the reason); `trigger = rollback` records an operator restoring a previously active snapshot (the message names both snapshot ids and the note).
 
 ## Retention
 

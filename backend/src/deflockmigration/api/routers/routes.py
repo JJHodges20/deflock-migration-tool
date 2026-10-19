@@ -118,14 +118,22 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
     assessor = getattr(state, "assessor", None)
     service = PlanTripService(config, state.routing, assessor)
     detour = DetourLimit(float(body.detour_limits.max_extra_seconds), float(body.detour_limits.max_relative_factor)) if body.detour_limits else None
-    result = service.plan(
-        LatLon(body.origin.lat, body.origin.lon),
-        LatLon(body.destination.lat, body.destination.lon),
-        profiles=body.profiles,
-        camera_scope=body.camera_scope,
-        snapshot_id=snapshot_id,
-        detour_limits=detour,
-    )
+    metrics = getattr(state, "metrics", None)
+    try:
+        result = service.plan(
+            LatLon(body.origin.lat, body.origin.lon),
+            LatLon(body.destination.lat, body.destination.lon),
+            profiles=body.profiles,
+            camera_scope=body.camera_scope,
+            snapshot_id=snapshot_id,
+            detour_limits=detour,
+        )
+    except AppError as exc:
+        if metrics is not None:
+            metrics.observe_plan_error(exc.code)  # the code only, never the trip
+        raise
+    if metrics is not None:
+        metrics.observe_plan(search_status=result.search_status, option_count=len(result.options), routing_calls=result.search.routing_calls_used, elapsed_s=result.search.elapsed_s)
     options = []
     for option in result.options:
         route = option.route

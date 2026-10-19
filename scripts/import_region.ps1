@@ -28,4 +28,33 @@ if ($rc -ne 0) { throw "graph build failed; the previous graph is still active" 
 
 Write-Host "Restarting the routing service to load the new graph..." -ForegroundColor Cyan
 docker compose restart valhalla | Out-Null
-Write-Host ("Done in {0:n0} s. Check Data Health in the app for the new graph date." -f $sw.Elapsed.TotalSeconds) -ForegroundColor Green
+
+# Validate before calling it done: the service must report a graph and answer a reviewed public-landmark route.
+$port = 3000
+if (Test-Path ".env") {
+  $m = Select-String -Path ".env" -Pattern "^DEFLOCK_PORT=(\d+)"
+  if ($m) { $port = [int]$m.Matches[0].Groups[1].Value }
+}
+$base = "http://127.0.0.1:$port"
+Write-Host "Validating the new graph through the running application..." -ForegroundColor Cyan
+$health = $null
+for ($i = 0; $i -lt 40; $i++) {
+  try {
+    $candidate = Invoke-RestMethod -Uri "$base/api/v1/health/data" -TimeoutSec 5
+    if ($candidate.router.available) { $health = $candidate; break }
+  } catch { }
+  Start-Sleep -Seconds 3
+}
+if (-not $health) { throw "the routing service did not report a graph after the restart; run scripts\rollback_graph.ps1 to restore the previous graph" }
+$body = @{ origin = @{ lat = 39.7530; lon = -105.0002 }; destination = @{ lat = 39.7503; lon = -104.9500 } } | ConvertTo-Json -Compress
+try {
+  $plan = Invoke-RestMethod -Method Post -Uri "$base/api/v1/routes/plan" -ContentType "application/json" -Body $body -TimeoutSec 60
+} catch {
+  throw "a test route (Union Station to Denver Zoo) failed on the new graph; run scripts\rollback_graph.ps1 to restore the previous graph"
+}
+Write-Host ("Graph validated: built {0}; test route has {1} maneuvers." -f $health.router.tileset_last_modified, $plan.options[0].maneuvers.Count) -ForegroundColor Green
+
+Write-Host "Refreshing camera road associations on the new graph (cached rows of the old graph are pruned)..." -ForegroundColor Cyan
+docker compose --profile setup run --rm associate-cameras
+if ($LASTEXITCODE -ne 0) { Write-Warning "association refresh reported failures; routes still assess correctly with live lookups" }
+Write-Host ("Done in {0:n0} s. The previous graph is kept in the volume; scripts\rollback_graph.ps1 restores it." -f $sw.Elapsed.TotalSeconds) -ForegroundColor Green

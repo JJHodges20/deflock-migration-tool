@@ -68,6 +68,17 @@ class SnapshotRepository:
     def diff_for(self, snapshot_id: str) -> SnapshotDiff | None:
         return self.s.execute(select(SnapshotDiff).where(SnapshotDiff.snapshot_id == snapshot_id)).scalars().first()
 
+    def list_diffs(self, region_id: str, limit: int = 20) -> list[tuple[SnapshotDiff, CameraSnapshot]]:
+        """Diff history, newest first, with the snapshot each diff describes (retained snapshots only)."""
+        stmt = (
+            select(SnapshotDiff, CameraSnapshot)
+            .join(CameraSnapshot, CameraSnapshot.snapshot_id == SnapshotDiff.snapshot_id)
+            .where(CameraSnapshot.region_id == region_id)
+            .order_by(SnapshotDiff.created_at.desc())
+            .limit(limit)
+        )
+        return [(diff, snapshot) for diff, snapshot in self.s.execute(stmt).all()]
+
     def prune(self, region_id: str, *, keep_superseded: int, keep_quarantined: int) -> list[tuple[str, str | None]]:
         """Delete old superseded and old quarantined/rejected snapshots (records cascade). Returns (id, raw_path) of deletions."""
         removed: list[tuple[str, str | None]] = []

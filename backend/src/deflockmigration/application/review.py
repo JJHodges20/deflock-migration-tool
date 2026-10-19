@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from deflockmigration.core.clock import Clock, isoformat_z, utc_now
 from deflockmigration.storage.db import SessionFactory
 from deflockmigration.storage.models import SyncJob
-from deflockmigration.storage.repositories import SnapshotRepository
+from deflockmigration.storage.repositories import CameraRepository, SnapshotRepository
 
 
 @dataclass(frozen=True)
@@ -81,3 +81,34 @@ def reject_snapshot(session_factory: SessionFactory, region_id: str, snapshot_id
         session.add(SyncJob(region_id=region_id, trigger="review", started_at=now, finished_at=now, status="succeeded", snapshot_id=snapshot_id, attempts=0, message=f"quarantined snapshot rejected by operator: {note[:200]}"))
         session.commit()
     return f"snapshot {snapshot_id} rejected; the active snapshot is unchanged"
+
+
+def rollback_snapshot(session_factory: SessionFactory, region_id: str, snapshot_id: str | None, note: str, *, clock: Clock = utc_now) -> str:
+    """Make a previously active (superseded, still retained) snapshot active again. No deletion: the replaced snapshot
+    becomes superseded and stays retained, so the rollback itself can be undone the same way."""
+    if not note.strip():
+        raise ReviewError("a note explaining the rollback is required")
+    now = clock()
+    with session_factory() as session:
+        repo = SnapshotRepository(session)
+        active = repo.get_active(region_id)
+        if active is None:
+            raise ReviewError("no active snapshot to roll back from")
+        target_id = snapshot_id or active.previous_active_snapshot_id
+        if not target_id:
+            raise ReviewError("the active snapshot has no recorded previous active snapshot; give a snapshot id")
+        target = repo.get(target_id)
+        if target is None or target.region_id != region_id:
+            raise ReviewError(f"snapshot {target_id} not found for region {region_id} (it may have been pruned)")
+        if target.snapshot_id == active.snapshot_id:
+            raise ReviewError(f"snapshot {target_id} is already active")
+        if target.promotion_state != "superseded":
+            raise ReviewError(f"snapshot {target_id} is {target.promotion_state}; only a previously active (superseded) snapshot can be rolled back to")
+        if CameraRepository(session).count(target_id, present_only=False) == 0:
+            raise ReviewError(f"snapshot {target_id} has no retained records")
+        repo.promote(target_id, region_id, now)
+        repo.set_review(target_id, f"rolled back to: {note}", now)
+        session.add(SyncJob(region_id=region_id, trigger="rollback", started_at=now, finished_at=now, status="succeeded", snapshot_id=target_id, attempts=0,
+                            message=f"rolled back from {active.snapshot_id} to {target_id} by operator: {note[:150]}"))
+        session.commit()
+    return f"snapshot {target_id} is active again (replaced {active.snapshot_id}, which stays retained as superseded)"

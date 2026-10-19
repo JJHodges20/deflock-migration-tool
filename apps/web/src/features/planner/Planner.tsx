@@ -24,6 +24,22 @@ const ERROR_TEXT: Record<string, string> = {
   NETWORK: "The server could not be reached.",
 };
 
+/** A planned result keeps the versions it was computed with; when Data Health shows newer ones, say so (never recompute silently). */
+export function outdatedVersions(option: { camera_snapshot_id: string | null; road_graph_version: string } | null, health: DataHealth | null): string[] {
+  if (!option || !health) return [];
+  const notes: string[] = [];
+  const current = health.snapshot?.snapshot_id ?? null;
+  if (option.camera_snapshot_id && current && current !== option.camera_snapshot_id) {
+    notes.push(`a newer camera snapshot (${current}) was published after this plan`);
+  }
+  const graphBuilt = health.router.tileset_last_modified;
+  const planned = option.road_graph_version.includes("@") ? option.road_graph_version.split("@")[1] : null;
+  if (graphBuilt && planned && graphBuilt !== planned) {
+    notes.push(`the road graph was rebuilt (${graphBuilt}) after this plan`);
+  }
+  return notes;
+}
+
 function withinBbox(lat: number, lon: number, bbox: number[] | undefined): boolean {
   if (!bbox || bbox.length !== 4) return true;
   return lon >= bbox[0] && lat >= bbox[1] && lon <= bbox[2] && lat <= bbox[3];
@@ -51,11 +67,25 @@ export function Planner() {
       .catch((error) => {
         if (!controller.signal.aborted) setRegionError(describeError(error).message);
       });
-    api
-      .dataHealth(controller.signal)
-      .then(setHealth)
-      .catch(() => undefined);
-    return () => controller.abort();
+    const refreshHealth = () => {
+      api
+        .dataHealth(controller.signal)
+        .then(setHealth)
+        .catch(() => undefined);
+    };
+    refreshHealth();
+    // Data Health is polled every five minutes and when the tab becomes visible again, so a route planned on an
+    // older snapshot or graph is shown as outdated instead of silently changing (roadmap 8, step 10).
+    const timer = window.setInterval(refreshHealth, 5 * 60 * 1000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refreshHealth();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      controller.abort();
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
   }, []);
 
   useEffect(() => {
@@ -220,6 +250,7 @@ export function Planner() {
   }, [route, highlighted]);
   const labelOf = (profile: RouteProfileName) => region?.profiles[profile]?.label ?? profile;
   const routeLabels = route ? route.profiles.map(labelOf).join(", ") : "";
+  const outdated = useMemo(() => outdatedVersions(state.result?.options[0] ?? null, health), [state.result, health]);
 
   const endpointProps = (endpoint: EndpointKey, label: string) => ({
     endpoint,
@@ -398,6 +429,11 @@ export function Planner() {
           </div>
         )}
 
+        {state.result && outdated.length > 0 && (
+          <div className="notice notice-warn" role="status" data-testid="outdated-result">
+            These results keep the data versions they were computed with, but {outdated.join(" and ")}. Plan again to use the current data.
+          </div>
+        )}
         {state.result && (
           <RouteCards
             result={state.result}

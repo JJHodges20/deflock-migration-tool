@@ -1,9 +1,12 @@
-"""Sanitized Data Health view: source, snapshot, sync, inventory, graph, geocoder, and boundary versions."""
+"""Sanitized Data Health view: source, snapshot, sync, scheduler, provider policy, inventory, graph, geocoder, and
+boundary versions. Never any trip data."""
 
 from __future__ import annotations
 
 import datetime as dt
 from dataclasses import dataclass, field
+
+from sqlalchemy import text
 
 from deflockmigration.core.clock import Clock, isoformat_z, utc_now
 from deflockmigration.core.config_loader import AppConfig
@@ -20,12 +23,14 @@ class DataHealth:
     envelope_id: str
     config_version: int
     camera_source: dict = field(default_factory=dict)
+    provider_policy: dict = field(default_factory=dict)
     snapshot: dict | None = None
     inventory: dict = field(default_factory=dict)
     last_sync: dict | None = None
     last_failure: dict | None = None
     recent_syncs: list = field(default_factory=list)
     staleness: dict = field(default_factory=dict)
+    scheduler: dict = field(default_factory=dict)
     router: dict = field(default_factory=dict)
     geocoder: dict = field(default_factory=dict)
     basemap: dict = field(default_factory=dict)
@@ -50,6 +55,74 @@ def _job_view(job) -> dict | None:
     }
 
 
+def schedule_view(
+    active_downloaded_at: dt.datetime | None,
+    interval_hours: float,
+    now: dt.datetime,
+    *,
+    overdue_grace_hours: float,
+    cooldown_minutes: int,
+    last_trigger: str | None,
+) -> dict:
+    """What the single scheduler will do next, derived the same way the worker derives it (roadmap 3.2 and M7 gate):
+    scheduled syncs run only while the camera-sync container runs, and a restart waits for the remainder of the interval."""
+    interval_s = interval_hours * 3600.0
+    base = {
+        "interval_hours": interval_hours,
+        "manual_refresh_cooldown_minutes": cooldown_minutes,
+        "last_trigger": last_trigger,
+        "runs_only_while_stack_is_up": True,
+        "note": "One scheduler for the fixed region. A restart waits for the remainder of the interval instead of querying again; manual refreshes share the cooldown and concurrent runs coalesce into one.",
+    }
+    if active_downloaded_at is None:
+        return {**base, "next_due_at": None, "due_in_seconds": 0, "overdue": True, "cooldown_remaining_seconds": 0, "state": "no snapshot yet; the worker syncs as soon as it runs"}
+    due_at = active_downloaded_at + dt.timedelta(seconds=interval_s)
+    due_in = (due_at - now).total_seconds()
+    overdue = due_in < -overdue_grace_hours * 3600.0
+    cooldown_remaining = max(0.0, cooldown_minutes * 60.0 - (now - active_downloaded_at).total_seconds())
+    if overdue:
+        state = "overdue: the scheduled sync has not run; is the camera-sync container running?"
+    elif due_in <= 0:
+        state = "due now (within the grace period)"
+    else:
+        state = "on schedule"
+    return {
+        **base,
+        "next_due_at": isoformat_z(due_at),
+        "due_in_seconds": round(max(0.0, due_in)),
+        "overdue": overdue,
+        "cooldown_remaining_seconds": round(cooldown_remaining),
+        "state": state,
+    }
+
+
+def storage_stats(session_factory: SessionFactory | None) -> dict:
+    """Database and snapshot store sizes: counts and bytes of public data, no trip data (roadmap 16)."""
+    if session_factory is None:
+        return {"available": False, "message": "database not configured"}
+    try:
+        with session_factory() as session:
+            by_state = {row.state: row.n for row in session.execute(text("SELECT promotion_state AS state, count(*) AS n FROM camera_snapshots GROUP BY promotion_state"))}
+            records = session.execute(text("SELECT count(*) FROM camera_records")).scalar() or 0
+            diffs = session.execute(text("SELECT count(*) FROM snapshot_diffs")).scalar() or 0
+            associations = session.execute(text("SELECT count(*) FROM camera_road_associations")).scalar() or 0
+            jobs = session.execute(text("SELECT count(*) FROM sync_jobs")).scalar() or 0
+            raw_bytes = session.execute(text("SELECT coalesce(sum(raw_bytes), 0) FROM camera_snapshots")).scalar() or 0
+            db_bytes = session.execute(text("SELECT pg_database_size(current_database())")).scalar() or 0
+        return {
+            "available": True,
+            "snapshots_by_state": by_state,
+            "camera_record_rows": int(records),
+            "snapshot_diff_rows": int(diffs),
+            "association_cache_rows": int(associations),
+            "sync_job_rows": int(jobs),
+            "raw_snapshot_bytes": int(raw_bytes),
+            "database_bytes": int(db_bytes),
+        }
+    except Exception as exc:  # noqa: BLE001 - metrics must degrade, never crash
+        return {"available": False, "message": f"database error: {type(exc).__name__}"}
+
+
 def build_data_health(
     config: AppConfig,
     *,
@@ -60,6 +133,7 @@ def build_data_health(
 ) -> DataHealth:
     region = config.region
     quality = config.data_quality
+    source_cfg = config.providers.camera_source
     health = DataHealth(
         region_id=region.region_id,
         service_boundary_id=region.service_boundary.id,
@@ -70,6 +144,18 @@ def build_data_health(
             "refresh_interval_hours": region.camera_source.refresh_interval_hours,
             "query_bbox_swne": region.camera_source.query_bbox_swne,
             "license": "ODbL 1.0 (OpenStreetMap contributors)",
+        },
+        provider_policy={
+            "endpoint": region.camera_source.endpoint,
+            "query": "one fixed query over the camera-data envelope; never derived from a trip",
+            "one_request_at_a_time": True,
+            "refresh_interval_hours": region.camera_source.refresh_interval_hours,
+            "identifies_application": True,
+            "timeout_seconds": source_cfg.timeout_seconds,
+            "pause_after_rate_limit_seconds": max(source_cfg.pause_after_rate_limit_seconds, region.camera_source.min_pause_after_429_seconds),
+            "max_attempts": source_cfg.max_attempts,
+            "backoff_seconds": source_cfg.backoff_seconds,
+            "no_endpoint_rotation": True,
         },
         inventory={
             "retain_missing_hours": quality.snapshot_validation.retain_missing_hours,
@@ -82,15 +168,21 @@ def build_data_health(
     )
     now = clock()
     stale_after = quality.snapshot_validation.stale_after_hours
+    schedule_kwargs = dict(
+        overdue_grace_hours=quality.snapshot_validation.overdue_grace_hours,
+        cooldown_minutes=quality.snapshot_validation.manual_refresh_cooldown_minutes,
+    )
     if session_factory is None:
         health.database = {"available": False, "message": "database not configured"}
+        health.scheduler = schedule_view(None, region.camera_source.refresh_interval_hours, now, last_trigger=None, **schedule_kwargs)
     else:
         try:
             with session_factory() as session:
                 snapshots = SnapshotRepository(session)
                 snapshot = snapshots.get_active(region.region_id)
                 jobs = SyncJobRepository(session)
-                health.last_sync = _job_view(jobs.latest(region.region_id))
+                latest = jobs.latest(region.region_id)
+                health.last_sync = _job_view(latest)
                 health.last_failure = _job_view(jobs.latest_failure(region.region_id))
                 health.recent_syncs = [_job_view(j) for j in jobs.recent(region.region_id, limit=5)]
                 health.inventory["pending_review"] = [
@@ -99,6 +191,7 @@ def build_data_health(
                 ]
                 health.inventory["retained_snapshots"] = len(snapshots.list(region.region_id, limit=1000))
                 health.database = {"available": True}
+                health.scheduler = schedule_view(snapshot.downloaded_at_end if snapshot else None, region.camera_source.refresh_interval_hours, now, last_trigger=latest.trigger if latest else None, **schedule_kwargs)
                 if snapshot is not None:
                     age_hours = (now - snapshot.timestamp_osm_base).total_seconds() / 3600 if snapshot.timestamp_osm_base else None
                     diff = snapshots.diff_for(snapshot.snapshot_id)
@@ -137,6 +230,7 @@ def build_data_health(
                     health.staleness = {"age_hours": None, "stale_after_hours": stale_after, "is_stale": True, "message": "no camera snapshot yet"}
         except Exception as exc:  # noqa: BLE001 - health must degrade, never crash
             health.database = {"available": False, "message": f"database error: {type(exc).__name__}"}
+            health.scheduler = schedule_view(None, region.camera_source.refresh_interval_hours, now, last_trigger=None, **schedule_kwargs)
     status = routing.status()
     health.router = {
         "available": status.available,
@@ -147,6 +241,7 @@ def build_data_health(
         "has_timezones": status.has_timezones,
         "graph_id": region.routing_graph.id,
         "extract_data_timestamp": region.routing_graph.extract_data_timestamp,
+        "rebuild_cadence": region.routing_graph.rebuild_cadence,
         "message": status.message,
     }
     gstatus = geocoder.status()
@@ -167,12 +262,14 @@ def as_dict(health: DataHealth) -> dict:
         "envelope_id": health.envelope_id,
         "config_version": health.config_version,
         "camera_source": health.camera_source,
+        "provider_policy": health.provider_policy,
         "snapshot": health.snapshot,
         "inventory": health.inventory,
         "last_sync": health.last_sync,
         "last_failure": health.last_failure,
         "recent_syncs": health.recent_syncs,
         "staleness": health.staleness,
+        "scheduler": health.scheduler,
         "router": health.router,
         "geocoder": health.geocoder,
         "basemap": health.basemap,

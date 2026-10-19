@@ -212,6 +212,15 @@ services:
         limits:
           memory: 6G
 
+  graph-rollback:
+    # Puts the last-good graph back (kept by graph-build in the volume); restart valhalla afterwards.
+    image: ghcr.io/valhalla/valhalla:3.9.1
+    profiles: ["setup"]
+    entrypoint: ["/bin/bash", "/opt/deflock/rollback_graph.sh"]
+    volumes:
+      - valhalla_tiles:/data
+      - ./infra/valhalla:/opt/deflock:ro
+
   basemap-extract:
     image: protomaps/go-pmtiles:v1.31.2
     profiles: ["setup"]

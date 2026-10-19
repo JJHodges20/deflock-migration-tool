@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import re
 import time
 import uuid
 
@@ -17,6 +18,7 @@ from deflockmigration.application.assessment_service import AssessmentService
 from deflockmigration.core.config_loader import AppConfig, load_app_config
 from deflockmigration.core.errors import INTERNAL_ERROR, VALIDATION_ERROR, AppError
 from deflockmigration.core.logging import configure_logging
+from deflockmigration.core.metrics import Metrics
 from deflockmigration.core.settings import Settings
 from deflockmigration.geocoding.nominatim_local import NominatimLocalGeocoder
 from deflockmigration.geocoding.provider import Geocoder, NullGeocoder
@@ -27,6 +29,27 @@ from deflockmigration.storage.db import SessionFactory, make_engine, make_sessio
 
 log = logging.getLogger(__name__)
 MAX_BODY_BYTES = 64 * 1024
+
+
+def _route_template(app: FastAPI, scope: dict) -> str:
+    """The declared path pattern of the matched route (never the raw URL), for metrics keyed without trip data.
+    Templates come from the OpenAPI document, which lists every route with its full path regardless of how routers
+    are nested; path parameters match one segment."""
+    templates = getattr(app.state, "route_templates", None)
+    if templates is None:
+        templates = []
+        try:
+            for template in app.openapi().get("paths", {}):
+                pattern = re.sub(r"\\\{[^/]+\\\}", "[^/]+", re.escape(template))
+                templates.append((re.compile(f"^{pattern}$"), template))
+        except Exception:  # noqa: BLE001 - metrics must never break a request
+            templates = []
+        app.state.route_templates = templates
+    path = scope.get("path") or ""
+    for pattern, template in templates:
+        if pattern.match(path):
+            return template
+    return "unmatched"
 
 
 def _error_response(request: Request, code: str, message: str, status: int, details: dict | None = None) -> JSONResponse:
@@ -79,6 +102,7 @@ def create_app(
     app.state.geocoder = geocoder
     app.state.session_factory = session_factory
     app.state.assessor = assessor
+    app.state.metrics = Metrics()  # process-local counts and latencies; never trip data
 
     if settings.cors_origins:
         app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["GET", "POST"], allow_headers=["Content-Type"], max_age=600)
@@ -91,10 +115,17 @@ def create_app(
         if length and length.isdigit() and int(length) > MAX_BODY_BYTES:
             return _error_response(request, VALIDATION_ERROR, "Request body too large.", 413)
         started = time.perf_counter()
-        response = await call_next(request)
+        try:
+            response = await call_next(request)
+        except Exception:
+            # Counted by its declared route template (never the raw URL), then re-raised for the error handler.
+            app.state.metrics.observe_request(_route_template(app, request.scope), 500, (time.perf_counter() - started) * 1000)
+            raise
         response.headers["X-Request-ID"] = request_id
+        duration_ms = (time.perf_counter() - started) * 1000
+        app.state.metrics.observe_request(_route_template(app, request.scope), response.status_code, duration_ms)
         # Path only: query strings and bodies are never logged.
-        log.info("%s %s -> %s in %.0f ms", request.method, request.url.path, response.status_code, (time.perf_counter() - started) * 1000)
+        log.info("%s %s -> %s in %.0f ms", request.method, request.url.path, response.status_code, duration_ms)
         return response
 
     @app.exception_handler(AppError)

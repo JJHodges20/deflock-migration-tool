@@ -236,6 +236,75 @@ export interface SnapshotDiffView {
   expired: number;
 }
 
+export interface SchedulerView {
+  interval_hours: number;
+  manual_refresh_cooldown_minutes: number;
+  last_trigger: string | null;
+  runs_only_while_stack_is_up: boolean;
+  note: string;
+  next_due_at: string | null;
+  due_in_seconds: number;
+  overdue: boolean;
+  cooldown_remaining_seconds: number;
+  state: string;
+}
+
+export interface ProviderPolicyView {
+  endpoint: string;
+  query: string;
+  one_request_at_a_time: boolean;
+  refresh_interval_hours: number;
+  identifies_application: boolean;
+  timeout_seconds: number;
+  pause_after_rate_limit_seconds: number;
+  max_attempts: number;
+  backoff_seconds: number;
+  no_endpoint_rotation: boolean;
+}
+
+export interface SnapshotDiffHistoryItem {
+  snapshot_id: string;
+  previous_snapshot_id: string | null;
+  snapshot_state: string;
+  source_as_of: string | null;
+  downloaded_at: string | null;
+  promoted_at: string | null;
+  added: number;
+  changed: number;
+  missing: number;
+  reappeared: number;
+  carried: number;
+  expired: number;
+  alpr_count: number;
+  in_envelope_alpr_count: number;
+  review_note: string | null;
+}
+
+export interface DiffHistoryResponse {
+  region_id: string;
+  diffs: SnapshotDiffHistoryItem[];
+  meaning: string;
+}
+
+export interface RequestMetrics {
+  count: number;
+  rejected_4xx: number;
+  errors_5xx: number;
+  samples: number;
+  p50_ms: number | null;
+  p95_ms: number | null;
+  max_ms: number | null;
+}
+
+export interface ServiceMetrics {
+  uptime_seconds: number;
+  requests: Record<string, RequestMetrics>;
+  plans: { count: number; by_search_status: Record<string, number>; options_returned: Record<string, number>; routing_calls_total: number; errors_by_code: Record<string, number>; elapsed_p50_ms: number | null; elapsed_p95_ms: number | null; elapsed_max_ms: number | null };
+  meaning: string;
+  process: { version: string; rss_mb: number | null };
+  storage: { available: boolean; message?: string; snapshots_by_state?: Record<string, number>; camera_record_rows?: number; snapshot_diff_rows?: number; association_cache_rows?: number; sync_job_rows?: number; raw_snapshot_bytes?: number; database_bytes?: number };
+}
+
 export interface DataHealth {
   region_id: string;
   service_boundary_id: string;
@@ -273,7 +342,9 @@ export interface DataHealth {
   last_failure: SyncJobView | null;
   recent_syncs: SyncJobView[];
   staleness: { age_hours?: number | null; stale_after_hours?: number; is_stale?: boolean; message?: string };
-  router: { available: boolean; version: string | null; tileset_last_modified: string | null; has_tiles: boolean | null; graph_id: string; extract_data_timestamp: string; message: string | null };
+  scheduler?: SchedulerView;
+  provider_policy?: ProviderPolicyView;
+  router: { available: boolean; version: string | null; tileset_last_modified: string | null; has_tiles: boolean | null; graph_id: string; extract_data_timestamp: string; rebuild_cadence?: string | null; message: string | null };
   geocoder: { configured: boolean; available: boolean; provider: string; data_updated: string | null; message: string | null };
   basemap: { id: string; attribution: string; max_zoom: number };
   database: { available: boolean; message?: string };

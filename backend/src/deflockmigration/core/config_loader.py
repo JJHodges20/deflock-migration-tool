@@ -178,6 +178,8 @@ class SnapshotValidationConfig(_Strict):
     stale_after_hours: int = 48
     unresolved_disappearance: Literal["retain_as_uncertain", "drop"] = "retain_as_uncertain"
     retain_missing_hours: int = 72
+    manual_refresh_cooldown_minutes: int = Field(default=30, ge=0)  # shared cooldown for operator-triggered refreshes
+    overdue_grace_hours: float = Field(default=1.0, ge=0)  # Data Health flags the scheduler as overdue beyond interval + grace
 
 
 class RetentionConfig(_Strict):

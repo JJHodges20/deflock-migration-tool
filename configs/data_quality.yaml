@@ -5,6 +5,8 @@ snapshot_validation:
   stale_after_hours: 48              # Data Health flags the snapshot as stale beyond this age
   unresolved_disappearance: retain_as_uncertain   # a record missing from a new snapshot is "no longer mapped", not "removed"
   retain_missing_hours: 72           # how long a no-longer-mapped record is carried as uncertain before it is dropped
+  manual_refresh_cooldown_minutes: 30  # operator refreshes share one cooldown; the scheduled worker is paced by refresh_interval_hours
+  overdue_grace_hours: 1             # Data Health reports the scheduler as overdue when the next sync is this much past due
 
 retention:
   keep_superseded_snapshots: 30      # older superseded snapshots (and their records) are pruned after a successful sync

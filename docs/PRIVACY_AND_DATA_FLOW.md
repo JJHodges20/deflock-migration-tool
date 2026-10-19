@@ -1,4 +1,4 @@
-# Privacy and data flow (M6 build)
+# Privacy and data flow (M7 build)
 
 Privacy is part of the implementation, not just the name. This page states what moves where, what is stored, and what is never stored.
 
@@ -26,6 +26,10 @@ No analytics, session replay, advertising SDKs, error-reporting services, or ext
 - API: Uvicorn's access log is disabled; the request middleware logs method, path, status code, and duration only. Query strings and bodies are never logged. A redaction filter masks coordinate pairs, `lat=`/`lon=`/`bbox=`/`q=` style values, JSON keys, and query strings in any log line, including exception traces (`backend/tests/privacy`).
 - Worker and setup jobs log counts, statuses, and sanitized error types, never payload content.
 - Nothing from a request is written to the database: the only tables are public camera snapshots, camera records, and sync jobs.
+
+## Service metrics (M7)
+
+`GET /api/v1/health/metrics` reports request counts and latency summaries per declared route template, plan outcomes by search status, routing calls, process memory, and public-data storage sizes. The numbers are kept in the API process memory only and contain no coordinates, addresses, shapes, bodies, or query strings; the contract and browser tests assert their absence. Sync job rows record outcomes and counts of public records, never a trip.
 
 ## Storage rules
 

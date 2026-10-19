@@ -24,12 +24,13 @@ from deflockmigration.ingestion.diff import compute_diff
 from deflockmigration.ingestion.normalize import normalize_elements
 from deflockmigration.ingestion.quality import evaluate_snapshot
 from deflockmigration.storage.db import SessionFactory
-from deflockmigration.storage.models import CameraSnapshot, SnapshotDiff
+from deflockmigration.storage.models import CameraSnapshot, SnapshotDiff, SyncJob
 from deflockmigration.storage.repositories import CameraRepository, SnapshotRepository, SyncJobRepository
 
 log = logging.getLogger(__name__)
 PARSER_VERSION = "normalize-1.1"
 CARRY_WARNING = "no longer mapped in this source snapshot; retained as uncertain"
+LOCK_SKIP_MESSAGE = "another sync holds the region lock; its result applies to this request as well"
 
 
 @dataclass(frozen=True)
@@ -69,7 +70,10 @@ def run_sync(
     snapshot_dir: Path,
     trigger: str = "scheduled",
     clock: Clock = utc_now,
+    force: bool = False,
 ) -> SyncOutcome:
+    """One refresh of the fixed region. Concurrent runs coalesce on the region lock (the second one is skipped and
+    the running sync's result applies); manual refreshes share a cooldown unless `force` is set."""
     region = config.region
     region_id = region.region_id
     quality_cfg = config.data_quality.snapshot_validation
@@ -79,10 +83,22 @@ def run_sync(
     with session_factory() as session:
         locked = session.execute(text("SELECT pg_try_advisory_lock(:key)"), {"key": _lock_key(region_id)}).scalar()
         if not locked:
-            return SyncOutcome("skipped", None, "another sync holds the region lock")
+            return SyncOutcome("skipped", None, LOCK_SKIP_MESSAGE)
         job = None
         try:
             jobs = SyncJobRepository(session)
+            snapshots = SnapshotRepository(session)
+            if trigger == "manual" and not force:
+                active = snapshots.get_active(region_id)
+                cooldown_s = quality_cfg.manual_refresh_cooldown_minutes * 60
+                if active is not None and (now - active.downloaded_at_end).total_seconds() < cooldown_s:
+                    age_min = (now - active.downloaded_at_end).total_seconds() / 60
+                    message = (f"manual refresh skipped: the active snapshot was downloaded {age_min:.0f} min ago and operator refreshes share a "
+                               f"{quality_cfg.manual_refresh_cooldown_minutes} min cooldown (use --force to query the public instance anyway)")
+                    session.add(SyncJob(region_id=region_id, trigger=trigger, started_at=now, finished_at=clock(), status="skipped", snapshot_id=active.snapshot_id, attempts=0, message=message[:400]))
+                    session.commit()
+                    log.info("%s", message)
+                    return SyncOutcome("skipped", active.snapshot_id, message)
             job = jobs.start(region_id, trigger, now)
             session.commit()
 
@@ -101,7 +117,6 @@ def run_sync(
             base_dt = dt.datetime.fromisoformat(base_ts.replace("Z", "+00:00")) if base_ts else None
             snapshot_id = f"ovp-{region_id}-{(base_dt or now).strftime('%Y%m%dT%H%M%SZ')}-{result.sha256[:8]}"
 
-            snapshots = SnapshotRepository(session)
             if snapshots.get(snapshot_id) is not None:
                 job.status, job.finished_at, job.snapshot_id, job.message = "succeeded", clock(), snapshot_id, "identical snapshot already stored"
                 session.commit()

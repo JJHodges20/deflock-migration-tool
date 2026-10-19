@@ -1,4 +1,4 @@
-import type { ApiErrorBody, CamerasResponse, CameraScope, DataHealth, GeocodeResponse, PlanRequest, PlanResponse, RegionResponse, ReverseGeocodeResponse } from "./types";
+import type { ApiErrorBody, CamerasResponse, CameraScope, DataHealth, DiffHistoryResponse, GeocodeResponse, PlanRequest, PlanResponse, RegionResponse, ReverseGeocodeResponse, ServiceMetrics } from "./types";
 
 // Same-origin by default: the nginx edge proxies /api/ to the backend, so no CORS and no third party.
 const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -48,6 +48,8 @@ async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
 export const api = {
   region: (signal?: AbortSignal) => request<RegionResponse>("/api/v1/region", { signal }),
   dataHealth: (signal?: AbortSignal) => request<DataHealth>("/api/v1/health/data", { signal }),
+  metrics: (signal?: AbortSignal) => request<ServiceMetrics>("/api/v1/health/metrics", { signal }),
+  diffHistory: (limit = 10, signal?: AbortSignal) => request<DiffHistoryResponse>(`/api/v1/cameras/diffs?limit=${limit}`, { signal }),
   plan: (body: PlanRequest, signal?: AbortSignal) => request<PlanResponse>("/api/v1/routes/plan", { method: "POST", body: JSON.stringify(body), signal }),
   geocode: (query: string, signal?: AbortSignal) => request<GeocodeResponse>("/api/v1/geocode", { method: "POST", body: JSON.stringify({ query, limit: 5 }), signal }),
   reverse: (lat: number, lon: number, signal?: AbortSignal) => request<ReverseGeocodeResponse>("/api/v1/geocode/reverse", { method: "POST", body: JSON.stringify({ lat, lon }), signal }),

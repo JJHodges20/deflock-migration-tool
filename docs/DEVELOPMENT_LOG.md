@@ -2,6 +2,45 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M7: scheduled updates, resilience, and operating instructions
+
+### Built
+
+- **One scheduler, politely:** unchanged from M2 (one `camera-sync` container, region lock, 6-hour interval, restart waits for the remainder of the interval). Data Health now derives the same schedule the worker uses: next due time, overdue flag (interval plus a one-hour grace), last trigger, and the fact that syncs run only while the stack is up.
+- **Manual refresh cooldown and coalescing:** operator refreshes share a 30-minute cooldown (`manual_refresh_cooldown_minutes`); a refresh inside it is recorded as a `skipped` sync job with the reason and the active snapshot id, `--force` (`scripts\sync_cameras.ps1 -Force`) bypasses it, concurrent runs still coalesce on the region lock, and the scheduled worker is never subject to the cooldown.
+- **Rollback without deletion:** `deflock-snapshot-review rollback [snapshot_id] --note` (`scripts\review_snapshot.ps1 rollback`) makes a previously active, still-retained snapshot active again; the replaced snapshot stays retained as superseded so the rollback can be undone the same way; refusals for a missing note, an already active, unknown, pruned, or never-active snapshot; a `rollback` job records both ids and the note.
+- **Graph rebuild workflow with validation and rollback:** the build keeps the graph it replaces as the last-good graph in the volume (`previous/`); `scripts\import_region.ps1` now validates the promoted graph through the running application (router available, a reviewed public-landmark route succeeds) and refreshes the camera road associations for the new graph version, and tells the operator to roll back when validation fails; `scripts\rollback_graph.ps1` (`graph-rollback` setup job) swaps the last-good graph back, restarts the service, refreshes associations, and running it again undoes the rollback.
+- **Per-request version pinning made visible:** the planner polls Data Health every five minutes and when the tab becomes visible again; a result planned on an older snapshot or graph is marked outdated and stays exactly as computed (the person plans again to use current data). The API already pinned the active snapshot per request; an integration test now proves a request on snapshot A keeps A's records and lifecycle states after B is promoted.
+- **Freshness policy and provider limits disclosed:** Data Health carries the scheduler block and a `provider_policy` block (fixed envelope query never derived from a trip, one request at a time, identified application, timeout, pause after a rate limit, attempts, backoff, no endpoint rotation); the routing graph's rebuild cadence is shown.
+- **Diff history:** `GET /api/v1/cameras/diffs` lists what each retained snapshot changed versus the one it replaced, with state and review notes; Data Health shows it as "Snapshot history".
+- **Resource monitoring without trip data:** `GET /api/v1/health/metrics` reports per route template request counts, rejected and failed counts, p50/p95/max latencies from a bounded in-memory reservoir, plan outcomes by search status, options returned, routing calls, plan latencies, API process memory, and public-data storage sizes; Data Health summarises it. Nothing in it derives from a trip, and the tests assert the absence of coordinates, addresses, and geometry.
+- **Operating instructions:** `docs/OPERATIONS.md` (everyday operation, the scheduler, cooldown, outcomes, review, snapshot and graph rollback, rebuild, version pinning, metrics, measured disk and memory, backups, upgrades, troubleshooting); the user guide, data dictionary, privacy document, and test plan updated.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 156 passed, including the M7 resilience matrix on PostGIS (manual cooldown recorded as a skipped job, `--force`, scheduled unaffected; rollback and its undo with refusals; pinned snapshot assessable across a promotion; truncated upstream response keeps the active snapshot; diff history), the metrics and scheduler unit tests, and the M7 contracts (metrics without trip text, scheduler and policy without a database, diff history unavailable rather than empty). Host: 125 passed, 31 skipped.
+- Frontend: type check clean; 52 Vitest tests passed (Data Health scheduler, policy, history, and metrics views; the outdated-result notice after a newer snapshot is reported, with the planned result untouched).
+- Browser (Playwright, three viewports): 72 passed in 2.4 min with no page errors. The new operations tests show Data Health with the scheduler, the source policy, the snapshot history, and the service metrics, assert that the metrics endpoint carries no coordinate, address, or geometry text, and show that a planned result is marked outdated when Data Health reports a newer snapshot while the result itself stays as computed.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed on the M7 images: the rebuilt graph (built 2026-10-19T20:02:35Z) and the new snapshot survived the restart.
+- Live operations checks on the pilot machine, in this order:
+  - Manual refresh twice: the first made one public query and promoted `ovp-denver-20261019T195537Z-83bc21f3` (replacing the 14:46 snapshot); the second and a third were skipped by the cooldown and recorded as `skipped` jobs; Data Health reported "on schedule", next due 2026-10-20T01:57Z, cooldown remaining 1,766 s.
+  - Snapshot rollback to the previous snapshot and roll-forward to the newer one through `scripts\review_snapshot.ps1 rollback`; both recorded as `rollback` jobs; 7 snapshots retained; the diff history endpoint shows the review notes.
+  - Failed rebuild: `graph-build` against a missing extract exited 2 and the active manifest (built 2026-10-15T23:22:43Z, 599 tiles) was untouched.
+  - Forced rebuild with `scripts\import_region.ps1 -Force` while a route loop planned Union Station to Denver Zoo every two seconds for eleven minutes: the latest Geofabrik extract (385,213,485 bytes) downloaded and verified in 26 s; the graph built in 214 s (build_tiles 202 s, 599 tiles) in staging and was promoted; the service restarted; the script validated the new graph through the app (built 2026-10-19T20:02:35Z, test route 9 maneuvers) and refreshed the association cache (1,279 records in 10.1 s, 1,285 rows of the old graph pruned); 268 s end to end. The loop recorded 292 successful plans and 0 failures: 99 cited the old graph version, 192 the new one, and 1 (during the restart) came back with the Standard route but no graph version, that is, honestly not assessed rather than wrong. The previous graph stayed in the volume as the last-good graph (606 MB).
+  - Graph rollback with `scripts\rollback_graph.ps1`: the last-good graph was swapped back (Data Health: built 2026-10-15T23:22:43Z; a test route succeeded with that graph version) and the association cache was refreshed for it (1,285 records, 12.2 s); running the script again undid the rollback (built 2026-10-19T20:02:35Z again, test route 9 maneuvers, cache refreshed in 10.9 s). No download or rebuild was needed for either step.
+
+### Gate check (roadmap M7)
+
+- New published source records flow into later route assessments after a validated sync: the manual refresh above promoted a new snapshot and the next plans cite it; the M2 and M7 integration tests prove added, edited, and vanished records across snapshots.
+- The app does not overwrite good data on failure: outage, rate limit, HTML page, malformed or truncated JSON, quarantine, and concurrent runs all keep the active snapshot (integration tests); a failed graph build leaves the active graph untouched (live).
+- Scheduled sync only runs when the local service is running; reopening catches up politely: the worker is a Compose service; the schedule view and the worker share `seconds_until_due`; a stack that was down catches up with one query.
+- Rollback does not require deleting the database: snapshot rollback flips promotion flags only; graph rollback swaps files kept in the volume.
+
+### Observations
+
+- The first manual refresh of the day was the only public query M7 made; everything else was served from retained data. The cooldown message names the age of the active snapshot so an operator understands why nothing happened.
+- Metrics are keyed by route templates taken from the OpenAPI document rather than from the request scope, because this FastAPI version nests included routers in a way that hides the matched route from middleware; the raw URL is never used as a key.
+- A forced rebuild on the pilot machine takes about four and a half minutes including the download, validation, and the association refresh, and keeping the last-good graph costs about 600 MB; both numbers are in the runbook. Graph rollback is a file swap plus a restart, about 25 s including the association refresh, so a bad rebuild costs minutes, not a day.
 ## 2026-10-19 - M6: complete trip-planning experience
 
 ### Built

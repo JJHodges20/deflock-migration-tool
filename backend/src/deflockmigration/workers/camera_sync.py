@@ -48,6 +48,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--once", action="store_true", help="run one sync and exit")
     parser.add_argument("--trigger", default=None, help="scheduled | manual | setup")
     parser.add_argument("--interval-hours", type=float, default=None, help="override the region refresh interval")
+    parser.add_argument("--force", action="store_true", help="manual refresh: ignore the shared cooldown and query the public instance now")
     args = parser.parse_args(argv)
 
     settings = Settings()
@@ -89,7 +90,7 @@ def main(argv: list[str] | None = None) -> int:
                 if stop["flag"]:
                     return 0
         while True:
-            outcome = run_sync(config, session_factory, client, snapshot_dir=settings.snapshot_dir, trigger=trigger)
+            outcome = run_sync(config, session_factory, client, snapshot_dir=settings.snapshot_dir, trigger=trigger, force=args.force and args.once)
             log.info("sync outcome=%s snapshot=%s %s", outcome.status, outcome.snapshot_id, outcome.message)
             if args.once:
                 return 0 if outcome.status in ("succeeded", "skipped") else 1
