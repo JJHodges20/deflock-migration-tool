@@ -1,4 +1,4 @@
-# Operations runbook (Denver pilot, M7)
+# Operations runbook (Denver pilot, v1.0 release candidate)
 
 Everything here was executed on the pilot machine (Windows 11, Docker Desktop with about 8.3 GB allocated) before it was written down. Every command runs inside containers; nothing is installed on the host. No command here touches a person's trip: the only data this system keeps is public OpenStreetMap camera records, public road data, and job history.
 
@@ -104,7 +104,11 @@ Only public data and job history exist, so a backup is optional. `docker compose
 3. `docker compose up -d`
 4. `powershell -ExecutionPolicy Bypass -File scripts\smoke_test.ps1 -CheckRestart`
 
-## 13. If something goes wrong
+## 13. Release audit
+
+`powershell -ExecutionPolicy Bypass -File scripts\audit.ps1 -Check all` runs the paid-key, egress, log, and restore checks against the running stack and prints the evidence; `-Check perf` stops and starts the stack to measure the cold start and then measures warm plan latencies. The network layout (an internal network for everything except the sync worker, the setup jobs, and the edge) is described in `docs/PRIVACY_AND_DATA_FLOW.md`; the audit results for this release are in `docs/AUDIT.md`.
+
+## 14. If something goes wrong
 
 | Symptom | Check | Action |
 |---|---|---|
@@ -112,5 +116,5 @@ Only public data and job history exist, so a backup is optional. `docker compose
 | Data Health: last failure `failed` with HTTP 429 | the shared instance is rate limiting | wait; the worker already paused 30 s and will retry at the next interval; do not add instances |
 | Data Health: snapshot quarantined | `scripts\review_snapshot.ps1 list` | corroborate, then accept or reject |
 | Route engine unavailable | `docker compose logs valhalla` | the graph may still be loading; after a failed rebuild run `scripts\rollback_graph.ps1` |
-| Address search unavailable | `docker compose logs -f geocoder` | the first import takes about 17 minutes; if it was interrupted it starts over |
+| Address search unavailable | `docker compose logs -f geocoder` | the first import takes about 17 minutes; if it was interrupted it starts over. Right after a restart the first searches can take several seconds while the database cache warms; the health check runs a real search every 30 s, and the API waits up to 15 s |
 | Results look outdated | the notice names the newer snapshot or graph | plan again |

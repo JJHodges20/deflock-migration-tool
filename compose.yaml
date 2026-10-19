@@ -5,7 +5,7 @@
 name: deflockmigration
 
 x-backend-image: &backend-image
-  image: deflockmigration/backend:0.1.0
+  image: deflockmigration/backend:1.0.0-rc1
   build:
     context: .
     dockerfile: backend/Dockerfile
@@ -16,11 +16,15 @@ x-backend-env: &backend-env
   DEFLOCK_DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:-deflock}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}@db:5432/${POSTGRES_DB:-deflock}
   DEFLOCK_VALHALLA_URL: http://valhalla:8002
   DEFLOCK_GEOCODER_URL: ${DEFLOCK_GEOCODER_URL:-http://geocoder:8080}
-  DEFLOCK_USER_AGENT: ${DEFLOCK_USER_AGENT:-DeFlockMigration/0.1 (local pilot; fixed-region camera sync)}
+  DEFLOCK_GEOCODER_TIMEOUT_SECONDS: ${DEFLOCK_GEOCODER_TIMEOUT_SECONDS:-15}
+  DEFLOCK_USER_AGENT: ${DEFLOCK_USER_AGENT:-DeFlockMigration/1.0.0rc1 (local pilot; fixed-region camera sync)}
 
 services:
   # ---- long-running services (started by `docker compose up`) ----
   edge:
+    networks:
+      - internal
+      - egress
     image: nginx:1.28-alpine
     ports:
       - "127.0.0.1:${DEFLOCK_PORT:-3000}:3000"
@@ -45,7 +49,9 @@ services:
           memory: 128M
 
   web:
-    image: deflockmigration/web:0.1.0
+    networks:
+      - internal
+    image: deflockmigration/web:1.0.0-rc1
     build:
       context: ./apps/web
       target: runner
@@ -66,6 +72,8 @@ services:
           memory: 512M
 
   api:
+    networks:
+      - internal
     <<: *backend-image
     environment:
       <<: *backend-env
@@ -81,6 +89,9 @@ services:
           memory: 512M
 
   camera-sync:
+    networks:
+      - internal
+      - egress
     <<: *backend-image
     command: ["python", "-m", "deflockmigration.workers.camera_sync"]
     environment:
@@ -99,6 +110,8 @@ services:
           memory: 512M
 
   db:
+    networks:
+      - internal
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-deflock}
@@ -121,6 +134,8 @@ services:
           memory: 1G
 
   valhalla:
+    networks:
+      - internal
     image: ghcr.io/valhalla/valhalla:3.9.1
     entrypoint: ["/bin/bash", "/opt/deflock/serve.sh"]
     environment:
@@ -141,6 +156,8 @@ services:
           memory: 2G
 
   geocoder:
+    networks:
+      - internal
     # Self-hosted Nominatim on the Colorado extract (decision 0001 D10). The first start imports
     # the extract (about 17 minutes, 5.2 GiB peak on the pilot machine); later starts serve at once.
     image: mediagis/nominatim:5.3.2
@@ -163,9 +180,11 @@ services:
       - osm_extracts:/pbf:ro
     shm_size: 1g
     healthcheck:
-      test: ["CMD-SHELL", "python3 -c \"import urllib.request,sys; sys.exit(0 if b'OK' in urllib.request.urlopen('http://127.0.0.1:8080/status', timeout=4).read() else 1)\""]
+      # A real search, not just /status: "healthy" then means searches answer, and the probe keeps the database cache warm
+      # after a restart (the first searches on a cold 9.5 GB import can take several seconds).
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request,sys; sys.exit(0 if b'Denver' in urllib.request.urlopen('http://127.0.0.1:8080/search?q=Union+Station+Denver&format=jsonv2&limit=1', timeout=20).read() else 1)\""]
       interval: 30s
-      timeout: 10s
+      timeout: 25s
       retries: 3
       start_period: 40m
     restart: unless-stopped
@@ -176,6 +195,8 @@ services:
 
   # ---- one-time setup jobs (profile "setup"; run by scripts/bootstrap.ps1 in this order) ----
   db-migrate:
+    networks:
+      - internal
     <<: *backend-image
     profiles: ["setup"]
     command: ["alembic", "upgrade", "head"]
@@ -186,6 +207,8 @@ services:
         condition: service_healthy
 
   osm-download:
+    networks:
+      - egress
     <<: *backend-image
     profiles: ["setup"]
     user: "0:0"
@@ -196,6 +219,8 @@ services:
       - osm_extracts:/pbf
 
   graph-build:
+    networks:
+      - internal
     image: ghcr.io/valhalla/valhalla:3.9.1
     profiles: ["setup"]
     entrypoint: ["/bin/bash", "/opt/deflock/build_graph.sh"]
@@ -213,6 +238,8 @@ services:
           memory: 6G
 
   graph-rollback:
+    networks:
+      - internal
     # Puts the last-good graph back (kept by graph-build in the volume); restart valhalla afterwards.
     image: ghcr.io/valhalla/valhalla:3.9.1
     profiles: ["setup"]
@@ -222,6 +249,8 @@ services:
       - ./infra/valhalla:/opt/deflock:ro
 
   basemap-extract:
+    networks:
+      - egress
     image: protomaps/go-pmtiles:v1.31.2
     profiles: ["setup"]
     command: ["extract", "${PROTOMAPS_BUILD_URL:-https://build.protomaps.com/20261015.pmtiles}", "/basemap/denver.pmtiles", "--bbox=${BASEMAP_BBOX:--105.34301,39.4341,-104.36565,40.09437}", "--maxzoom=15"]
@@ -229,6 +258,8 @@ services:
       - basemap:/basemap
 
   basemap-assets:
+    networks:
+      - egress
     <<: *backend-image
     profiles: ["setup"]
     user: "0:0"
@@ -239,6 +270,9 @@ services:
       - basemap:/basemap
 
   camera-sync-once:
+    networks:
+      - internal
+      - egress
     <<: *backend-image
     profiles: ["setup"]
     command: ["python", "-m", "deflockmigration.workers.camera_sync", "--once", "--trigger", "setup"]
@@ -251,6 +285,8 @@ services:
         condition: service_healthy
 
   associate-cameras:
+    networks:
+      - internal
     <<: *backend-image
     profiles: ["setup"]
     command: ["deflock-associate-cameras"]
@@ -264,6 +300,8 @@ services:
 
   # ---- tests (profile "test") ----
   api-tests:
+    networks:
+      - internal
     <<: *backend-image
     profiles: ["test"]
     command: ["pytest", "-q"]
@@ -276,7 +314,9 @@ services:
         condition: service_healthy
 
   web-tests:
-    image: deflockmigration/web-test:0.1.0
+    networks:
+      - internal
+    image: deflockmigration/web-test:1.0.0-rc1
     profiles: ["test"]
     build:
       context: ./apps/web
@@ -298,6 +338,14 @@ services:
     depends_on:
       edge:
         condition: service_healthy
+
+networks:
+  # Local-only services live on an internal network with no route to the internet (roadmap section 13: a proven
+  # local-only mode). Only the camera-sync worker, the public-data setup jobs, and the nginx edge (which publishes
+  # the port and never initiates egress) also join the egress network.
+  internal:
+    internal: true
+  egress:
 
 volumes:
   pgdata:

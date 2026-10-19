@@ -1,4 +1,4 @@
-# Privacy and data flow (M7 build)
+# Privacy and data flow (v1.0 release candidate)
 
 Privacy is part of the implementation, not just the name. This page states what moves where, what is stored, and what is never stored.
 
@@ -43,8 +43,24 @@ No analytics, session replay, advertising SDKs, error-reporting services, or ext
 - CORS is closed by default (same-origin through the edge); `DEFLOCK_CORS_ORIGINS` exists only for development against a separately published API.
 - Request bodies are limited to 64 KB at the edge and in the API; camera viewport queries are limited to 0.6 degrees per side.
 
-## Known gaps to close in later milestones
+## Network layout and egress audit (executed 2026-10-19)
 
-- Local-only mode is enforced by configuration, not yet proven by an egress audit (M8 plans a network inspection while planning real trips).
-- The geocoder container's own logging configuration has not been hardened beyond the project's defaults (M3).
-- Operator endpoints do not exist yet; manual sync is a CLI/script action (M7 adds protected operator functions if needed).
+The Compose stack uses two networks. `internal` is a Docker internal network with no route outside the machine; `web`, `api`,
+`db`, `valhalla`, and `geocoder` are attached to it only. `egress` is an ordinary bridge; only `camera-sync` (the Overpass
+query), the public-data setup jobs (`osm-download`, `basemap-extract`, `basemap-assets`, `camera-sync-once`), and `edge`
+(which publishes 127.0.0.1:3000 and never initiates a connection) join it. `scripts\audit.ps1 -Check egress` probes every
+running container; on 2026-10-19 the api, web, valhalla, db, and geocoder containers had no internet route (name resolution
+or connection failed), the edge's probe timed out, and only camera-sync reached the public Overpass instance. The browser
+privacy suite (`apps/web/e2e/privacy.spec.ts`) shows that a complete session makes requests to this origin only, sends trip
+details only in POST bodies, writes nothing to browser storage, sets no cookie, registers no service worker, and keeps
+coordinates out of the address bar. `scripts\audit.ps1 -Check logs` makes a plan, an address search, a reverse lookup, a
+camera viewport query, and an outside-area plan, then searches every container log for the coordinates, the address, the
+bounding box, and the landmark names: zero hits, with the nginx access log off and the API logging method, path template,
+status, and duration only.
+
+## Remaining limitations
+
+- The stack is local only by design: no TLS, no authentication, no rate limiting beyond the request body limit and the bounded search. Publishing it on a network needs its own review and the owner's approval.
+- The geocoder container's own logging configuration is the image's default (no project hardening beyond keeping it on the internal network and never logging its queries in this application).
+- Operator actions are scripts and CLIs on the machine that runs the stack; there is no operator endpoint, which is the chosen design for a local pilot.
+- Service metrics are kept in the API process only and never written anywhere; they contain no trip data, as the tests assert, but they are visible to anyone who can reach the local port.

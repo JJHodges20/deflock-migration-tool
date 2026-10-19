@@ -7,8 +7,8 @@ DeFlockMigration is an independent project. It is not affiliated with or endorse
 ## Status
 
 - **M0 feasibility** through **M6 complete trip-planning experience**: complete and approved (2026-10-15 to 2026-10-19); evidence per milestone in `docs/DEVELOPMENT_LOG.md`, milestone table in `docs/IMPLEMENTATION_PLAN.md`.
-- **M7 scheduled updates, resilience, and operating instructions:** built and verified 2026-10-19, awaiting the owner's gate approval. The runbook is `docs/OPERATIONS.md`.
-- Remaining: M8 Denver pilot audit and v1 release candidate.
+- **M7 scheduled updates, resilience, and operating instructions:** complete and approved 2026-10-19. The runbook is `docs/OPERATIONS.md`.
+- **M8 Denver pilot audit and v1.0 release candidate (`1.0.0rc1`):** built and audited 2026-10-19, awaiting the owner's gate review. The audit, known limitations, and release checklist are in `docs/AUDIT.md`; attribution and policies in `docs/ATTRIBUTION.md`. An invited pilot needs the owner's approval after reviewing that evidence; public deployment and any service-area change need separate approval.
 
 ## Run it (Docker only)
 
@@ -32,9 +32,9 @@ Then open http://127.0.0.1:3000. Details, timings, operator tasks, and troublesh
 | `backend/` | API, worker, setup jobs, Alembic migrations, pytest suites |
 | `apps/web/` | Next.js + MapLibre planner, Vitest tests, Playwright browser suites (`e2e/`) |
 | `configs/` | region geometry references, providers, route profiles, data quality, privacy flags |
-| `data/` | committed boundaries, fixtures, manifests; local-only extracts and basemap under `data/raw/` |
-| `scripts/` | `bootstrap.ps1`, `import_region.ps1`, `rollback_graph.ps1`, `sync_cameras.ps1`, `review_snapshot.ps1`, `associate_cameras.ps1`, `smoke_test.ps1` |
-| `docs/` | roadmap, decisions, feasibility report and evidence, data source register, user guide, operations runbook, routing and assessment method, data dictionary, test plan, privacy and data flow, development log |
+| `data/` | committed boundaries, fixtures (including the reviewed pilot trips), manifests; local-only extracts and basemap under `data/raw/` |
+| `scripts/` | `bootstrap.ps1`, `import_region.ps1`, `rollback_graph.ps1`, `sync_cameras.ps1`, `review_snapshot.ps1`, `associate_cameras.ps1`, `smoke_test.ps1`, `audit.ps1` |
+| `docs/` | roadmap, decisions, feasibility report and evidence, data source register, attribution and policies, user guide, operations runbook, routing and assessment method, data dictionary, test plan, privacy and data flow, release audit, development log |
 | `spikes/` | M0 routing and geocoder spikes with their results |
 | `CLAUDE.md` | engineering rules for Claude Code sessions |
 

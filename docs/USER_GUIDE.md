@@ -1,4 +1,4 @@
-# User guide (Denver pilot, M7 build)
+# User guide (Denver pilot, v1.0 release candidate)
 
 DeFlockMigration runs entirely in Docker. The host needs Docker Desktop (Compose v2) and Git; nothing else is installed on the computer.
 
@@ -79,6 +79,7 @@ docker compose up
 | Look up one camera record's history | `GET http://127.0.0.1:3000/api/v1/cameras/record?source_key=osm:node:<id>` returns the current record and its versions across retained snapshots |
 | After updating the code | `docker compose build`, then `docker compose --profile setup run --rm db-migrate`, then `docker compose up -d` (migrations are never applied silently) |
 | Refresh road data and rebuild the graph | `powershell -ExecutionPolicy Bypass -File scripts\import_region.ps1` (add `-Force` to rebuild an unchanged extract); the script validates the new graph through the running app, refreshes the camera road associations, and keeps the previous graph for `scripts\rollback_graph.ps1` |
+| Run the release audit (keys, egress, logs, restore; `-Check perf` for timings) | `powershell -ExecutionPolicy Bypass -File scripts\audit.ps1 -Check all` (evidence summary in `docs/AUDIT.md`) |
 | Verify the stack, including a restart persistence check | `powershell -ExecutionPolicy Bypass -File scripts\smoke_test.ps1 -CheckRestart` |
 | Follow the geocoder import | `docker compose logs -f geocoder` |
 | Run the test suites | `docker compose --profile test run --rm api-tests`, `... web-tests`, `... e2e` (the last one needs the stack running) |

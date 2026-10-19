@@ -23,14 +23,14 @@ class Settings(BaseSettings):
     valhalla_url: str = "http://valhalla:8002"
     geocoder_url: str | None = Field(default=None, description="Base URL of the approved self-hosted geocoder; None = not configured")
     overpass_url: str = "https://overpass-api.de/api/interpreter"
-    user_agent: str = "DeFlockMigration/0.1 (local pilot; fixed-region camera sync)"
+    user_agent: str = "DeFlockMigration/1.0.0rc1 (local pilot; fixed-region camera sync)"
     snapshot_dir: Path = Path("/var/lib/deflock/snapshots")
 
     log_level: str = "INFO"
     cors_origins: list[str] = Field(default_factory=list)
     router_connect_timeout_seconds: float = 2.0
     router_read_timeout_seconds: float = 10.0
-    geocoder_timeout_seconds: float = 5.0
+    geocoder_timeout_seconds: float = 15.0  # a self-hosted Nominatim answers in well under a second once warm, but the first searches after a restart can take several seconds
     plan_deadline_seconds: float = 20.0
     cameras_max_bbox_degrees: float = Field(default=0.6, description="Maximum width/height of a camera viewport query")
 

@@ -1,0 +1,18 @@
+{
+  "meaning": "Reviewed Denver pilot trips between public landmarks and public office addresses only (roadmap section 16: no personal home or work addresses). Coordinates are approximate landmark points; the routing engine snaps them to the nearest drivable road and the response discloses the snap distance. Expected values describe the service boundary and legality checks, never a camera count: counts change with every published snapshot.",
+  "reviewed_on": "2026-10-19",
+  "service_boundary_id": "denver-service-v1",
+  "trips": [
+    {"name": "union_station_to_zoo", "origin": [39.7530, -105.0002], "destination": [39.7503, -104.9500], "covers": "downtown to City Park across the Capitol corridor; the M0 reference trip", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "capitol_to_washington_park", "origin": [39.7393, -104.9848], "destination": [39.7006, -104.9699], "covers": "arterial south of downtown; a trip with no better camera-aware alternative on the 2026-10-19 snapshot", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "downtown_one_way_grid", "origin": [39.7478, -104.9968], "destination": [39.7558, -104.9933], "covers": "short trip inside the one-way downtown grid", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "union_station_to_den", "origin": [39.7530, -105.0002], "destination": [39.8494, -104.6737], "covers": "city edge, interstate ramps, and the airport arm of the service boundary", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "cherry_creek_to_highlands", "origin": [39.7177, -104.9533], "destination": [39.7580, -105.0110], "covers": "diagonal across the city through Speer Boulevard", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "zoo_to_cherry_creek_mall", "origin": [39.7503, -104.9500], "destination": [39.7175, -104.9533], "covers": "north to south along Colorado Boulevard, a divided road with parallel frontage access", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "union_station_to_coors_field", "origin": [39.7530, -105.0002], "destination": [39.7559, -104.9942], "covers": "very short trip: a few blocks in the ballpark district", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "botanic_gardens_to_union_station", "origin": [39.7321, -104.9608], "destination": [39.7530, -105.0002], "covers": "east to west through Capitol Hill and the downtown one-way grid", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "washington_park_to_lowry", "origin": [39.7006, -104.9699], "destination": [39.7225, -104.8880], "covers": "both ends inside Denver with the Glendale enclave (outside the service boundary) between them; driving through an enclave is allowed, only endpoints are bounded", "expect": {"outcome": "planned", "max_snap_m": 300}},
+    {"name": "union_station_to_red_rocks", "origin": [39.7530, -105.0002], "destination": [39.6654, -105.2057], "covers": "destination outside the service boundary (Red Rocks Amphitheatre, Jefferson County)", "expect": {"outcome": "OUTSIDE_SERVICE_AREA"}},
+    {"name": "same_place_twice", "origin": [39.7530, -105.0002], "destination": [39.7530, -105.0002], "covers": "identical start and destination", "expect": {"outcome": "VALIDATION_ERROR"}}
+  ]
+}
