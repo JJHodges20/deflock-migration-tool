@@ -1,4 +1,5 @@
-"""Plan-trip use case, M1 scope: validate, obtain baseline candidates, return the Standard route.
+"""Plan-trip use case, M3 scope: validate, obtain baseline candidates, return the Standard route with
+endpoint-snapping and alignment disclosures.
 
 No camera assessment happens yet (M4/M5). Counts are therefore reported as null with
 assessment_coverage_status = not_assessed, never as zero.
@@ -11,19 +12,13 @@ import uuid
 from dataclasses import dataclass
 
 from deflockmigration.core.config_loader import AppConfig
-from deflockmigration.core.errors import OUTSIDE_SERVICE_AREA, ROUTER_UNAVAILABLE, AppError
+from deflockmigration.core.errors import OUTSIDE_SERVICE_AREA, ROUTER_UNAVAILABLE, VALIDATION_ERROR, AppError
 from deflockmigration.domain.routes import AssessmentCoverage, CameraScope, EngineRoute, LatLon, RouteProfile
-from deflockmigration.routing.candidates import choose_standard, dedupe, validate_maneuvers
+from deflockmigration.routing.candidates import alignment_warnings, choose_standard, dedupe, haversine_m, snap_distances_m, validate_maneuvers
 from deflockmigration.routing.provider import RoutingProvider
 
 log = logging.getLogger(__name__)
-
-
-@dataclass(frozen=True)
-class SnapshotVersions:
-    camera_snapshot_id: str | None
-    camera_source_as_of: str | None
-    camera_downloaded_at: str | None
+MIN_TRIP_DISTANCE_M = 25.0
 
 
 @dataclass(frozen=True)
@@ -33,6 +28,8 @@ class PlannedOption:
     route: EngineRoute
     extra_duration_s: float
     extra_distance_m: float
+    origin_snap_m: float
+    destination_snap_m: float
 
 
 @dataclass(frozen=True)
@@ -61,6 +58,8 @@ class PlanTripService:
                 "Trips must start and end inside the Denver pilot area.",
                 details={"outside": outside, "service_boundary_id": boundary.boundary_id},
             )
+        if haversine_m((origin.lat, origin.lon), (destination.lat, destination.lon)) < MIN_TRIP_DISTANCE_M:
+            raise AppError(VALIDATION_ERROR, "Start and destination are the same place. Choose two different points.", details={"min_distance_m": MIN_TRIP_DISTANCE_M})
         alternates = self._config.providers.routing.alternates
         candidates = dedupe(self._routing.baseline_candidates(origin, destination, alternates=alternates, request_id=request_id))
         if not candidates:
@@ -71,10 +70,19 @@ class PlanTripService:
             raise AppError(ROUTER_UNAVAILABLE, "The routing engine returned routes without usable directions.")
         standard = choose_standard(valid)
         warnings = list(dict.fromkeys(w for c in valid for w in c.warnings))
+        warnings.extend(alignment_warnings(standard))
         if standard.source != "primary":
             warnings.append("Standard route is the fastest baseline candidate by reported time; it differs from the engine's primary result.")
-        labels = [RouteProfile.STANDARD]
-        option = PlannedOption(route_id=uuid.uuid4().hex, profiles=labels, route=standard, extra_duration_s=0.0, extra_distance_m=0.0)
+        origin_snap, destination_snap = snap_distances_m(standard, origin, destination)
+        option = PlannedOption(
+            route_id=uuid.uuid4().hex,
+            profiles=[RouteProfile.STANDARD],
+            route=standard,
+            extra_duration_s=0.0,
+            extra_distance_m=0.0,
+            origin_snap_m=origin_snap,
+            destination_snap_m=destination_snap,
+        )
         return PlanResult(
             request_id=request_id,
             options=[option],

@@ -23,6 +23,8 @@ function fakeResult(id = "r1"): PlanResponse {
         length_meters: 6423,
         extra_duration_seconds: 0,
         extra_distance_meters: 0,
+        origin_snap_distance_meters: 12.5,
+        destination_snap_distance_meters: 80.0,
         matched_camera_record_count: null,
         uncertain_nearby_camera_count: null,
         counting_method_version: null,
@@ -110,6 +112,27 @@ describe("plannerReducer", () => {
   it("reports an explicit no-match state for empty search results", () => {
     const state = plannerReducer(initialPlannerState, { type: "SEARCH_RESULT", endpoint: "origin", candidates: [] });
     expect(state.origin.error?.code).toBe("NO_MATCH");
+  });
+
+  it("relabels a map pin from a reverse lookup only while that pin is still confirmed", () => {
+    let state = plannerReducer(initialPlannerState, { type: "SET_PIN_MODE", endpoint: "origin" });
+    state = plannerReducer(state, { type: "PIN_PLACED", lat: 39.753, lon: -105.0002 });
+    state = plannerReducer(state, { type: "RELABEL_ENDPOINT", endpoint: "origin", lat: 39.753, lon: -105.0002, label: "Map pin near Union Station" });
+    expect(state.origin.confirmed?.label).toBe("Map pin near Union Station");
+    expect(state.origin.confirmed?.lat).toBe(39.753);
+    // A stale lookup for a different pin position is ignored.
+    state = plannerReducer(state, { type: "RELABEL_ENDPOINT", endpoint: "origin", lat: 39.7, lon: -105.0, label: "elsewhere" });
+    expect(state.origin.confirmed?.label).toBe("Map pin near Union Station");
+    // Typed addresses are never relabelled.
+    state = plannerReducer(state, { type: "CONFIRM_CANDIDATE", endpoint: "origin", candidate: unionStation });
+    state = plannerReducer(state, { type: "RELABEL_ENDPOINT", endpoint: "origin", lat: unionStation.lat, lon: unionStation.lon, label: "nope" });
+    expect(state.origin.confirmed?.label).toBe("Union Station");
+  });
+
+  it("keeps the units preference across clear trip", () => {
+    let state = plannerReducer(initialPlannerState, { type: "SET_UNITS", units: "mi" });
+    state = plannerReducer(state, { type: "CLEAR_TRIP" });
+    expect(state.units).toBe("mi");
   });
 
   it("bounds the detour controls", () => {

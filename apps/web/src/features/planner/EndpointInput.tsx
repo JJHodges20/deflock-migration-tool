@@ -77,7 +77,9 @@ export function EndpointInput({ endpoint, label, state, pinModeActive, geocoderC
                   />
                   <label htmlFor={`${endpoint}-candidate-${index}`}>
                     {candidate.label}
+                    {candidate.category && candidate.category !== "coordinates" && <span className="desc"> {candidate.category}</span>}
                     {!candidate.inside_service_boundary && <span className="desc"> (outside the pilot area)</span>}
+                    {candidate.note && <span className="desc"> {candidate.note}</span>}
                   </label>
                 </li>
               ))}

@@ -1,4 +1,5 @@
 import type { CameraScope, GeocodeCandidate, PlanResponse, RouteProfileName } from "@/lib/api/types";
+import type { Units } from "@/lib/format";
 
 export type EndpointKey = "origin" | "destination";
 
@@ -22,6 +23,7 @@ export interface PlannerState {
   relativeLimit: number;
   showAdvanced: boolean;
   showCameras: boolean;
+  units: Units;
   request: { status: RequestStatus; error: { code: string; message: string } | null; sequence: number };
   result: PlanResponse | null;
   selectedRouteId: string | null;
@@ -44,6 +46,8 @@ export type PlannerAction =
   | { type: "SET_RELATIVE"; factor: number }
   | { type: "TOGGLE_ADVANCED" }
   | { type: "TOGGLE_CAMERAS" }
+  | { type: "SET_UNITS"; units: Units }
+  | { type: "RELABEL_ENDPOINT"; endpoint: EndpointKey; lat: number; lon: number; label: string }
   | { type: "PLAN_START" }
   | { type: "PLAN_SUCCESS"; sequence: number; result: PlanResponse }
   | { type: "PLAN_ERROR"; sequence: number; error: { code: string; message: string } }
@@ -64,6 +68,7 @@ export const initialPlannerState: PlannerState = {
   relativeLimit: 1.5,
   showAdvanced: false,
   showCameras: true,
+  units: "km",
   request: { status: "idle", error: null, sequence: 0 },
   result: null,
   selectedRouteId: null,
@@ -114,6 +119,15 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
       return { ...state, showAdvanced: !state.showAdvanced };
     case "TOGGLE_CAMERAS":
       return { ...state, showCameras: !state.showCameras };
+    case "SET_UNITS":
+      return { ...state, units: action.units };
+    case "RELABEL_ENDPOINT": {
+      // Only relabel the pin that is still confirmed at these coordinates; a late reverse lookup for a replaced pin is ignored.
+      const confirmed = state[action.endpoint].confirmed;
+      if (!confirmed || confirmed.source !== "map_pin" || confirmed.lat !== action.lat || confirmed.lon !== action.lon) return state;
+      const relabelled = { ...confirmed, label: action.label };
+      return { ...state, [action.endpoint]: { ...state[action.endpoint], confirmed: relabelled, text: action.label } };
+    }
     case "PLAN_START":
       return { ...state, request: { status: "loading", error: null, sequence: state.request.sequence + 1 }, result: null, selectedRouteId: null };
     case "PLAN_SUCCESS":
@@ -128,7 +142,7 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
     case "SELECT_ROUTE":
       return { ...state, selectedRouteId: action.routeId };
     case "CLEAR_TRIP":
-      return { ...initialPlannerState, profile: state.profile, scope: state.scope, showCameras: state.showCameras, sheetExpanded: state.sheetExpanded, request: { status: "idle", error: null, sequence: state.request.sequence + 1 } };
+      return { ...initialPlannerState, profile: state.profile, scope: state.scope, showCameras: state.showCameras, units: state.units, sheetExpanded: state.sheetExpanded, request: { status: "idle", error: null, sequence: state.request.sequence + 1 } };
     case "TOGGLE_SHEET":
       return { ...state, sheetExpanded: !state.sheetExpanded };
     default:

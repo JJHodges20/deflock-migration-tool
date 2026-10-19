@@ -3,8 +3,10 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { api, describeError } from "@/lib/api/client";
-import type { GeocodeCandidate, RegionResponse } from "@/lib/api/types";
+import type { DataHealth, GeocodeCandidate, RegionResponse } from "@/lib/api/types";
+import type { Units } from "@/lib/format";
 import { DataHealthPanel } from "@/features/data-health/DataHealthPanel";
+import { DataStatusStrip } from "./DataStatusStrip";
 import { Directions } from "./Directions";
 import { EndpointInput } from "./EndpointInput";
 import { RouteCards } from "./RouteCards";
@@ -24,10 +26,14 @@ const ERROR_TEXT: Record<string, string> = {
 export function Planner() {
   const [state, dispatch] = useReducer(plannerReducer, initialPlannerState);
   const [region, setRegion] = useState<RegionResponse | null>(null);
+  const [health, setHealth] = useState<DataHealth | null>(null);
   const [regionError, setRegionError] = useState<string | null>(null);
   const [mapStatus, setMapStatus] = useState<"loading" | "ready" | "failed">("loading");
+  const [highlighted, setHighlighted] = useState<number | null>(null);
   const planAbort = useRef<AbortController | null>(null);
   const searchAborts = useRef<Record<EndpointKey, AbortController | null>>({ origin: null, destination: null });
+  const pinModeRef = useRef(state.pinMode);
+  pinModeRef.current = state.pinMode;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -37,6 +43,10 @@ export function Planner() {
       .catch((error) => {
         if (!controller.signal.aborted) setRegionError(describeError(error).message);
       });
+    api
+      .dataHealth(controller.signal)
+      .then(setHealth)
+      .catch(() => undefined);
     return () => controller.abort();
   }, []);
 
@@ -51,7 +61,7 @@ export function Planner() {
       try {
         const response = await api.geocode(text, controller.signal);
         if (controller.signal.aborted) return;
-        if (response.candidates.length === 1 && response.query_kind === "coordinates") {
+        if (response.candidates.length === 1 && response.query_kind === "coordinates" && !response.candidates[0].note) {
           dispatch({ type: "CONFIRM_CANDIDATE", endpoint, candidate: response.candidates[0] });
         } else {
           dispatch({ type: "SEARCH_RESULT", endpoint, candidates: response.candidates });
@@ -65,6 +75,26 @@ export function Planner() {
     [state],
   );
 
+  const geocoderConfigured = region?.capabilities.geocoder_configured ?? false;
+
+  const onPinPlaced = useCallback(
+    (lat: number, lon: number) => {
+      const endpoint = pinModeRef.current;
+      dispatch({ type: "PIN_PLACED", lat, lon });
+      if (!endpoint || !geocoderConfigured) return;
+      // Label the pin with the nearest mapped place; the pin coordinates themselves never change.
+      api
+        .reverse(lat, lon)
+        .then((result) => {
+          if (result.found && result.label) {
+            dispatch({ type: "RELABEL_ENDPOINT", endpoint, lat, lon, label: `Map pin near ${result.label}` });
+          }
+        })
+        .catch(() => undefined);
+    },
+    [geocoderConfigured],
+  );
+
   const plan = useCallback(async () => {
     const origin = state.origin.confirmed;
     const destination = state.destination.confirmed;
@@ -73,6 +103,7 @@ export function Planner() {
     const controller = new AbortController();
     planAbort.current = controller;
     dispatch({ type: "PLAN_START" });
+    setHighlighted(null);
     const sequence = state.request.sequence + 1;
     try {
       const result = await api.plan(
@@ -83,7 +114,7 @@ export function Planner() {
           profiles: [state.profile],
           camera_scope: state.scope,
           detour_limits: { max_extra_seconds: state.maxExtraMinutes * 60, max_relative_factor: state.relativeLimit },
-          units: "km",
+          units: state.units,
         },
         controller.signal,
       );
@@ -101,7 +132,12 @@ export function Planner() {
   }, []);
 
   const route = useMemo(() => selectedRoute(state), [state]);
-  const geocoderConfigured = region?.capabilities.geocoder_configured ?? false;
+  const highlightRange = useMemo<[number, number] | null>(() => {
+    if (!route || highlighted === null) return null;
+    const maneuver = route.maneuvers[highlighted];
+    return maneuver ? [maneuver.begin_shape_index, maneuver.end_shape_index] : null;
+  }, [route, highlighted]);
+
   const endpointProps = (endpoint: EndpointKey, label: string) => ({
     endpoint,
     label,
@@ -115,6 +151,8 @@ export function Planner() {
     onTogglePinMode: () => dispatch({ type: "SET_PIN_MODE", endpoint: state.pinMode === endpoint ? null : endpoint }),
   });
 
+  const setUnits = (units: Units) => dispatch({ type: "SET_UNITS", units });
+
   return (
     <div className="planner-layout">
       <aside className={`panel${state.sheetExpanded ? "" : " collapsed"}`} aria-label="Trip planner">
@@ -125,8 +163,9 @@ export function Planner() {
           <h1 className="app-title">DeFlockMigration</h1>
           <p className="app-subtitle">{region ? region.display_name : "Denver pilot"} · compare routes by mapped ALPR cameras</p>
         </header>
+        <DataStatusStrip region={region} health={health} />
         {regionError && <div className="notice notice-error">Region configuration could not be loaded: {regionError}</div>}
-        {mapStatus === "failed" && <div className="notice notice-warn">The map could not be rendered on this device. Coordinates, map-pin-free planning, and written directions still work.</div>}
+        {mapStatus === "failed" && <div className="notice notice-warn">The map could not be rendered on this device. Coordinates, typed addresses, and written directions still work; map pins need the map.</div>}
 
         <section className="section" aria-labelledby="trip-heading">
           <h2 id="trip-heading">Trip</h2>
@@ -136,6 +175,14 @@ export function Planner() {
             <button type="button" className="btn btn-small" onClick={() => dispatch({ type: "SWAP" })} disabled={!state.origin.confirmed && !state.destination.confirmed}>
               Swap start and destination
             </button>
+            <span className="units-toggle" role="group" aria-label="Distance units">
+              <button type="button" className="btn btn-small" aria-pressed={state.units === "km"} onClick={() => setUnits("km")}>
+                km
+              </button>
+              <button type="button" className="btn btn-small" aria-pressed={state.units === "mi"} onClick={() => setUnits("mi")}>
+                mi
+              </button>
+            </span>
           </div>
         </section>
 
@@ -213,8 +260,8 @@ export function Planner() {
           </div>
         </section>
 
-        {state.result && <RouteCards result={state.result} region={region} selectedRouteId={state.selectedRouteId} onSelect={(routeId) => dispatch({ type: "SELECT_ROUTE", routeId })} />}
-        {route && <Directions route={route} />}
+        {state.result && <RouteCards result={state.result} region={region} selectedRouteId={state.selectedRouteId} units={state.units} onSelect={(routeId) => dispatch({ type: "SELECT_ROUTE", routeId })} />}
+        {route && <Directions route={route} units={state.units} highlighted={highlighted} onHighlight={setHighlighted} />}
 
         <DataHealthPanel />
 
@@ -242,7 +289,8 @@ export function Planner() {
             pinMode={state.pinMode !== null}
             showCameras={state.showCameras}
             scope={state.scope}
-            onPinPlaced={(lat, lon) => dispatch({ type: "PIN_PLACED", lat, lon })}
+            highlightRange={highlightRange}
+            onPinPlaced={onPinPlaced}
             onStatus={setMapStatus}
           />
         )}

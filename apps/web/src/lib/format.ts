@@ -1,3 +1,8 @@
+export type Units = "km" | "mi";
+
+const METERS_PER_MILE = 1609.344;
+const FEET_PER_METER = 3.28084;
+
 export function formatDuration(seconds: number): string {
   const minutes = Math.round(seconds / 60);
   if (minutes < 60) return `${minutes} min`;
@@ -6,7 +11,13 @@ export function formatDuration(seconds: number): string {
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
 }
 
-export function formatDistance(meters: number): string {
+/** All server values are meters; conversion happens here and only here. */
+export function formatDistance(meters: number, units: Units = "km"): string {
+  if (units === "mi") {
+    const miles = meters / METERS_PER_MILE;
+    if (miles < 0.1) return `${Math.round(meters * FEET_PER_METER)} ft`;
+    return `${miles.toFixed(miles < 10 ? 1 : 0)} mi`;
+  }
   if (meters < 1000) return `${Math.round(meters)} m`;
   return `${(meters / 1000).toFixed(meters < 10000 ? 1 : 0)} km`;
 }

@@ -2,6 +2,41 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M3: standard route and usable address entry
+
+### Built
+
+- **Address entry:** candidates inside the pilot area are listed first with their match type; identical points are de-duplicated; a pair typed as `lon, lat` is recognised, swapped, and returned with a note that asks for confirmation instead of a silent failure; the no-match state is explicit. Still submit-only, never autocomplete.
+- **Map pins:** a placed pin is labelled "Map pin near <nearest mapped place>" through a new reverse endpoint (`POST /api/v1/geocode/reverse`) on the local geocoder; the pin's own coordinates are kept for routing and a stale reverse result for a replaced pin is ignored.
+- **Routing disclosures:** each route option reports how far the engine's start and end snapped from the chosen points; the card says so above 50 m. Maneuver checks now require in-range, ordered indices covering the whole shape, and a length-sum mismatch above 3 % becomes a visible warning. Identical start and destination is rejected with a clear message.
+- **Units:** km/mi toggle in the UI; all server values stay in metres and seconds and are converted only in the display helpers (feet below 0.1 mi). The adapter handles a miles response from the engine.
+- **Directions to geometry:** pointing at (or focusing) a direction step highlights its shape segment on the map, which exercises the begin/end shape indices directly.
+- **Freshness and privacy strip:** always-visible road-data date, camera snapshot date (with a stale flag), address-search locality, and the no-storage promise.
+- **Reviewed Denver cases:** a live backend test resolves ten public addresses and landmarks against the local geocoder with inside/outside flags, and routes five reviewed trips through the engine with legality evidence from `trace_attributes` (no backward edges, drivable uses only, destination-only edges only at the ends) plus alignment and snapping checks.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 91 passed, including the live Denver cases against the local geocoder and router (ten addresses and landmarks within tolerance with correct inside/outside flags; nonexistent street empty; reverse lookup labels a pin; five reviewed trips legal per `trace_attributes` with no backward edges, drivable road uses only, destination-only edges only at the ends; maneuvers aligned; snapping under 300 m).
+- Frontend: type check clean; 21 Vitest tests passed (units conversion, pin relabelling, units kept across clear trip, status strip and units toggle in the shell).
+- Browser (Playwright, three viewports): 30 passed. Address-to-address planning with candidate confirmation through the local geocoder, the explicit no-match state, the swapped-coordinate explanation, the km/mi toggle without a new request, map initialisation (worker, controls, legend after load, no worker errors), pin-to-pin planning on the rendered map, plus the earlier smoke tests and the WebGL probe.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed after the backend rollout; the plain smoke test passed again after the final web rollout.
+- The live stack runs the M3 images; the camera snapshot `ovp-denver-20261019T144621Z-37c4cf74` and the 2026-10-15 graph are unchanged.
+
+### Gate check (roadmap M3)
+
+- Address-to-address and pin-to-pin planning work for reviewed Denver cases: yes (live backend cases and browser tests above).
+- No camera-avoidance claim yet: route cards say "Not assessed in this version", counts stay null, coverage `not_assessed`.
+- Freshness and privacy disclosures appear in the UI: the status strip shows road-data date, camera snapshot date with a stale flag, address-search locality, and the no-storage promise; route cards show the snapshot date and graph version.
+
+### Observations
+
+- **Map worker bug found and fixed (present since M1):** MapLibre 6 ships its worker as a separate module and derives the worker URL from its own script URL, requiring a plain http(s) URL. Inside the Next.js production bundle that condition fails, the worker URL becomes empty, MapLibre logs "Worker failed to load", and the map never fires `load`: no boundary outline, no camera overlay, no pins, with an entirely blank map area. None of the earlier browser tests asserted a rendered map, so the gap went unnoticed. Fix: a `prebuild` step copies `maplibre-gl-worker.mjs` and `maplibre-gl-shared.mjs` from the installed package into `public/vendor/maplibre/` (ignored by git, served same-origin through the edge), and the map calls `setWorkerUrl` with that path before initialising. A new browser test asserts that the canvas appears, the overlay legend renders after `load`, and no worker error is logged.
+- The test browser (headless Chromium in the Playwright image) does provide WebGL1 and WebGL2 through SwiftShader, so map-level browser tests are possible there; the pin-to-pin test still skips itself cleanly if a browser lacks WebGL2.
+- **Second layout bug found by the pin test:** MapLibre's stylesheet sets `position: relative` on the map container, overriding the app's absolutely positioned container and collapsing its height to zero (the canvas still drew because MapLibre sizes it itself). The container is now positioned inline, which MapLibre's rule cannot override.
+- My first version of the geocode endpoint reordered candidates to put pilot-area matches first. The live Denver cases showed it displacing the geocoder's best match for "Glendale, Colorado"; the reordering was removed so the first match means what the geocoder ranked first, with the inside/outside flag left to the user.
+- NO_DRIVABLE_ROUTE cannot be produced from inside the Denver boundary in practice: the engine snaps to the nearest drivable road within its search cut-off, so the state is covered by the contract test and the M0 spike (engine error 171), not by a live Denver case.
+- "Use my location" (browser geolocation) is deliberately not implemented; the roadmap lists it as optional and it would be the only feature that reads a sensor. It can be revisited in M6 with an explicit user action.
+
 ## 2026-10-16 / 2026-10-19 - M2: public camera inventory
 
 ### Built

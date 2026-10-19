@@ -1,4 +1,4 @@
-import type { ApiErrorBody, CamerasResponse, CameraScope, DataHealth, GeocodeResponse, PlanRequest, PlanResponse, RegionResponse } from "./types";
+import type { ApiErrorBody, CamerasResponse, CameraScope, DataHealth, GeocodeResponse, PlanRequest, PlanResponse, RegionResponse, ReverseGeocodeResponse } from "./types";
 
 // Same-origin by default: the nginx edge proxies /api/ to the backend, so no CORS and no third party.
 const BASE = process.env.NEXT_PUBLIC_API_BASE ?? "";
@@ -50,6 +50,7 @@ export const api = {
   dataHealth: (signal?: AbortSignal) => request<DataHealth>("/api/v1/health/data", { signal }),
   plan: (body: PlanRequest, signal?: AbortSignal) => request<PlanResponse>("/api/v1/routes/plan", { method: "POST", body: JSON.stringify(body), signal }),
   geocode: (query: string, signal?: AbortSignal) => request<GeocodeResponse>("/api/v1/geocode", { method: "POST", body: JSON.stringify({ query, limit: 5 }), signal }),
+  reverse: (lat: number, lon: number, signal?: AbortSignal) => request<ReverseGeocodeResponse>("/api/v1/geocode/reverse", { method: "POST", body: JSON.stringify({ lat, lon }), signal }),
   cameras: (bboxWsen: [number, number, number, number], scope: CameraScope, signal?: AbortSignal) =>
     request<CamerasResponse>(`/api/v1/cameras?bbox=${encodeURIComponent(bboxWsen.map((v) => v.toFixed(5)).join(","))}&scope=${scope}`, { signal }),
 };

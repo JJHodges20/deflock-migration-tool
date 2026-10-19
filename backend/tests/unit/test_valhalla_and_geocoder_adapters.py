@@ -67,7 +67,9 @@ def test_status_parses_verbose_payload():
 def test_coordinate_pair_parsing():
     assert parse_coordinate_pair("39.7530, -105.0002").lat == 39.753
     assert parse_coordinate_pair(" 39.7530 -105.0002 ").lon == -105.0002
-    assert parse_coordinate_pair("95, 0") is None
+    assert parse_coordinate_pair("95, 100") is None  # invalid in either order
+    swapped = parse_coordinate_pair("95, 0")  # longitude first: swapped with a note (M3)
+    assert swapped is not None and swapped.lat == 0 and swapped.lon == 95 and swapped.note
     assert parse_coordinate_pair("Union Station") is None
     assert parse_coordinate_pair("1701 Wynkoop St") is None
 

@@ -31,6 +31,8 @@ export interface RouteOptionOut {
   length_meters: number;
   extra_duration_seconds: number;
   extra_distance_meters: number;
+  origin_snap_distance_meters: number;
+  destination_snap_distance_meters: number;
   matched_camera_record_count: number | null;
   uncertain_nearby_camera_count: number | null;
   counting_method_version: string | null;
@@ -77,6 +79,7 @@ export interface GeocodeCandidate {
   source: string;
   category: string | null;
   importance: number | null;
+  note?: string | null;
   inside_service_boundary: boolean;
 }
 
@@ -84,6 +87,16 @@ export interface GeocodeResponse {
   query_kind: "coordinates" | "search";
   provider: string;
   candidates: GeocodeCandidate[];
+}
+
+export interface ReverseGeocodeResponse {
+  provider: string;
+  found: boolean;
+  label: string | null;
+  category: string | null;
+  matched_lat: number | null;
+  matched_lon: number | null;
+  inside_service_boundary: boolean;
 }
 
 export interface ProfileOut {

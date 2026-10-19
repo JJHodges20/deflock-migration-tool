@@ -72,6 +72,18 @@ describe("Planner shell", () => {
     expect((screen.getByLabelText("Start") as HTMLInputElement).value).toContain("39.7503");
   });
 
+  it("shows the freshness and privacy strip and a units toggle", async () => {
+    render(<Planner />);
+    await screen.findByText("Standard route");
+    const strip = screen.getByTestId("data-status");
+    expect(strip).toHaveTextContent("Road data");
+    expect(strip).toHaveTextContent("never stored");
+    expect(strip).toHaveTextContent("not configured");
+    const miles = screen.getByRole("button", { name: "mi" });
+    fireEvent.click(miles);
+    expect(miles).toHaveAttribute("aria-pressed", "true");
+  });
+
   it("offers the scope and preference controls with explicit labels", async () => {
     render(<Planner />);
     await screen.findByText("Standard route");

@@ -94,6 +94,24 @@ def test_geocode_not_configured(client: TestClient):
     resp = client.post("/api/v1/geocode", json={"query": "Union Station"})
     assert resp.status_code == 503 and resp.json()["error"]["code"] == "GEOCODER_NOT_CONFIGURED"
     assert client.post("/api/v1/geocode", json={"query": ""}).status_code == 400
+    resp = client.post("/api/v1/geocode/reverse", json={"lat": 39.753, "lon": -105.0002})
+    assert resp.status_code == 503 and resp.json()["error"]["code"] == "GEOCODER_NOT_CONFIGURED"
+    assert client.post("/api/v1/geocode/reverse", json={"lat": 95, "lon": 0}).status_code == 400
+
+
+def test_geocode_swapped_coordinates_are_explained(client: TestClient):
+    body = client.post("/api/v1/geocode", json={"query": "-105.0002, 39.7530"}).json()
+    candidate = body["candidates"][0]
+    assert candidate["lat"] == 39.753 and candidate["lon"] == -105.0002 and candidate["inside_service_boundary"] is True
+    assert "swapped" in candidate["note"]
+
+
+def test_plan_reports_snapping_and_rejects_identical_points(client: TestClient):
+    body = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO}).json()
+    option = body["options"][0]
+    assert option["origin_snap_distance_meters"] >= 0 and option["destination_snap_distance_meters"] >= 0
+    resp = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": UNION_STATION})
+    assert resp.status_code == 400 and "same place" in resp.json()["error"]["message"]
 
 
 def test_cameras_without_database_and_bad_bbox(client: TestClient):

@@ -1,14 +1,17 @@
 "use client";
 
 import type { PlanResponse, RegionResponse, RouteOptionOut } from "@/lib/api/types";
-import { formatDistance, formatDuration, formatSignedDuration, formatTimestamp } from "@/lib/format";
+import { formatDistance, formatDuration, formatSignedDuration, formatTimestamp, type Units } from "@/lib/format";
 
 interface Props {
   result: PlanResponse;
   region: RegionResponse | null;
   selectedRouteId: string | null;
+  units: Units;
   onSelect: (routeId: string) => void;
 }
+
+const SNAP_NOTE_THRESHOLD_M = 50;
 
 function encounterText(option: RouteOptionOut): string {
   if (option.assessment_coverage_status === "not_assessed" || option.matched_camera_record_count === null) {
@@ -20,7 +23,18 @@ function encounterText(option: RouteOptionOut): string {
   return `${option.matched_camera_record_count} mapped`;
 }
 
-export function RouteCards({ result, region, selectedRouteId, onSelect }: Props) {
+function snapNotes(option: RouteOptionOut, units: Units): string[] {
+  const notes: string[] = [];
+  if (option.origin_snap_distance_meters > SNAP_NOTE_THRESHOLD_M) {
+    notes.push(`The route starts ${formatDistance(option.origin_snap_distance_meters, units)} from your start point, on the nearest drivable road.`);
+  }
+  if (option.destination_snap_distance_meters > SNAP_NOTE_THRESHOLD_M) {
+    notes.push(`The route ends ${formatDistance(option.destination_snap_distance_meters, units)} from your destination point, on the nearest drivable road.`);
+  }
+  return notes;
+}
+
+export function RouteCards({ result, region, selectedRouteId, units, onSelect }: Props) {
   return (
     <div className="section" data-testid="route-cards">
       <h2>Route options</h2>
@@ -33,6 +47,7 @@ export function RouteCards({ result, region, selectedRouteId, onSelect }: Props)
       )}
       {result.options.map((option) => {
         const selected = option.route_id === selectedRouteId;
+        const notes = snapNotes(option, units);
         return (
           <button key={option.route_id} type="button" className={`route-card${selected ? " selected" : ""}`} onClick={() => onSelect(option.route_id)} aria-pressed={selected} data-testid="route-card">
             <div className="labels">
@@ -50,7 +65,7 @@ export function RouteCards({ result, region, selectedRouteId, onSelect }: Props)
                 <span className="label">estimated, no live traffic</span>
               </div>
               <div className="metric">
-                <span className="value">{formatDistance(option.length_meters)}</span>
+                <span className="value" data-testid="route-distance">{formatDistance(option.length_meters, units)}</span>
                 <span className="label">distance</span>
               </div>
               <div className="metric">
@@ -58,6 +73,11 @@ export function RouteCards({ result, region, selectedRouteId, onSelect }: Props)
                 <span className="label">versus standard</span>
               </div>
             </div>
+            {notes.map((note) => (
+              <span key={note} className="notice notice-info" data-testid="snap-note">
+                {note}
+              </span>
+            ))}
             <dl className="kv">
               <dt>Mapped camera encounters</dt>
               <dd>{encounterText(option)}</dd>

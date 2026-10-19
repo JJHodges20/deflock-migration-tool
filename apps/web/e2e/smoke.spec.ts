@@ -53,6 +53,20 @@ test("rejects a trip that starts outside the pilot area with an explicit state",
   await expect(page.getByTestId("plan-error")).toContainText("OUTSIDE_SERVICE_AREA");
 });
 
+test("the map initialises: worker loads, controls appear, and the overlay reports its state", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("console", (message) => {
+    if (message.type() === "error") errors.push(message.text());
+  });
+  await page.goto("/");
+  const webgl2 = await page.evaluate(() => Boolean(document.createElement("canvas").getContext("webgl2")));
+  test.skip(!webgl2, "this browser has no WebGL2; MapLibre cannot render here");
+  await expect(page.getByTestId("map").locator("canvas.maplibregl-canvas")).toBeVisible({ timeout: 20_000 });
+  // The legend only renders after MapLibre's load event, so its presence proves the style and worker loaded.
+  await expect(page.getByTestId("camera-legend")).toContainText(/Zoom in|mapped records in view/, { timeout: 30_000 });
+  expect(errors.filter((text) => /worker/i.test(text))).toEqual([]);
+});
+
 test("data health panel reports the published snapshot and graph", async ({ page }) => {
   await page.goto("/");
   await page.getByText("Data health").click();

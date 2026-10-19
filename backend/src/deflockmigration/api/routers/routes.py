@@ -56,6 +56,8 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
             length_meters=round(route.length_m, 1),
             extra_duration_seconds=round(option.extra_duration_s, 1),
             extra_distance_meters=round(option.extra_distance_m, 1),
+            origin_snap_distance_meters=option.origin_snap_m,
+            destination_snap_distance_meters=option.destination_snap_m,
             matched_camera_record_count=None,
             uncertain_nearby_camera_count=None,
             counting_method_version=None,

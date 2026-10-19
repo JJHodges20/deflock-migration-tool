@@ -1,6 +1,6 @@
 "use client";
 
-import { LngLatBounds, Map as MapLibreMap, Marker, NavigationControl, Popup, addProtocol, type GeoJSONSource, type StyleSpecification } from "maplibre-gl";
+import { LngLatBounds, Map as MapLibreMap, Marker, NavigationControl, Popup, addProtocol, setWorkerUrl, type GeoJSONSource, type StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { layers, namedFlavor } from "@protomaps/basemaps";
 import { Protocol } from "pmtiles";
@@ -18,6 +18,7 @@ interface Props {
   pinMode: boolean;
   showCameras: boolean;
   scope: CameraScope;
+  highlightRange: [number, number] | null;
   onPinPlaced: (lat: number, lon: number) => void;
   onStatus: (status: "ready" | "failed") => void;
 }
@@ -90,7 +91,7 @@ function popupElement(properties: Record<string, unknown>): HTMLElement {
   return root;
 }
 
-export function MapView({ region, route, origin, destination, pinMode, showCameras, scope, onPinPlaced, onStatus }: Props) {
+export function MapView({ region, route, origin, destination, pinMode, showCameras, scope, highlightRange, onPinPlaced, onStatus }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<{ origin?: Marker; destination?: Marker }>({});
@@ -112,6 +113,9 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
     }
     try {
       if (!protocolRegistered) {
+        // Self-hosted worker (copied from the installed package at build time): MapLibre's own URL derivation
+        // fails inside the production bundle, which leaves the map silently unloaded.
+        setWorkerUrl(`${window.location.origin}/vendor/maplibre/maplibre-gl-worker.mjs`);
         const protocol = new Protocol();
         addProtocol("pmtiles", protocol.tile);
         protocolRegistered = true;
@@ -133,6 +137,8 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
         map.addSource("route", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "route-casing", type: "line", source: "route", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": 9 } });
         map.addLayer({ id: "route-line", type: "line", source: "route", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#1f5f8b", "line-width": 5 } });
+        map.addSource("maneuver-highlight", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        map.addLayer({ id: "maneuver-highlight-line", type: "line", source: "maneuver-highlight", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#e8b400", "line-width": 8, "line-opacity": 0.9 } });
         map.addSource("cameras", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({
           id: "cameras-circle",
@@ -202,6 +208,21 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
     }
   }, [route, loaded]);
 
+  // Highlight the maneuver the user points at in the directions list (instruction-to-geometry alignment).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded) return;
+    const source = map.getSource("maneuver-highlight") as GeoJSONSource | undefined;
+    if (!source) return;
+    if (route && highlightRange) {
+      const [begin, end] = highlightRange;
+      const coords = route.geometry.coordinates.slice(Math.max(0, begin), Math.min(route.geometry.coordinates.length, end + 1));
+      source.setData(coords.length >= 2 ? { type: "Feature", properties: {}, geometry: { type: "LineString", coordinates: coords } } : { type: "FeatureCollection", features: [] });
+    } else {
+      source.setData({ type: "FeatureCollection", features: [] });
+    }
+  }, [route, highlightRange, loaded]);
+
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !loaded) return;
@@ -262,7 +283,8 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
 
   return (
     <>
-      <div ref={containerRef} className="map-container" role="application" aria-label="Map of the Denver pilot area" data-testid="map" />
+      {/* Inline positioning wins over MapLibre's own `.maplibregl-map { position: relative }` rule, which would collapse the container's height. */}
+      <div ref={containerRef} className="map-container" style={{ position: "absolute", inset: 0 }} role="application" aria-label="Map of the Denver pilot area" data-testid="map" />
       {overlayState !== "hidden" && (
         <div className="map-legend" role="status" data-testid="camera-legend">
           {overlayState === "zoom" && <span>Zoom in to see mapped cameras.</span>}

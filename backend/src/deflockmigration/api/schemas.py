@@ -73,6 +73,8 @@ class RouteOptionOut(BaseModel):
     length_meters: float
     extra_duration_seconds: float
     extra_distance_meters: float
+    origin_snap_distance_meters: float
+    destination_snap_distance_meters: float
     matched_camera_record_count: int | None
     uncertain_nearby_camera_count: int | None
     counting_method_version: str | None
@@ -114,6 +116,7 @@ class GeocodeCandidateOut(BaseModel):
     source: str
     category: str | None
     importance: float | None
+    note: str | None = None
     inside_service_boundary: bool
 
 
@@ -121,6 +124,21 @@ class GeocodeResponse(BaseModel):
     query_kind: Literal["coordinates", "search"]
     provider: str
     candidates: list[GeocodeCandidateOut]
+
+
+class ReverseGeocodeRequest(_Strict):
+    lat: float = Field(ge=-90, le=90)
+    lon: float = Field(ge=-180, le=180)
+
+
+class ReverseGeocodeResponse(BaseModel):
+    provider: str
+    found: bool
+    label: str | None
+    category: str | None
+    matched_lat: float | None
+    matched_lon: float | None
+    inside_service_boundary: bool
 
 
 class ProfileOut(BaseModel):

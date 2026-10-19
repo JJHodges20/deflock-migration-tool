@@ -14,6 +14,13 @@ describe("format helpers", () => {
     expect(formatDistance(40308)).toBe("40 km");
   });
 
+  it("converts to miles and feet without touching server values", () => {
+    expect(formatDistance(100, "mi")).toBe("328 ft");
+    expect(formatDistance(6373, "mi")).toBe("4.0 mi");
+    expect(formatDistance(40308, "mi")).toBe("25 mi");
+    expect(formatDistance(1609.344, "mi")).toBe("1.0 mi");
+  });
+
   it("formats signed extra time without claiming savings under 30 s", () => {
     expect(formatSignedDuration(0)).toBe("no extra time");
     expect(formatSignedDuration(600)).toBe("+10 min");
