@@ -14,7 +14,7 @@ Privacy is part of the implementation, not just the name. This page states what 
 | Camera overlay for the current map view | browser → edge → api → PostGIS (`camera_records`) | no | no; the viewport bounding box is in a query string that nginx does not log and the API never logs |
 | Map tiles, fonts, sprites | browser → edge → static files in the `basemap` volume | no | public data only |
 | Camera inventory refresh | `camera-sync` worker → public Overpass API, one fixed bounding-box query every 6 hours | yes, the fixed Denver envelope query with an identifying User-Agent and no personal data | yes: public OSM records, snapshot metadata, sync job records (PostGIS) and raw snapshot files (`camera_snapshots` volume) |
-| Road data | `osm-download` setup job → Geofabrik; `graph-build` job inside the Valhalla container | yes, a public extract download | yes: the extract (`osm_extracts` volume) and the graph (`valhalla_tiles` volume) |
+| Road data | `osm-download` setup job → Geofabrik; `graph-build` job inside the Valhalla container, which also downloads the timezone boundary shapefile from the GitHub release of `evansiroky/timezone-boundary-builder` (found by the fresh-install test in M8; the job therefore joins the egress network) | yes, two public downloads (extract, timezone boundaries) | yes: the extract (`osm_extracts` volume) and the graph with its timezone and admin databases (`valhalla_tiles` volume) |
 | Basemap | `basemap-extract` and `basemap-assets` jobs → Protomaps build server and GitHub | yes, public data downloads | yes: `basemap` volume |
 | Geocoder data | `geocoder` container imports the local extract | no (uses the downloaded extract) | yes: `geocoder_db` volume |
 
@@ -47,7 +47,7 @@ No analytics, session replay, advertising SDKs, error-reporting services, or ext
 
 The Compose stack uses two networks. `internal` is a Docker internal network with no route outside the machine; `web`, `api`,
 `db`, `valhalla`, and `geocoder` are attached to it only. `egress` is an ordinary bridge; only `camera-sync` (the Overpass
-query), the public-data setup jobs (`osm-download`, `basemap-extract`, `basemap-assets`, `camera-sync-once`), and `edge`
+query), the public-data setup jobs (`osm-download`, `graph-build` for the timezone boundaries, `basemap-extract`, `basemap-assets`, `camera-sync-once`), and `edge`
 (which publishes 127.0.0.1:3000 and never initiates a connection) join it. `scripts\audit.ps1 -Check egress` probes every
 running container; on 2026-10-19 the api, web, valhalla, db, and geocoder containers had no internet route (name resolution
 or connection failed), the edge's probe timed out, and only camera-sync reached the public Overpass instance. The browser

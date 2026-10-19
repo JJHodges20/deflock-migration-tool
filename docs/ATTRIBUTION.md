@@ -15,6 +15,7 @@ local pilot. A public deployment needs its own review and the owner's separate a
 | Basemap fonts and sprites | Protomaps basemaps assets (fonts under the SIL Open Font License; sprites from the Protomaps basemaps repository) | OFL permits bundling with attribution; sprites follow the basemaps repository license | Downloaded once by a setup job to the local volume; served same-origin |
 | Service boundary | City and County of Denver Open Data, "County Boundary" | Provided "as is", "not for engineering purposes", custom disclaimer; not ODbL | Used only to decide whether endpoints are inside the pilot area; attributed separately in the footer; never merged into ODbL exports |
 | Address search data | the same Geofabrik extract, imported into a self-hosted Nominatim | ODbL as above | Local only; the public OSMF Nominatim service is never called |
+| Timezone boundaries used by the routing graph build | `evansiroky/timezone-boundary-builder` release shapefile (derived from OpenStreetMap), downloaded by `valhalla_build_timezones` | data ODbL (OpenStreetMap derived); builder code MIT | Downloaded once per graph build into the `valhalla_tiles` volume; used only to attach time zones to road edges |
 
 ## Software
 
@@ -38,7 +39,7 @@ The project's own license has not been chosen by the owner; until it is, the rep
 |---|---|---|
 | Overpass API (overpass-api.de) | shared resource; identify the application; keep load low; no end-user backend use at scale; no rotation to evade limits | one fixed envelope query every 6 hours while the stack runs (4 per day), operator refreshes share a 30 min cooldown, one request at a time, an identifying User-Agent, a 30 s pause after HTTP 429/406, bounded retries, no endpoint rotation; the register notes the move to the Geofabrik extract before any public rollout |
 | Geofabrik downloads | public extracts, be reasonable | one 385 MB download per weekly rebuild, checksum verified |
-| Protomaps build server, GitHub (assets) | public downloads | one-time setup downloads; no runtime traffic |
+| Protomaps build server, GitHub (basemap assets, timezone boundaries) | public downloads | one-time setup downloads and one per graph rebuild; no runtime traffic |
 | OpenStreetMap Foundation Nominatim and tile servers | usage policies forbid heavy or application-backend use | not used at all; the planner reaches only this computer |
 
 ## Independence statement

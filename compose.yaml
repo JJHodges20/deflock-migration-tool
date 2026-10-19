@@ -219,8 +219,10 @@ services:
       - osm_extracts:/pbf
 
   graph-build:
+    # Needs egress: valhalla_build_timezones downloads the timezone boundary shapefile (GitHub release of
+    # evansiroky/timezone-boundary-builder); nothing else in the build leaves the machine.
     networks:
-      - internal
+      - egress
     image: ghcr.io/valhalla/valhalla:3.9.1
     profiles: ["setup"]
     entrypoint: ["/bin/bash", "/opt/deflock/build_graph.sh"]
