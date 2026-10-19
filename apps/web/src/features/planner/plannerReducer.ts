@@ -11,7 +11,7 @@ export interface EndpointState {
   error: { code: string; message: string } | null;
 }
 
-export type RequestStatus = "idle" | "loading" | "success" | "error";
+export type RequestStatus = "idle" | "loading" | "success" | "error" | "cancelled";
 
 export interface PlannerState {
   origin: EndpointState;
@@ -119,7 +119,7 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
     case "RELABEL_ENDPOINT": {
       // Only relabel the pin that is still confirmed at these coordinates; a late reverse lookup for a replaced pin is ignored.
       const confirmed = state[action.endpoint].confirmed;
-      if (!confirmed || confirmed.source !== "map_pin" || confirmed.lat !== action.lat || confirmed.lon !== action.lon) return state;
+      if (!confirmed || (confirmed.source !== "map_pin" && confirmed.source !== "device_location") || confirmed.lat !== action.lat || confirmed.lon !== action.lon) return state;
       const relabelled = { ...confirmed, label: action.label };
       return { ...state, [action.endpoint]: { ...state[action.endpoint], confirmed: relabelled, text: action.label } };
     }
@@ -133,7 +133,8 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
       return { ...state, request: { ...state.request, status: "error", error: action.error }, result: null, selectedRouteId: null };
     case "PLAN_CANCEL":
       if (state.request.status !== "loading") return state;
-      return { ...state, request: { ...state.request, status: "idle", error: null, sequence: state.request.sequence + 1 } };
+      // An explicit cancelled state: nothing is kept, and a late answer to the cancelled request is discarded by the sequence bump.
+      return { ...state, request: { ...state.request, status: "cancelled", error: null, sequence: state.request.sequence + 1 }, result: null, selectedRouteId: null };
     case "SELECT_ROUTE":
       return { ...state, selectedRouteId: action.routeId };
     case "CLEAR_TRIP":

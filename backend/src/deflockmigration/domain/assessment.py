@@ -138,6 +138,8 @@ class Encounter:
     source_url: str
     association: Association | None
     reason: str
+    source_timestamp: str | None = None  # last edit of the record in the source (ISO 8601), for camera details
+    check_date: str | None = None        # contributor-supplied check date tag, raw
 
 
 @dataclass(frozen=True)

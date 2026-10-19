@@ -191,6 +191,7 @@ def assess_route(
             site_group_id=groups[record.source_key], manufacturer=record.manufacturer, is_flock=record.is_flock,
             lifecycle_state=record.lifecycle_state, direction_raw=record.direction_raw, direction_conflict=record.direction_conflict,
             heading_relation=_heading_relation(record, edge_at_pass), in_envelope=record.in_envelope, source_url=_source_url(record.source_key),
+            source_timestamp=record.source_timestamp.isoformat().replace("+00:00", "Z") if record.source_timestamp else None, check_date=record.check_date,
         )
         if in_scope and record.lifecycle_state != "no_longer_mapped":
             for r in radii:

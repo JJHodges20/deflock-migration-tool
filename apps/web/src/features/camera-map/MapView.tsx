@@ -100,7 +100,16 @@ function encounterPopup(properties: Record<string, unknown>): HTMLElement {
   title.textContent = `${properties.status_label ?? properties.status}`;
   const reason = document.createElement("p");
   reason.textContent = String(properties.reason ?? "");
-  root.append(title, reason);
+  const details = document.createElement("p");
+  details.className = "legend-note";
+  details.textContent = [
+    `manufacturer: ${properties.manufacturer ?? "unknown"}`,
+    `mapped status: ${properties.lifecycle_state ?? "unknown"}`,
+    `direction tag: ${properties.direction_raw ?? "none"}`,
+    `last edited: ${properties.source_timestamp ?? "unknown"}`,
+    `check date: ${properties.check_date ?? "none"}`,
+  ].join(" · ");
+  root.append(title, reason, details);
   const url = String(properties.source_url ?? "");
   if (url.startsWith(OSM_URL_PREFIX)) {
     const link = document.createElement("a");
@@ -273,7 +282,7 @@ export function MapView({ region, route, options, origin, destination, pinMode, 
       type: "FeatureCollection",
       features: (encounters ?? [])
         .filter((e) => e.status !== "excluded_scope")
-        .map((e) => ({ type: "Feature", geometry: { type: "Point", coordinates: [e.lon, e.lat] }, properties: { status: e.status, status_label: labels[e.status] ?? e.status, reason: e.reason, source_url: e.source_url } })),
+        .map((e) => ({ type: "Feature", geometry: { type: "Point", coordinates: [e.lon, e.lat] }, properties: { status: e.status, status_label: labels[e.status] ?? e.status, reason: e.reason, source_url: e.source_url, manufacturer: e.manufacturer, lifecycle_state: e.lifecycle_state, source_timestamp: e.source_timestamp, check_date: e.check_date, direction_raw: e.direction_raw } })),
     });
   }, [encounters, loaded]);
 

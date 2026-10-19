@@ -1,4 +1,4 @@
-# Privacy and data flow (M1 build)
+# Privacy and data flow (M6 build)
 
 Privacy is part of the implementation, not just the name. This page states what moves where, what is stored, and what is never stored.
 
@@ -8,6 +8,8 @@ Privacy is part of the implementation, not just the name. This page states what 
 |---|---|---|---|
 | Trip planning (origin, destination, preferences) | browser → nginx edge (127.0.0.1:3000) → api → valhalla, all on the Compose network | no | no: the API keeps it in memory for the request only; the UI keeps it in page state until Clear trip or reload |
 | Address search | browser → edge → api → self-hosted geocoder container | no | no; the geocoder is a local Nominatim with no access log configured by this project |
+| Device location (optional "Use my location") | browser geolocation API, read once on an explicit click; the coordinates then follow the map-pin path (reverse lookup on the local geocoder, routing on the local engine) | no | no: never watched, never stored; it lives in page state until Clear trip or reload |
+| Print and GeoJSON download of a planned route | browser only: the print dialog and a file written by the browser on the user's computer | no | only where the user saves or prints it; nothing is uploaded, and the file warns that other apps may recalculate the path |
 | Coordinate entry (`lat, lon`) | parsed by the API without any provider call | no | no |
 | Camera overlay for the current map view | browser → edge → api → PostGIS (`camera_records`) | no | no; the viewport bounding box is in a query string that nginx does not log and the API never logs |
 | Map tiles, fonts, sprites | browser → edge → static files in the `basemap` volume | no | public data only |

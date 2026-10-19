@@ -1,7 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const baseURL = process.env.DEFLOCK_BASE_URL ?? "http://127.0.0.1:3000";
-// Software WebGL so MapLibre can render in headless Chromium (needed for map-pin tests).
+// Software WebGL so MapLibre can render in headless Chromium (needed for map-pin tests). The Compose test service shares the
+// edge's network namespace, so baseURL is http://localhost:3000: a secure context, like a person's browser at 127.0.0.1.
 const launchOptions = { args: ["--use-gl=angle", "--use-angle=swiftshader", "--enable-unsafe-swiftshader", "--ignore-gpu-blocklist"] };
 
 export default defineConfig({

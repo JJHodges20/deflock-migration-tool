@@ -2,6 +2,42 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M6: complete trip-planning experience
+
+### Built
+
+- **Result states that cannot be confused (gate):** every card carries a labelled state block: *No mapped encounters* (the honest zero, with an extra caveat when the snapshot holds no records inside the assessed area), *Unknown data* (nothing assessed; counts unknown, not zero), *Incomplete assessment* (route leaves the assessed area; lower bound, not ranked), *No better route within your limit* (Standard card, with the raise-limit action), *Lower exposure than Standard* (alternatives, including the zero sentence when they reach zero); *No route at all* is its own block in the planner, distinct from engine outages and validation errors.
+- **Data-age badges:** the status strip and every card show how old the camera download and the road data are; stale snapshots (threshold from Data Health), an empty inventory, and snapshots awaiting operator review are flagged.
+- **Camera details:** the evidence list and the map ring popups now carry the raw mapped status, the direction tag, the source's last edit time, and the check date next to manufacturer, distance, association, and the source link (backend: `source_timestamp` and `check_date` on each encounter).
+- **Directions:** a summary line (steps, distance, estimated time, toll or highway use, selected preference), engine instruction text untouched, road names only when supplied, roundabout exits, "to next" distances, keyboard focus with `aria-current`, and the plan-while-stopped wording.
+- **Print view and GeoJSON download:** a print stylesheet keeps the selected card, the directions, a print header with trip endpoints, snapshot and graph versions, and the disclaimer, and drops the map and controls; the download writes the selected geometry with timestamps, counts, maneuvers, and the recalculation warning to a file on the user's computer (nothing uploaded).
+- **Cancel, clear, focus:** cancelling is an explicit state and the late answer to a cancelled request is discarded; Clear trip aborts any request in flight and resets inputs, result, selection, and errors while keeping preferences; a successful plan moves keyboard focus to "Route options"; errors are announced as alerts; a skip link leads to the planner.
+- **Mobile bottom sheet:** a one-line summary of the selected route stays visible when the sheet is hidden; the sheet button declares what it controls; state survives viewport changes.
+- **Optional one-shot device location:** "Use my location" asks the browser once, only on the click, labels the start as a device estimate with its accuracy and the nearest mapped place, explains a denied permission, and never watches or stores the position (roadmap section 12).
+- **Accessibility polish:** visually hidden help for the inputs, labelled select buttons on the cards, `aria-pressed` and `aria-current`, a text alternative stating that the map is optional, reduced-motion respected, and an automated axe scan in the browser suite.
+- **Disclaimer wording** reviewed: the footer now says that nothing leaves the computer except requests to the local services; the directions say the app does not follow your position or know about closures.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 142 passed (the encounter detail fields ride on the existing suites). Host: 116 passed, 26 skipped.
+- Frontend: type check clean; 49 Vitest tests passed (the four result states with the empty-inventory caveat, badges with the stale flag, print and download on the selected card only, status-strip badges, directions summary and steps, device location and its denied state, explicit cancellation with the late answer ignored, the no-route-at-all state, focus on results, clear trip, age and export helpers, plus the M1 to M5 suites).
+- Browser (Playwright, three viewports): 66 passed in 1.8 min with no page errors. The new experience suite covers the full address-to-address flow with selection of another option, keyboard-only operation, the narrow-screen sheet with state surviving viewport changes, cancellation with the late answer discarded, the print view, the GeoJSON download, no request while typing and none off the origin, the four result states against mocked responses derived from a real one, the one-shot device location with a mocked position, data-age badges, and an axe scan with zero serious or critical violations before and after planning. The suite now shares the edge's network namespace and reaches the app at `http://localhost:3000`, a secure context like a person's browser.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed on the M6 images; the snapshot and graph survived the restart.
+- Reviewed by hand in the browser: the screenshot spec saved fifteen full-page captures (three viewports; start, planned, alternative selected, evidence open, print layout) under `apps/web/e2e/test-results/screens/`, and I looked at the desktop and phone captures: the dashed alternative and the bold selected route render with the encounter rings, the state blocks and badges read correctly, the evidence entries show status, roads, reason, heading, mapped status, last edit, check date, and the source link, and the print layout keeps the header, the selected card, and the directions. The first print capture still showed the slider and checkbox labels, which are now hidden as well.
+
+### Gate check (roadmap M6)
+
+- A person can plan and compare a trip without opening a terminal: the browser suite runs the whole address-to-address flow through the local geocoder, compares the three preferences, selects another option, prints, downloads, and raises the limit from the page; the user guide describes every control.
+- The UI clearly distinguishes no mapped encounters, unknown data, no better route, and no route at all: distinct labelled blocks with their own test ids, exercised in unit tests and in the browser against mocked responses derived from a real one.
+- Full browser flow, keyboard-only operation, narrow-screen layout, request cancellation, late-response handling, synchronized route and instructions, and no external autocomplete on a restricted provider: each is a named browser test.
+
+### Observations
+
+- The axe scan is the first automated accessibility check in the project; it found no serious or critical violations on the initial page or after planning at any of the three viewports, which is a floor, not a certificate; keyboard operation and screen-reader wording were checked by the named tests and by reading the markup, not by a person using assistive technology.
+- **Two bugs found by the browser suite before the commit:** the "Use my location" button was rendered only on the client (`navigator` is undefined on the server), which produced a React hydration mismatch on every page load; it is now decided after mount. And the test browser reached the stack at `http://edge:3000`, where Chromium treats the page as insecure and refuses geolocation, which is also what a person would hit on any host name other than localhost; the planner now explains that case, and the suite runs from the edge's network namespace at localhost.
+- Alternatives that reach zero exposure are labelled "Lower exposure than Standard" and still carry the honest zero sentence, so the comparison and the zero statement never contradict each other.
+- "Use my location" is implemented as the roadmap's optional, deliberate action only; it is the only feature that reads a sensor, and the browser test mocks the position.
+
 ## 2026-10-19 - M5: camera-aware route generation and comparison
 
 ### Built

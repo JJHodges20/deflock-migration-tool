@@ -60,6 +60,8 @@ export interface EncounterOut {
   heading_relation: string | null;
   in_envelope: boolean;
   source_url: string;
+  source_timestamp: string | null;
+  check_date: string | null;
   association: AssociationOut | null;
 }
 

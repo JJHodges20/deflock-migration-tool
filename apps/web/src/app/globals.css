@@ -143,3 +143,30 @@ details > summary { cursor: pointer; font-weight: 600; }
 .search-summary .notes { margin: 0; padding-left: 18px; }
 .compare-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
 .compare-list .desc { display: block; color: var(--text-muted); font-size: 0.85rem; }
+
+/* M6: badges, result states, bottom-sheet summary, print view */
+.badge { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); font-size: 0.75rem; white-space: nowrap; }
+.badge-warn { background: var(--warn-bg); color: var(--warn-text); border-color: transparent; }
+.state { display: flex; gap: 8px; align-items: flex-start; padding: 8px 10px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-muted); font-size: 0.9rem; }
+.state .state-label { font-weight: 650; white-space: nowrap; }
+.state-unknown, .state-no-route { background: var(--warn-bg); color: var(--warn-text); border-color: transparent; }
+.state-no-route { background: var(--error-bg); color: var(--error-text); }
+.sheet-summary { display: none; }
+.skip-link { position: absolute; left: -999px; top: 8px; z-index: 10; background: var(--surface); color: var(--text); padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); }
+.skip-link:focus { left: 8px; }
+.print-only { display: none; }
+@media (max-width: 768px) {
+  .panel.collapsed .sheet-summary { display: block; margin-top: 6px; font-size: 0.9rem; }
+}
+@media print {
+  @page { margin: 14mm; }
+  html, body { height: auto; background: #ffffff; color: #000000; }
+  .planner-layout { display: block; height: auto; }
+  .map-area, .sheet-handle, .btn, .units-toggle, input, fieldset, details:not(.print-keep), .notice-info, .status-strip, .search-summary, .data-health, .map-legend, .skip-link, .field, .radio, .sheet-summary, #trip-heading, #prefs-heading, .compare-list { display: none !important; }
+  .panel { border: none; overflow: visible; padding: 0; max-height: none; }
+  .print-only { display: block; }
+  .route-card:not(.selected) { display: none; }
+  .route-card.selected { border: 1px solid #000000; box-shadow: none; break-inside: avoid; }
+  .direction { break-inside: avoid; border-color: #cccccc; }
+  a::after { content: ""; }
+}

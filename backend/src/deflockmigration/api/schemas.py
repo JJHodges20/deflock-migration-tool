@@ -100,6 +100,8 @@ class EncounterOut(BaseModel):
     heading_relation: str | None
     in_envelope: bool
     source_url: str
+    source_timestamp: str | None = None
+    check_date: str | None = None
     association: AssociationOut | None
 
 

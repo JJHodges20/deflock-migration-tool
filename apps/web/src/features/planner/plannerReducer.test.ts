@@ -84,11 +84,11 @@ describe("plannerReducer", () => {
     expect(state.result?.options[0].route_id).toBe("current");
   });
 
-  it("cancelling a request returns to idle and ignores its eventual result", () => {
+  it("cancelling a request is an explicit state and ignores its eventual result", () => {
     let state = plannerReducer(initialPlannerState, { type: "PLAN_START" });
     const seq = state.request.sequence;
     state = plannerReducer(state, { type: "PLAN_CANCEL" });
-    expect(state.request.status).toBe("idle");
+    expect(state.request.status).toBe("cancelled");
     state = plannerReducer(state, { type: "PLAN_SUCCESS", sequence: seq, result: fakeResult() });
     expect(state.result).toBeNull();
   });
@@ -143,5 +143,41 @@ describe("plannerReducer", () => {
   it("bounds the detour controls", () => {
     expect(plannerReducer(initialPlannerState, { type: "SET_MAX_EXTRA", minutes: 999 }).maxExtraMinutes).toBe(120);
     expect(plannerReducer(initialPlannerState, { type: "SET_RELATIVE", factor: 0.2 }).relativeLimit).toBe(1);
+  });
+});
+
+describe("plannerReducer cancel and clear (M6)", () => {
+  function planning() {
+    let state = initialPlannerState;
+    state = plannerReducer(state, { type: "CONFIRM_CANDIDATE", endpoint: "origin", candidate: unionStation });
+    state = plannerReducer(state, { type: "CONFIRM_CANDIDATE", endpoint: "destination", candidate: zoo });
+    return plannerReducer(state, { type: "PLAN_START" });
+  }
+
+  it("cancelling is an explicit state and the late answer to the cancelled request is dropped", () => {
+    let state = planning();
+    const sequence = state.request.sequence;
+    state = plannerReducer(state, { type: "PLAN_CANCEL" });
+    expect(state.request.status).toBe("cancelled");
+    expect(canPlan(state)).toBe(true);
+    state = plannerReducer(state, { type: "PLAN_SUCCESS", sequence, result: fakeResult("late") });
+    expect(state.result).toBeNull();
+    expect(state.request.status).toBe("cancelled");
+  });
+
+  it("clear trip removes endpoints, result, selection, and errors but keeps preferences", () => {
+    let state = planning();
+    state = plannerReducer(state, { type: "SET_SCOPE", scope: "flock_only" });
+    state = plannerReducer(state, { type: "SET_UNITS", units: "mi" });
+    state = plannerReducer(state, { type: "PLAN_SUCCESS", sequence: state.request.sequence, result: fakeResult("r9") });
+    expect(selectedRoute(state)?.route_id).toBe("r9");
+    state = plannerReducer(state, { type: "CLEAR_TRIP" });
+    expect(state.origin.confirmed).toBeNull();
+    expect(state.destination.text).toBe("");
+    expect(state.result).toBeNull();
+    expect(state.selectedRouteId).toBeNull();
+    expect(state.request.status).toBe("idle");
+    expect(state.scope).toBe("flock_only");
+    expect(state.units).toBe("mi");
   });
 });

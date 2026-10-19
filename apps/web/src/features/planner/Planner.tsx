@@ -3,8 +3,8 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { api, describeError } from "@/lib/api/client";
-import type { DataHealth, GeocodeCandidate, RegionResponse } from "@/lib/api/types";
-import type { Units } from "@/lib/format";
+import type { DataHealth, GeocodeCandidate, RegionResponse, RouteProfileName } from "@/lib/api/types";
+import { formatDistance, formatDuration, formatTimestamp, type Units } from "@/lib/format";
 import { DataHealthPanel } from "@/features/data-health/DataHealthPanel";
 import { DataStatusStrip } from "./DataStatusStrip";
 import { Directions } from "./Directions";
@@ -18,10 +18,16 @@ const ERROR_TEXT: Record<string, string> = {
   OUTSIDE_SERVICE_AREA: "Trips must start and end inside the Denver pilot area.",
   ROUTER_UNAVAILABLE: "The route engine is unavailable right now. Try again in a moment.",
   NO_DRIVABLE_ROUTE: "No drivable route was found between these points.",
+  VALIDATION_ERROR: "The request was rejected as invalid: unsupported route settings or input. Adjust the limits and try again.",
   GEOCODER_NOT_CONFIGURED: "Address search is not configured. Type coordinates as lat, lon or place a map pin.",
   GEOCODER_UNAVAILABLE: "Address search is temporarily unavailable. Coordinates and map pins still work.",
   NETWORK: "The server could not be reached.",
 };
+
+function withinBbox(lat: number, lon: number, bbox: number[] | undefined): boolean {
+  if (!bbox || bbox.length !== 4) return true;
+  return lon >= bbox[0] && lat >= bbox[1] && lon <= bbox[2] && lat <= bbox[3];
+}
 
 export function Planner() {
   const [state, dispatch] = useReducer(plannerReducer, initialPlannerState);
@@ -30,6 +36,8 @@ export function Planner() {
   const [regionError, setRegionError] = useState<string | null>(null);
   const [mapStatus, setMapStatus] = useState<"loading" | "ready" | "failed">("loading");
   const [highlighted, setHighlighted] = useState<number | null>(null);
+  const [locating, setLocating] = useState(false);
+  const [locationSupported, setLocationSupported] = useState(false); // decided after mount so server and client render the same HTML
   const planAbort = useRef<AbortController | null>(null);
   const searchAborts = useRef<Record<EndpointKey, AbortController | null>>({ origin: null, destination: null });
   const pinModeRef = useRef(state.pinMode);
@@ -49,6 +57,17 @@ export function Planner() {
       .catch(() => undefined);
     return () => controller.abort();
   }, []);
+
+  useEffect(() => {
+    setLocationSupported(typeof navigator !== "undefined" && "geolocation" in navigator);
+  }, []);
+
+  // Keyboard and screen-reader users land on the results as soon as they exist.
+  useEffect(() => {
+    if (state.request.status === "success" && state.result) {
+      document.getElementById("route-options-heading")?.focus();
+    }
+  }, [state.request.status, state.result]);
 
   const search = useCallback(
     async (endpoint: EndpointKey) => {
@@ -77,23 +96,67 @@ export function Planner() {
 
   const geocoderConfigured = region?.capabilities.geocoder_configured ?? false;
 
-  const onPinPlaced = useCallback(
-    (lat: number, lon: number) => {
-      const endpoint = pinModeRef.current;
-      dispatch({ type: "PIN_PLACED", lat, lon });
-      if (!endpoint || !geocoderConfigured) return;
-      // Label the pin with the nearest mapped place; the pin coordinates themselves never change.
+  const relabel = useCallback(
+    (endpoint: EndpointKey, lat: number, lon: number, prefix: string) => {
+      if (!geocoderConfigured) return;
+      // Label the point with the nearest mapped place; the coordinates themselves never change.
       api
         .reverse(lat, lon)
         .then((result) => {
           if (result.found && result.label) {
-            dispatch({ type: "RELABEL_ENDPOINT", endpoint, lat, lon, label: `Map pin near ${result.label}` });
+            dispatch({ type: "RELABEL_ENDPOINT", endpoint, lat, lon, label: `${prefix} near ${result.label}` });
           }
         })
         .catch(() => undefined);
     },
     [geocoderConfigured],
   );
+
+  const onPinPlaced = useCallback(
+    (lat: number, lon: number) => {
+      const endpoint = pinModeRef.current;
+      dispatch({ type: "PIN_PLACED", lat, lon });
+      if (endpoint) relabel(endpoint, lat, lon, "Map pin");
+    },
+    [relabel],
+  );
+
+  // Optional one-shot device location (roadmap section 12): asked only on this click, never watched or stored.
+  const useLocation = useCallback(() => {
+    if (typeof navigator === "undefined" || !("geolocation" in navigator)) return;
+    if (typeof window !== "undefined" && window.isSecureContext === false) {
+      dispatch({ type: "SEARCH_ERROR", endpoint: "origin", error: { code: "LOCATION_INSECURE", message: "Browsers share location only on secure pages (https or localhost). Open the planner at http://127.0.0.1:3000, or type an address, coordinates, or place a map pin." } });
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocating(false);
+        const { latitude: lat, longitude: lon, accuracy } = position.coords;
+        const candidate: GeocodeCandidate = {
+          label: `My location (device estimate, about ${Math.round(accuracy)} m accuracy)`,
+          lat,
+          lon,
+          source: "device_location",
+          category: "location",
+          importance: null,
+          inside_service_boundary: withinBbox(lat, lon, region?.service_boundary.bbox_wsen),
+        };
+        dispatch({ type: "CONFIRM_CANDIDATE", endpoint: "origin", candidate });
+        relabel("origin", lat, lon, "My location");
+      },
+      (error) => {
+        setLocating(false);
+        const denied = error.code === error.PERMISSION_DENIED;
+        dispatch({
+          type: "SEARCH_ERROR",
+          endpoint: "origin",
+          error: { code: "LOCATION_UNAVAILABLE", message: denied ? "Location permission was denied. Type an address, coordinates, or place a map pin instead." : "Your location is not available right now. Type an address, coordinates, or place a map pin instead." },
+        });
+      },
+      { enableHighAccuracy: false, timeout: 10_000, maximumAge: 0 },
+    );
+  }, [region, relabel]);
 
   const plan = useCallback(async () => {
     const origin = state.origin.confirmed;
@@ -131,6 +194,12 @@ export function Planner() {
     dispatch({ type: "PLAN_CANCEL" });
   }, []);
 
+  const clearTrip = useCallback(() => {
+    planAbort.current?.abort();
+    setHighlighted(null);
+    dispatch({ type: "CLEAR_TRIP" });
+  }, []);
+
   // "Raise the limit and plan again": the slider moves first, then the next render re-plans with the new limit.
   const replanRef = useRef(false);
   const raiseLimit = useCallback((minutes: number) => {
@@ -149,6 +218,8 @@ export function Planner() {
     const maneuver = route.maneuvers[highlighted];
     return maneuver ? [maneuver.begin_shape_index, maneuver.end_shape_index] : null;
   }, [route, highlighted]);
+  const labelOf = (profile: RouteProfileName) => region?.profiles[profile]?.label ?? profile;
+  const routeLabels = route ? route.profiles.map(labelOf).join(", ") : "";
 
   const endpointProps = (endpoint: EndpointKey, label: string) => ({
     endpoint,
@@ -164,24 +235,41 @@ export function Planner() {
   });
 
   const setUnits = (units: Units) => dispatch({ type: "SET_UNITS", units });
+  const planError = state.request.status === "error" ? state.request.error : null;
 
   return (
     <div className="planner-layout">
-      <aside className={`panel${state.sheetExpanded ? "" : " collapsed"}`} aria-label="Trip planner">
-        <button type="button" className="btn btn-small sheet-handle" onClick={() => dispatch({ type: "TOGGLE_SHEET" })} aria-expanded={state.sheetExpanded}>
+      <a className="skip-link" href="#trip-heading">
+        Skip to the trip planner
+      </a>
+      <aside id="planner-panel" className={`panel${state.sheetExpanded ? "" : " collapsed"}`} aria-label="Trip planner">
+        <button type="button" className="btn btn-small sheet-handle" onClick={() => dispatch({ type: "TOGGLE_SHEET" })} aria-expanded={state.sheetExpanded} aria-controls="planner-panel">
           {state.sheetExpanded ? "Hide planner" : "Show planner"}
         </button>
+        <div className="sheet-summary" data-testid="sheet-summary" aria-live="polite">
+          {route
+            ? `${routeLabels}: ${formatDuration(route.estimated_duration_seconds)}, ${formatDistance(route.length_meters, state.units)}, ${route.exposure_count !== null ? `${route.exposure_count} mapped record${route.exposure_count === 1 ? "" : "s"} (matched plus uncertain)` : "camera data unknown"}`
+            : state.request.status === "loading"
+              ? "Planning…"
+              : "No route planned yet"}
+        </div>
         <header>
           <h1 className="app-title">DeFlockMigration</h1>
           <p className="app-subtitle">{region ? region.display_name : "Denver pilot"} · compare routes by mapped ALPR cameras</p>
         </header>
         <DataStatusStrip region={region} health={health} />
-        {regionError && <div className="notice notice-error">Region configuration could not be loaded: {regionError}</div>}
+        {regionError && (
+          <div className="notice notice-error" role="alert">
+            Region configuration could not be loaded: {regionError}
+          </div>
+        )}
         {mapStatus === "failed" && <div className="notice notice-warn">The map could not be rendered on this device. Coordinates, typed addresses, and written directions still work; map pins need the map.</div>}
 
         <section className="section" aria-labelledby="trip-heading">
-          <h2 id="trip-heading">Trip</h2>
-          <EndpointInput {...endpointProps("origin", "Start")} />
+          <h2 id="trip-heading" tabIndex={-1}>
+            Trip
+          </h2>
+          <EndpointInput {...endpointProps("origin", "Start")} onUseLocation={locationSupported ? useLocation : undefined} locating={locating} />
           <EndpointInput {...endpointProps("destination", "Destination")} />
           <div className="row">
             <button type="button" className="btn btn-small" onClick={() => dispatch({ type: "SWAP" })} disabled={!state.origin.confirmed && !state.destination.confirmed}>
@@ -263,37 +351,67 @@ export function Planner() {
               {state.request.status === "loading" ? "Planning…" : "Plan route"}
             </button>
             {state.request.status === "loading" && (
-              <button type="button" className="btn" onClick={cancel}>
+              <button type="button" className="btn" onClick={cancel} data-testid="cancel-button">
                 Cancel
               </button>
             )}
-            <button type="button" className="btn" onClick={() => dispatch({ type: "CLEAR_TRIP" })}>
+            <button type="button" className="btn" onClick={clearTrip} data-testid="clear-trip">
               Clear trip
             </button>
           </div>
           <div aria-live="polite">
-            {state.request.status === "loading" && <div className="notice notice-info">Calculating the standard route, then searching camera-aware alternatives (up to about 20 s)…</div>}
-            {state.request.status === "error" && state.request.error && (
-              <div className="notice notice-error" data-testid="plan-error">
-                {state.request.error.message} <span className="disclaimer">({state.request.error.code})</span>
+            {state.request.status === "loading" && (
+              <div className="notice notice-info" role="status">
+                Calculating the standard route, then searching camera-aware alternatives (up to about 20 s)…
+              </div>
+            )}
+            {state.request.status === "cancelled" && (
+              <div className="notice notice-info" role="status" data-testid="plan-cancelled">
+                Planning cancelled. Nothing was kept; plan again when you are ready.
+              </div>
+            )}
+            {planError && planError.code === "NO_DRIVABLE_ROUTE" && (
+              <div className="state state-no-route" role="alert" data-testid="state-no-route">
+                <span className="state-label">No route at all</span>
+                <span>{planError.message} Nothing is drawn, because no road-legal path exists between these points in the current road graph. Try points on nearby public roads.</span>
+              </div>
+            )}
+            {planError && planError.code !== "NO_DRIVABLE_ROUTE" && (
+              <div className="notice notice-error" role="alert" data-testid="plan-error">
+                {planError.message} <span className="disclaimer">({planError.code})</span>
               </div>
             )}
             {!canPlan(state) && state.request.status === "idle" && !state.result && <div className="notice notice-info">Confirm a start and a destination to plan a route.</div>}
           </div>
         </section>
 
+        {state.result && route && (
+          <div className="print-only" data-testid="print-header">
+            <h2>DeFlockMigration route plan</h2>
+            <p>
+              Planned {formatTimestamp(new Date().toISOString())}. Start: {state.origin.confirmed?.label ?? "unknown"}. Destination: {state.destination.confirmed?.label ?? "unknown"}.
+            </p>
+            <p>
+              Selected option: {routeLabels}; {formatDuration(route.estimated_duration_seconds)} estimated without live traffic; camera snapshot {route.camera_snapshot_id ?? "none"} as of {formatTimestamp(route.camera_source_as_of)}; road graph {route.road_graph_version}.
+            </p>
+            <p>{state.result.disclaimer}</p>
+          </div>
+        )}
+
         {state.result && (
           <RouteCards
             result={state.result}
             region={region}
+            health={health}
             selectedRouteId={state.selectedRouteId}
             units={state.units}
             maxExtraMinutes={state.maxExtraMinutes}
+            exportContext={{ originLabel: state.origin.confirmed?.label ?? "start", destinationLabel: state.destination.confirmed?.label ?? "destination" }}
             onSelect={(routeId) => dispatch({ type: "SELECT_ROUTE", routeId })}
             onRaiseLimit={raiseLimit}
           />
         )}
-        {route && <Directions route={route} units={state.units} highlighted={highlighted} onHighlight={setHighlighted} />}
+        {route && <Directions route={route} units={state.units} highlighted={highlighted} onHighlight={setHighlighted} profileLabel={routeLabels} />}
 
         <DataHealthPanel />
 
@@ -304,10 +422,11 @@ export function Planner() {
               <li key={line}>{line}</li>
             ))}
           </ul>
-          <p className="disclaimer">DeFlockMigration is an independent project, not affiliated with DeFlock, Flock Safety, OpenStreetMap, or the City and County of Denver. No trip is stored.</p>
+          <p className="disclaimer">DeFlockMigration is an independent project, not affiliated with DeFlock, Flock Safety, OpenStreetMap, or the City and County of Denver. No trip is stored, no account exists, and nothing leaves this computer except requests to the local services.</p>
         </footer>
       </aside>
       <main className="map-area">
+        <p className="visually-hidden">The map is optional: the route cards and the written directions describe every option in full.</p>
         {mapStatus === "failed" ? (
           <div className="map-fallback" role="status">
             Map rendering is unavailable on this device. The planner and written directions remain usable.

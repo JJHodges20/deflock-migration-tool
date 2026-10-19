@@ -72,6 +72,7 @@ def _assessment_out(a: AssessmentResult) -> AssessmentOut:
                 position_m=e.position_m, position_fraction=e.position_fraction, pass_count=e.pass_count, site_group_id=e.site_group_id,
                 manufacturer=e.manufacturer, is_flock=e.is_flock, lifecycle_state=e.lifecycle_state, direction_raw=e.direction_raw,
                 direction_conflict=e.direction_conflict, heading_relation=e.heading_relation, in_envelope=e.in_envelope, source_url=e.source_url,
+                source_timestamp=e.source_timestamp, check_date=e.check_date,
                 association=AssociationOut(**{k: v for k, v in e.association.__dict__.items() if k != "reason"}) if e.association else None,
             )
             for e in a.encounters
