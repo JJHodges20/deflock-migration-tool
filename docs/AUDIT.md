@@ -26,7 +26,7 @@ what remains unverified. Nothing here claims global route optimality, complete c
 | 16 | Map, data, and asset attribution and public-service policies documented | done | `docs/ATTRIBUTION.md`, `docs/DATA_SOURCE_REGISTER.md`, attribution strings in the footer, map, Data Health, print, and export |
 | 17 | Unit, integration, browser, privacy, and synthetic routing tests pass | done | see section 2 |
 | 18 | Real-world pilot checks and unvalidated limitations recorded honestly | done | sections 3 and 5 |
-| 19 | User guide and recovery procedures work on a clean local installation | PENDING_FRESH_STATUS | section 4 |
+| 19 | User guide and recovery procedures work on a clean local installation | done (second attempt; the first found a defect, now fixed) | section 4 |
 | 20 | The owner approves any public deployment separately | open by design | no public deployment exists; the service boundary is unchanged; both need separate approval |
 
 ## 2. Test suites executed for this audit (2026-10-19)
@@ -72,7 +72,24 @@ synthetic, and mocked browser tests).
 
 ## 4. Fresh-install test
 
-PENDING_FRESH_TEXT
+Executed twice on 2026-10-19 from a clean `git clone` of the repository into an empty folder, as a separate Compose
+project (`COMPOSE_PROJECT_NAME=deflockfresh`, own volumes and networks) on port 3100, with the geocoder skipped
+(`scripts\bootstrap.ps1 -SkipGeocoder`; the 17-minute Colorado import was verified on this machine in M1 and M3).
+
+- **Attempt 1 (commit f162136) failed and was the most useful result of the audit:** the graph build stopped in
+  `valhalla_build_timezones`, which downloads the timezone boundary shapefile from GitHub, because the network split had
+  put the `graph-build` job on the internal network. The main stack had not shown this (its graph was rebuilt before the
+  split). The job now joins the egress network, and the download is disclosed in the privacy flows, the attribution page,
+  and the runbook (commit 034a3cb).
+- **Attempt 2 (commit 034a3cb) passed:** images built from cache, migrations applied, the extract downloaded and verified,
+  the graph built in 136 s, the basemap extracted, the fonts and sprites downloaded, the first camera snapshot
+  published with one public query, the associations precomputed, the stack started, and the bootstrap's own smoke test
+  passed; `scripts\smoke_test.ps1 -CheckRestart` then passed against the fresh project on port 3100, including the restart
+  persistence check. Bootstrap took 322 s and the whole test 339 s including teardown. The scratch project's
+  containers, networks, and volumes were removed afterwards; the main stack was untouched throughout.
+
+The documented first-time setup therefore works on a clean clone with nothing installed on the host but Docker Desktop
+and Git, provided the machine can reach Geofabrik, GitHub, Protomaps, and the Overpass API during setup.
 
 ## 5. Performance measured on the pilot machine
 
@@ -140,7 +157,7 @@ rebuild 268 s end to end; graph rollback about 25 s.
 
 - [x] All suites green on the release-candidate images (section 2).
 - [x] Live pilot trips planned while stationary with legality evidence (section 3).
-- [x] Fresh install from a clean clone (section 4). PENDING_FRESH_CHECK
+- [x] Fresh install from a clean clone (section 4).
 - [x] Browser network, storage, and container log inspection (section 6).
 - [x] Egress audit on the split networks (section 6).
 - [x] Source-policy review (section 7) and attribution (`docs/ATTRIBUTION.md`).

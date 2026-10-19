@@ -12,7 +12,7 @@ Milestones follow roadmap section 15. One milestone at a time; each ends with a 
 | M5 | Camera-aware route generation and comparison: documented avoidance requests, bounded candidate search with full reassessment, deterministic ranking per preference, duplicate suppression, honest partial and no-improvement states, search disclosure, comparison UI, synthetic routing fixture | **Complete, approved 2026-10-19** (commit `66c7134`; method in `docs/ROUTING_METHOD.md` section 3) |
 | M6 | Complete trip-planning experience: unmistakable result states, data-age badges, camera details, directions summary, print view, GeoJSON download, explicit cancel, focus management, bottom-sheet summary, one-shot device location, accessibility polish with an axe scan | **Complete, approved 2026-10-19** (commit `44b679b`) |
 | M7 | Scheduled updates, resilience, operating instructions: scheduler and freshness disclosure, manual-refresh cooldown, snapshot rollback, validated graph rebuild with rollback, per-request pinning made visible, provider policy, diff history, trip-free metrics, operations runbook | **Complete, approved 2026-10-19** (commit `84644a4`; runbook in `docs/OPERATIONS.md`) |
-| M8 | Denver pilot audit and v1 release candidate | not started |
+| M8 | Denver pilot audit and v1.0 release candidate: definition-of-done audit, release audit script (keys, egress, logs, restore, perf), local-only network layout, browser privacy suite, pilot fixture set with live cases, fresh-install test, attribution and policy review, known limitations, release checklist | **Built and audited 2026-10-19 (`1.0.0rc1`, tag `v1.0.0-rc1`); awaiting the owner's gate review** (evidence in `docs/AUDIT.md`) |
 
 ## M1 deliverables (what exists after M1)
 

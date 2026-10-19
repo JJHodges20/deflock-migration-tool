@@ -2,6 +2,39 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M8: Denver pilot audit and v1.0 release candidate
+
+### Built
+
+- **Release candidate `1.0.0rc1`:** API and package versions, image tags, and the sync User-Agent bumped; git tag `v1.0.0-rc1` on the final commit.
+- **Local-only network layout (roadmap 13):** the Compose stack now has an `internal` network (no route outside the machine) for web, api, db, valhalla, and geocoder, and an `egress` network joined only by the camera-sync worker, the public-data setup jobs, and the port-publishing edge. Verified by probing every container.
+- **Release audit script:** `scripts\audit.ps1` with `keys`, `egress`, `logs`, `restore`, and `perf` checks that print evidence and never log a trip.
+- **Browser privacy suite:** `apps/web/e2e/privacy.spec.ts` (same-origin requests only, POST bodies for trip details, no browser storage, cookies, or service worker, no coordinates in the address bar, Clear trip empties the page).
+- **Pilot fixture set:** `data/fixtures/pilot_trips.json` with nine reviewed public-landmark trips and two expected rejections, planned live by `tests/integration/test_pilot_trips_live.py` with legality, snapping, complete-assessment, lower-exposure, and distinct-geometry checks.
+- **Documentation:** `docs/AUDIT.md` (definition of done item by item, suites, live cases, fresh install, performance, privacy summary, source-policy review, known limitations, release checklist, what to tell a pilot user), `docs/ATTRIBUTION.md` (data, software, policies, independence statement), privacy document with the executed egress audit and the remaining limitations, user guide, operations runbook, test plan, and README for the release candidate.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 167 passed, including the eleven pilot trip cases. Host: 125 passed, 42 skipped.
+- Frontend: type check clean; 52 Vitest tests passed.
+- Browser (Playwright, three viewports): 78 passed in 1.3 min with no page errors, including the new privacy suite. One earlier run straight after two stack restarts failed the address-based tests because the self-hosted geocoder answers its first searches slowly on a cold cache; the API timeout is now 15 s and the geocoder health check is a real search, and the rerun passed.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed on the split networks with the release-candidate images (API version 1.0.0rc1); the snapshot and the graph survived the restart.
+- Release audit (`scripts\audit.ps1`): no API key, token, or paid provider anywhere; egress probes show api, web, valhalla, db, and geocoder without an internet route and only camera-sync reaching the public Overpass instance; after a plan, an address search, a reverse lookup, a camera viewport query, and an outside-area plan, zero occurrences of any coordinate, address, bounding box, or landmark name in the edge, api, web, geocoder, and valhalla logs (39 lines captured); a compressed dump of the live database (825 KB) restored into a scratch database with identical counts (7 snapshots, 11,175 records, 2 diffs, 1,285 associations, 11 jobs, same active snapshot), scratch dropped afterwards.
+- Live pilot trips: nine planned trips and two expected rejections from `data/fixtures/pilot_trips.json`; every displayed option road-legal by `trace_attributes`, every avoidance option complete, lower in exposure, and within its bound, all geometries distinct, snapping at most 117 m; five trips found a zero-exposure alternative for +49 to +113 s, the airport trip went 7 to 4 to 2 mapped records, three trips had nothing to avoid; searches took 0.05 to 0.72 s with 1 to 5 routing calls.
+- Fresh install: two attempts from a clean clone as a separate Compose project on port 3100 with the geocoder skipped. The first (f162136) failed in `valhalla_build_timezones`, which downloads the timezone boundary shapefile from GitHub and had no route on the internal network; the graph-build job now joins the egress network and the download is documented (034a3cb). The second (034a3cb) passed: bootstrap 322 s (graph build 136 s), its smoke test and a restart smoke test on the fresh project passed, 339 s in all including teardown; the main stack was untouched.
+- Performance: cold start 19 s to healthy; first plan 353 ms; 27 warm pilot-trip plans with three preferences p50 104 ms, p95 717 ms, max 757 ms; API 125 MB resident; database 27 MB.
+
+### Gate check (roadmap M8)
+
+- Evidence for an invited pilot is assembled in `docs/AUDIT.md`; the decision to invite anyone is the owner's.
+- No claim of global route optimality, complete camera coverage, or guaranteed avoidance appears in the UI or the documents; the wording was re-read for this audit.
+- No public deployment exists and the service boundary is unchanged; both need separate approval.
+
+### Observations
+
+- Splitting the networks surfaced nothing broken: no service needed the internet except the sync worker and the setup jobs, which confirms the local-only design rather than changing it.
+- The whole inventory database compresses to under a megabyte; backups are cheap and the restore path is a two-minute operation.
+- The audit changed two things and found nothing else: the self-hosted geocoder is slow on its first searches after a restart (now a 15 s API timeout and a search-based health probe that keeps the cache warm), and the diff-history row limit is the one query parameter besides the camera viewport, which the privacy suite now names explicitly. The release candidate is otherwise the M7 code with a version, a network boundary, and evidence.
 ## 2026-10-19 - M7: scheduled updates, resilience, and operating instructions
 
 ### Built
