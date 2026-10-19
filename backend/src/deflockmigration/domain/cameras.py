@@ -14,6 +14,7 @@ class LifecycleState(StrEnum):
     DESTROYED = "destroyed"
     DISUSED = "disused"
     PLANNED = "planned"
+    NO_LONGER_MAPPED = "no_longer_mapped"  # absent from a later successful same-scope query; retained as uncertain
 
 
 @dataclass(frozen=True)

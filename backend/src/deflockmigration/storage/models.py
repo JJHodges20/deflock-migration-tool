@@ -31,15 +31,19 @@ class CameraSnapshot(Base):
     alpr_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     flock_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     unknown_manufacturer_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    in_envelope_alpr_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    no_longer_mapped_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
     raw_sha256: Mapped[str] = mapped_column(String(64), nullable=False)
     raw_bytes: Mapped[int] = mapped_column(BigInteger, nullable=False)
     raw_path: Mapped[str | None] = mapped_column(String(400))
     parser_version: Mapped[str] = mapped_column(String(40), nullable=False)
     license: Mapped[str] = mapped_column(String(120), nullable=False, default="ODbL 1.0 (OpenStreetMap contributors)")
     quality: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
-    promotion_state: Mapped[str] = mapped_column(String(20), nullable=False)  # staged | active | superseded | quarantined
+    promotion_state: Mapped[str] = mapped_column(String(20), nullable=False)  # staged | active | superseded | quarantined | rejected
     previous_active_snapshot_id: Mapped[str | None] = mapped_column(String(120))
     promoted_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    review_note: Mapped[str | None] = mapped_column(Text)
+    reviewed_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
@@ -49,6 +53,7 @@ class CameraRecord(Base):
         UniqueConstraint("snapshot_id", "source_key", name="uq_camera_records_snapshot_source"),
         Index("ix_camera_records_geom", "geom", postgresql_using="gist"),
         Index("ix_camera_records_snapshot", "snapshot_id"),
+        Index("ix_camera_records_source_key", "source_key"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -75,6 +80,29 @@ class CameraRecord(Base):
     lifecycle_evidence: Mapped[str | None] = mapped_column(String(200))
     check_date: Mapped[str | None] = mapped_column(String(40))
     parse_warnings: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    in_envelope: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    missing_since: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
+    last_seen_snapshot_id: Mapped[str | None] = mapped_column(String(120))
+
+
+class SnapshotDiff(Base):
+    """What changed between the previous active snapshot and this one. Key lists are bounded; counts are exact."""
+
+    __tablename__ = "snapshot_diffs"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    snapshot_id: Mapped[str] = mapped_column(String(120), ForeignKey("camera_snapshots.snapshot_id", ondelete="CASCADE"), nullable=False)
+    previous_snapshot_id: Mapped[str | None] = mapped_column(String(120))
+    added_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    changed_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    missing_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    reappeared_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    carried_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    expired_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    added_keys: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    changed: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    missing_keys: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
 class SyncJob(Base):
@@ -82,7 +110,7 @@ class SyncJob(Base):
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     region_id: Mapped[str] = mapped_column(String(40), nullable=False)
-    trigger: Mapped[str] = mapped_column(String(20), nullable=False)  # scheduled | manual | setup
+    trigger: Mapped[str] = mapped_column(String(20), nullable=False)  # scheduled | manual | setup | review
     started_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     finished_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[str] = mapped_column(String(20), nullable=False)  # running | succeeded | failed | quarantined

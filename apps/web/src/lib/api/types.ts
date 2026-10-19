@@ -108,6 +108,29 @@ export interface RegionResponse {
   disclaimer: string;
 }
 
+export interface SyncJobView {
+  status: string;
+  trigger: string;
+  started_at: string;
+  finished_at: string | null;
+  snapshot_id: string | null;
+  http_status: number | null;
+  attempts: number;
+  added: number | null;
+  changed: number | null;
+  no_longer_present: number | null;
+  message: string | null;
+}
+
+export interface SnapshotDiffView {
+  added: number;
+  changed: number;
+  missing: number;
+  reappeared: number;
+  carried: number;
+  expired: number;
+}
+
 export interface DataHealth {
   region_id: string;
   service_boundary_id: string;
@@ -124,12 +147,26 @@ export interface DataHealth {
     alpr_count: number;
     flock_count: number;
     unknown_manufacturer_count: number;
+    in_envelope_alpr_count: number;
+    no_longer_mapped_count: number;
+    previous_active_snapshot_id: string | null;
     parser_version: string;
     quality: Record<string, unknown>;
+    review_note: string | null;
+    diff: SnapshotDiffView | null;
     counts_meaning: string;
   } | null;
-  last_sync: Record<string, unknown> | null;
-  last_failure: Record<string, unknown> | null;
+  inventory: {
+    retain_missing_hours: number;
+    unresolved_disappearance: string;
+    keep_superseded_snapshots: number;
+    keep_quarantined_snapshots: number;
+    pending_review: { snapshot_id: string; created_at: string; reason: string | null; alpr_count: number }[];
+    retained_snapshots?: number;
+  };
+  last_sync: SyncJobView | null;
+  last_failure: SyncJobView | null;
+  recent_syncs: SyncJobView[];
   staleness: { age_hours?: number | null; stale_after_hours?: number; is_stale?: boolean; message?: string };
   router: { available: boolean; version: string | null; tileset_last_modified: string | null; has_tiles: boolean | null; graph_id: string; extract_data_timestamp: string; message: string | null };
   geocoder: { configured: boolean; available: boolean; provider: string; data_updated: string | null; message: string | null };
@@ -149,8 +186,13 @@ export interface CameraFeatureProperties {
   camera_direction_raw: string | null;
   direction_conflict: boolean;
   lifecycle_state: string;
+  lifecycle_evidence: string | null;
+  uncertain: boolean;
   check_date: string | null;
   geometry_quality: string;
+  in_envelope: boolean;
+  missing_since: string | null;
+  source_url: string;
 }
 
 export interface CamerasResponse {

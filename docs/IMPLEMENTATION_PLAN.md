@@ -5,8 +5,8 @@ Milestones follow roadmap section 15. One milestone at a time; each ends with a 
 | Milestone | Scope | Status |
 |---|---|---|
 | M0 | Source, geography, and routing feasibility | **Complete, approved 2026-10-15** (commit `4476da0`) |
-| M1 | Repository, contracts, Docker Compose stack, visible application shell | **Built and verified 2026-10-16; awaiting the owner's gate approval** (evidence in `docs/DEVELOPMENT_LOG.md`) |
-| M2 | Public camera inventory: quarantine review, lifecycle handling, diff history, searchable map overlay polish | not started (the sync pipeline, snapshot contract, atomic promotion, and bbox overlay already exist from M1) |
+| M1 | Repository, contracts, Docker Compose stack, visible application shell | **Complete, approved 2026-10-16** (commit `5f78ac8`) |
+| M2 | Public camera inventory: envelope checks, no-longer-mapped carry-over, diff and record history, retention, quarantine review, overlay legend and source links | **Built and verified 2026-10-19; awaiting the owner's gate approval** (evidence in `docs/DEVELOPMENT_LOG.md`) |
 | M3 | Standard route and usable address entry: approved geocoder wired into the UI with candidate confirmation, Denver address test cases, cancellation polish | not started (coordinate entry, map pins, standard routing, and the Nominatim adapter exist from M1) |
 | M4 | Encounter assessment and road-association validation (PostGIS geography, fixtures for parallel roads, overpasses, 25/50/100 m sensitivity) | not started |
 | M5 | Camera-aware route generation and comparison (linear cost factors, exclusions, bounded candidate search, honest partial states) | not started |

@@ -104,6 +104,21 @@ def test_cameras_without_database_and_bad_bbox(client: TestClient):
     assert client.get("/api/v1/cameras", params={"bbox": "-104.9,39.8,-105.0,39.7"}).status_code == 400
 
 
+def test_camera_record_endpoint_contract(client: TestClient):
+    resp = client.get("/api/v1/cameras/record", params={"source_key": "not-a-key"})
+    assert resp.status_code == 400 and resp.json()["error"]["code"] == "VALIDATION_ERROR"
+    resp = client.get("/api/v1/cameras/record", params={"source_key": "osm:node:123"})
+    assert resp.status_code == 503 and resp.json()["error"]["code"] == "CAMERA_DATA_UNAVAILABLE"
+
+
+def test_health_data_inventory_block(client: TestClient):
+    data = client.get("/api/v1/health/data").json()
+    inventory = data["inventory"]
+    assert inventory["retain_missing_hours"] == 72 and inventory["unresolved_disappearance"] == "retain_as_uncertain"
+    assert inventory["keep_superseded_snapshots"] == 30 and inventory["pending_review"] == []
+    assert data["recent_syncs"] == []
+
+
 def test_oversized_body_is_rejected(client: TestClient):
     resp = client.post("/api/v1/routes/plan", content=b"{}", headers={"Content-Type": "application/json", "Content-Length": str(70 * 1024)})
     assert resp.status_code == 413

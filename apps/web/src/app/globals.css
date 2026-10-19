@@ -96,7 +96,17 @@ legend { font-weight: 600; padding: 0 4px; }
 .disclaimer { font-size: 0.8rem; color: var(--text-muted); }
 details > summary { cursor: pointer; font-weight: 600; }
 .sheet-handle { display: none; }
+.map-legend { position: absolute; left: 12px; bottom: 28px; z-index: 2; background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius); padding: 8px 10px; font-size: 0.8rem; max-width: 260px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+.map-legend ul { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.map-legend li { display: flex; align-items: center; gap: 6px; }
+.legend-note { color: var(--text-muted); font-size: 0.75rem; }
+.swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #ffffff; box-shadow: 0 0 0 1px var(--border); }
+.swatch-flock { background: #b3261e; }
+.swatch-other { background: #c77a00; }
+.swatch-unknown { background: #5b6b7a; }
+.swatch-uncertain { background: rgba(179, 38, 30, 0.35); border-color: #1c2024; }
 .maplibregl-popup-content { color: #1c2024; font-family: var(--font); font-size: 0.85rem; }
+.camera-popup a { display: inline-block; margin-top: 6px; }
 .camera-popup dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 2px 8px; }
 .camera-popup dt { color: #5a636d; }
 .camera-popup dd { margin: 0; }

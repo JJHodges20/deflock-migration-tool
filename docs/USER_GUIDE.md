@@ -54,14 +54,17 @@ docker compose up
 - **Maximum extra travel time** and the advanced relative limit will bound camera-aware alternatives in later milestones.
 - **Plan route** sends the trip to the local backend; **Cancel** aborts; **Clear trip** removes the current inputs and result from the page. No trip is stored anywhere.
 - Route cards show estimated time (no live traffic), distance, extra time versus Standard, the camera assessment state, the camera snapshot date, and the road-graph version. Selecting a card updates the map and the street-by-street directions together.
-- **Show mapped cameras** draws records from the local snapshot when zoomed in. Clicking a dot shows the mapped manufacturer, operator, direction tag, lifecycle, last edit, and check date; none of this is field-verified.
-- **Data health** (bottom of the panel) shows the snapshot id and source date, counts of mapped records, freshness, the last sync result, the routing graph build date, and geocoder status. "Refresh view" reloads the panel; it does not trigger a sync.
+- **Show mapped cameras** draws records from the local snapshot when zoomed in. A legend counts the records in view: red for Flock-tagged, orange for another known manufacturer, grey for manufacturer unknown, faded with a dark outline for records that are no longer present in the source and are retained as uncertain, and no outline for records outside the assessed area. Clicking a dot shows the mapped status, manufacturer, operator, direction tag, whether it lies in the assessed area, last edit, check date, and a link to the record on OpenStreetMap; none of this is field-verified.
+- **Data health** (bottom of the panel) shows the snapshot id and source date, counts of mapped records (including how many lie inside the assessed area and how many are retained as "no longer mapped"), what changed versus the previous snapshot, freshness, the last syncs, any snapshot waiting for operator review, the routing graph build date, and geocoder status. "Refresh view" reloads the panel; it does not trigger a sync.
 
 ## 4. Operator tasks
 
 | Task | Command |
 |---|---|
 | Refresh the camera inventory now | `powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1` (the worker also runs every 6 hours while the stack is up) |
+| Review a quarantined snapshot | `powershell -ExecutionPolicy Bypass -File scripts\review_snapshot.ps1 list`, then `... accept <snapshot_id> -Note "<what you corroborated>"` or `... reject <snapshot_id> -Note "<why>"`. A snapshot is quarantined when the source returns an empty result or the mapped ALPR count drops by more than half; the last good snapshot stays active until you decide. |
+| Look up one camera record's history | `GET http://127.0.0.1:3000/api/v1/cameras/record?source_key=osm:node:<id>` returns the current record and its versions across retained snapshots |
+| After updating the code | `docker compose build`, then `docker compose --profile setup run --rm db-migrate`, then `docker compose up -d` (migrations are never applied silently) |
 | Refresh road data and rebuild the graph | `powershell -ExecutionPolicy Bypass -File scripts\import_region.ps1` (add `-Force` to rebuild an unchanged extract) |
 | Verify the stack, including a restart persistence check | `powershell -ExecutionPolicy Bypass -File scripts\smoke_test.ps1 -CheckRestart` |
 | Follow the geocoder import | `docker compose logs -f geocoder` |

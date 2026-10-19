@@ -2,6 +2,41 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-16 / 2026-10-19 - M2: public camera inventory
+
+### Built
+
+- **Envelope check:** every record carries `in_envelope`; the snapshot counts ALPR records inside the camera-data envelope separately (`in_envelope_alpr_count`). Only those are assessed against routes later.
+- **Vanished records:** a record present in the previous active snapshot but absent from a later successful same-scope query is carried into the new snapshot as `lifecycle_state = no_longer_mapped` with `missing_since` and `last_seen_snapshot_id`, counted separately, shown faded on the map, and dropped after `retain_missing_hours` (72 h). Lifecycle prefixes mapped by contributors (`removed:`, `was:`, `destroyed:`, `disused:`) stay distinct from this state. The `drop` policy variant is supported and tested.
+- **Diff history:** each sync stores a `snapshot_diffs` row (added, changed, missing, reappeared, carried, expired counts plus bounded key lists); sync jobs keep the summary counts; Data Health shows the active snapshot's diff and the five most recent syncs.
+- **Record history:** `GET /api/v1/cameras/record?source_key=osm:node:<id>` returns the current record and its versions across retained snapshots, plus the OpenStreetMap link, so a changed recommendation can be explained.
+- **Retention:** after a successful sync the newest 30 superseded and 10 quarantined/rejected snapshots are kept; older ones, their records, diffs, and raw files are pruned.
+- **Quarantine review:** `deflock-snapshot-review list|accept|reject` (wrapped by `scripts/review_snapshot.ps1`) records the operator decision and a note; accept promotes atomically, reject keeps the last good snapshot; both write a `review` sync-job row. Data Health lists pending reviews.
+- **Overlay:** legend with per-view counts (Flock-tagged, other manufacturer, unknown, no longer mapped, outside the assessed area), distinct styling for uncertain and out-of-envelope records, popup with mapped status, assessed-area flag, and a link to the source record.
+- **Schema:** migration 0002; `docs/DATA_DICTIONARY.md` documents every table and column.
+
+### Verification (2026-10-19)
+
+- Migration 0002 applied to the live database with `docker compose --profile setup run --rm db-migrate`; the api and worker were recreated on the rebuilt image.
+- Backend in the container: 66 passed, including the integration matrix (`test_inventory_lifecycle`, `test_drop_policy_discards_vanished_records_immediately`) against the `deflock_test` PostGIS database.
+- Frontend: type check clean; 17 Vitest tests passed (legend summary and Data Health panel tests added).
+- Browser smoke (Playwright, three viewports): 9 passed.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed; the snapshot and graph survived the restart.
+- Live inventory: the scheduled sync on the restart absorbed three days of real OpenStreetMap activity (14 added, 3 changed, 6 no longer present versus the 2026-10-16 snapshot). A manual sync then published `ovp-denver-20261019T144621Z-37c4cf74`: 1,548 ALPR records, 1,285 inside the envelope, 1,270 Flock, 155 manufacturer unknown, zero diff against the snapshot taken four minutes earlier; 6 snapshots retained. `GET /api/v1/cameras/record` returned a Flock record with 6 historical versions across the retained snapshots and its OpenStreetMap link; the overlay features carry `uncertain`, `in_envelope`, and `source_url`.
+- Not demonstrated live: a carried "no longer mapped" record (no record vanished between the two M2-era syncs). The carry-over, reappearance, retention expiry, quarantine review, pruning, and concurrent-sync behaviours are proven by the integration matrix with mocked source responses.
+
+### Gate check (roadmap M2)
+
+- A real dated Denver-region snapshot loads and refreshes without per-route provider calls: yes (scheduled, manual, and setup triggers; routes never touch the source).
+- Source errors preserve the last known good snapshot: yes (integration test; real 502 retries observed in the logs).
+- Counts refer to mapped records only: yes (API `counts_meaning` fields, legend and Data Health wording, data dictionary).
+
+### Observations
+
+- Record counts in the UI and API distinguish "present in the source" (`alpr_count`), "inside the assessed area" (`in_envelope_alpr_count`), and "no longer mapped, retained as uncertain" (`no_longer_mapped_count`). None of them is a count of physical devices.
+- The sync's per-record carry-over copies the previous row verbatim (tags, manufacturer, direction) so that an uncertain record keeps its evidence; only lifecycle, warnings, and the missing timestamps change.
+- Migrations are never applied automatically at container start; `docker compose --profile setup run --rm db-migrate` is the documented step after a code update.
+
 ## 2026-10-15 / 2026-10-16 - M1: repository, contracts, Docker Compose stack, application shell
 
 ### Built

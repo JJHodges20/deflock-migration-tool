@@ -159,6 +159,13 @@ class SnapshotValidationConfig(_Strict):
     max_count_drop_fraction: float = 0.5
     stale_after_hours: int = 48
     unresolved_disappearance: Literal["retain_as_uncertain", "drop"] = "retain_as_uncertain"
+    retain_missing_hours: int = 72
+
+
+class RetentionConfig(_Strict):
+    keep_superseded_snapshots: int = 30
+    keep_quarantined_snapshots: int = 10
+    max_diff_keys_stored: int = 500
 
 
 class ProximityConfig(_Strict):
@@ -168,6 +175,7 @@ class ProximityConfig(_Strict):
 
 class DataQualityConfig(_Strict):
     snapshot_validation: SnapshotValidationConfig
+    retention: RetentionConfig = Field(default_factory=RetentionConfig)
     proximity: ProximityConfig
 
 

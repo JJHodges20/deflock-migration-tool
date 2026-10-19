@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api/client";
 import type { CameraScope, GeocodeCandidate, RegionResponse, RouteOptionOut } from "@/lib/api/types";
 import { clampBbox } from "@/lib/format";
+import { emptySummary, summarizeCameraFeatures, type CameraSummary } from "./cameraSummary";
 
 interface Props {
   region: RegionResponse | null;
@@ -23,6 +24,7 @@ interface Props {
 
 const CAMERA_MIN_ZOOM = 11;
 const MAX_BBOX_DEGREES = 0.6;
+const OSM_URL_PREFIX = "https://www.openstreetmap.org/";
 let protocolRegistered = false;
 
 function webglAvailable(): boolean {
@@ -53,12 +55,14 @@ function popupElement(properties: Record<string, unknown>): HTMLElement {
   const root = document.createElement("div");
   root.className = "camera-popup";
   const dl = document.createElement("dl");
+  const uncertain = properties.uncertain === true;
   const rows: [string, unknown][] = [
+    ["Status", uncertain ? `no longer mapped (since ${properties.missing_since ?? "unknown"}); retained as uncertain` : String(properties.lifecycle_state)],
     ["Manufacturer", properties.manufacturer ?? "unknown"],
     ["Flock scope", properties.is_flock ? "yes" : "no"],
     ["Operator", properties.operator ?? "unknown"],
     ["Mapped direction", properties.direction_raw ?? "none"],
-    ["Lifecycle", properties.lifecycle_state],
+    ["In assessed area", properties.in_envelope ? "yes" : "no (outside the data envelope)"],
     ["Last edited", properties.source_timestamp ?? "unknown"],
     ["Check date", properties.check_date ?? "none"],
     ["Source", properties.source_key],
@@ -70,9 +74,19 @@ function popupElement(properties: Record<string, unknown>): HTMLElement {
     dd.textContent = String(value);
     dl.append(dt, dd);
   }
+  root.append(dl);
+  const url = String(properties.source_url ?? "");
+  if (url.startsWith(OSM_URL_PREFIX)) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "View this record on OpenStreetMap";
+    root.append(link);
+  }
   const note = document.createElement("p");
   note.textContent = "Mapped record, not a field-verified device. Direction is where contributors believe it points.";
-  root.append(dl, note);
+  root.append(note);
   return root;
 }
 
@@ -84,10 +98,12 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
   const onPinPlacedRef = useRef(onPinPlaced);
   const cameraAbortRef = useRef<AbortController | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [summary, setSummary] = useState<CameraSummary>(emptySummary);
+  const [overlayState, setOverlayState] = useState<"hidden" | "zoom" | "ready" | "unavailable">("hidden");
+  const [snapshotDate, setSnapshotDate] = useState<string | null>(null);
   pinModeRef.current = pinMode;
   onPinPlacedRef.current = onPinPlaced;
 
-  // Create the map once the region (and therefore the basemap paths) is known.
   useEffect(() => {
     if (!region || !containerRef.current || mapRef.current) return;
     if (!webglAvailable()) {
@@ -122,12 +138,18 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
           id: "cameras-circle",
           type: "circle",
           source: "cameras",
-          paint: { "circle-radius": 6, "circle-color": ["case", ["==", ["get", "is_flock"], true], "#b3261e", "#c77a00"], "circle-stroke-color": "#ffffff", "circle-stroke-width": 1.5 },
+          paint: {
+            "circle-radius": ["case", ["==", ["get", "uncertain"], true], 5, 6],
+            "circle-color": ["case", ["==", ["get", "is_flock"], true], "#b3261e", ["!=", ["get", "manufacturer"], null], "#c77a00", "#5b6b7a"],
+            "circle-opacity": ["case", ["==", ["get", "uncertain"], true], 0.35, ["==", ["get", "in_envelope"], false], 0.5, 0.95],
+            "circle-stroke-color": ["case", ["==", ["get", "uncertain"], true], "#1c2024", "#ffffff"],
+            "circle-stroke-width": ["case", ["==", ["get", "in_envelope"], false], 0, 1.5],
+          },
         });
         map.on("click", "cameras-circle", (event) => {
           const feature = event.features?.[0];
           if (!feature) return;
-          new Popup({ closeButton: true, maxWidth: "320px" }).setLngLat(event.lngLat).setDOMContent(popupElement(feature.properties as Record<string, unknown>)).addTo(map);
+          new Popup({ closeButton: true, maxWidth: "340px" }).setLngLat(event.lngLat).setDOMContent(popupElement(feature.properties as Record<string, unknown>)).addTo(map);
         });
         map.on("mouseenter", "cameras-circle", () => {
           map.getCanvas().style.cursor = "pointer";
@@ -139,7 +161,6 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
         onStatus("ready");
       });
       map.on("error", (event) => {
-        // Missing optional sprites or tiles outside the extract are not fatal; log to the console only.
         console.warn("map warning", event.error?.message ?? event);
       });
       map.on("click", (event) => {
@@ -165,7 +186,6 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
     if (map) map.getCanvas().style.cursor = pinMode ? "crosshair" : "";
   }, [pinMode]);
 
-  // Route geometry.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !loaded) return;
@@ -182,7 +202,6 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
     }
   }, [route, loaded]);
 
-  // Origin / destination markers.
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !loaded) return;
@@ -205,8 +224,14 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
     if (!source) return;
     const refresh = async () => {
       cameraAbortRef.current?.abort();
-      if (!showCameras || map.getZoom() < CAMERA_MIN_ZOOM) {
+      if (!showCameras) {
         source.setData({ type: "FeatureCollection", features: [] });
+        setOverlayState("hidden");
+        return;
+      }
+      if (map.getZoom() < CAMERA_MIN_ZOOM) {
+        source.setData({ type: "FeatureCollection", features: [] });
+        setOverlayState("zoom");
         return;
       }
       const b = map.getBounds();
@@ -215,10 +240,15 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
       cameraAbortRef.current = controller;
       try {
         const data = await api.cameras(bbox, scope, controller.signal);
-        if (!controller.signal.aborted) source.setData({ type: "FeatureCollection", features: data.features });
+        if (controller.signal.aborted) return;
+        source.setData({ type: "FeatureCollection", features: data.features });
+        setSummary(summarizeCameraFeatures(data.features));
+        setSnapshotDate(data.snapshot.timestamp_osm_base);
+        setOverlayState("ready");
       } catch (error) {
         if (!(error instanceof DOMException && error.name === "AbortError")) {
           source.setData({ type: "FeatureCollection", features: [] });
+          setOverlayState("unavailable");
         }
       }
     };
@@ -230,5 +260,28 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
     };
   }, [showCameras, scope, loaded]);
 
-  return <div ref={containerRef} className="map-container" role="application" aria-label="Map of the Denver pilot area" data-testid="map" />;
+  return (
+    <>
+      <div ref={containerRef} className="map-container" role="application" aria-label="Map of the Denver pilot area" data-testid="map" />
+      {overlayState !== "hidden" && (
+        <div className="map-legend" role="status" data-testid="camera-legend">
+          {overlayState === "zoom" && <span>Zoom in to see mapped cameras.</span>}
+          {overlayState === "unavailable" && <span>Camera records are unavailable right now.</span>}
+          {overlayState === "ready" && (
+            <>
+              <strong>{summary.total} mapped records in view</strong>
+              <ul>
+                <li><span className="swatch swatch-flock" /> Flock-tagged: {summary.flock}</li>
+                <li><span className="swatch swatch-other" /> Other manufacturer: {summary.otherKnown}</li>
+                <li><span className="swatch swatch-unknown" /> Manufacturer unknown: {summary.unknown}</li>
+                <li><span className="swatch swatch-uncertain" /> No longer mapped, retained as uncertain: {summary.uncertain}</li>
+                {summary.outsideEnvelope > 0 && <li>Outside the assessed area: {summary.outsideEnvelope}</li>}
+              </ul>
+              <span className="legend-note">Records, not devices. Snapshot data as of {snapshotDate ?? "unknown"}.</span>
+            </>
+          )}
+        </div>
+      )}
+    </>
+  );
 }

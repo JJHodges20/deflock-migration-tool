@@ -1,9 +1,15 @@
-# Snapshot validation and assessment parameters (roadmap sections 8 and 9).
+# Snapshot validation, retention, and assessment parameters (roadmap sections 8 and 9).
 snapshot_validation:
   min_element_count: 1               # an empty result is never published automatically
   max_count_drop_fraction: 0.5       # quarantine when the ALPR count falls by more than 50 % versus the active snapshot
   stale_after_hours: 48              # Data Health flags the snapshot as stale beyond this age
   unresolved_disappearance: retain_as_uncertain   # a record missing from a new snapshot is "no longer mapped", not "removed"
+  retain_missing_hours: 72           # how long a no-longer-mapped record is carried as uncertain before it is dropped
+
+retention:
+  keep_superseded_snapshots: 30      # older superseded snapshots (and their records) are pruned after a successful sync
+  keep_quarantined_snapshots: 10     # quarantined or rejected snapshots kept for review
+  max_diff_keys_stored: 500          # per-sync diff keeps exact counts and at most this many keys per list
 
 proximity:
   candidate_radius_m: 50             # review parameter only; not a detection range
