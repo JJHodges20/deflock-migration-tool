@@ -112,7 +112,7 @@ def _search_out(result: PlanResult) -> SearchOut:
 def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
     state = request.app.state
     config = state.config
-    if body.region_id != config.region.region_id:
+    if body.region_id is not None and body.region_id != config.region.region_id:
         raise AppError(VALIDATION_ERROR, "Unknown region.", details={"region_id": body.region_id})
     snapshot_id, as_of, downloaded_at = _active_snapshot_versions(state.session_factory, config.region.region_id)
     assessor = getattr(state, "assessor", None)

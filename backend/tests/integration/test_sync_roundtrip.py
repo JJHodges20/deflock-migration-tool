@@ -19,6 +19,7 @@ from sqlalchemy import text
 
 from deflockmigration.application.review import ReviewError, accept_snapshot, list_snapshots, reject_snapshot
 from deflockmigration.data_sources.overpass import OverpassClient
+from deflockmigration.ingestion.normalize import normalize_elements
 from deflockmigration.ingestion.sync import _lock_key, run_sync
 from deflockmigration.storage.db import make_engine, make_session_factory
 from deflockmigration.storage.models import Base
@@ -26,7 +27,7 @@ from deflockmigration.storage.repositories import CameraRepository, SnapshotRepo
 
 pytestmark = pytest.mark.integration
 TEST_URL = os.environ.get("DEFLOCK_TEST_DATABASE_URL")
-FAR_RECORD = {"type": "node", "id": 999999999, "lat": 39.0, "lon": -106.5, "version": 1, "timestamp": "2026-10-16T00:00:00Z",
+FAR_RECORD = {"type": "node", "id": 999999999, "lat": 39.0, "lon": -98.0, "version": 1, "timestamp": "2026-10-16T00:00:00Z",
               "tags": {"man_made": "surveillance", "surveillance:type": "ALPR", "manufacturer": "Flock Safety"}}
 
 
@@ -71,8 +72,6 @@ def _run(config, session_factory, payload, tmp_path, clock=None, trigger="schedu
 
 
 def _expected_in_envelope_alpr(config, elements: list[dict]) -> int:
-    from deflockmigration.ingestion.normalize import normalize_elements
-
     return sum(1 for r in normalize_elements(elements) if r.is_alpr and config.envelope.contains(r.lat, r.lon))
 
 
@@ -95,10 +94,13 @@ def test_inventory_lifecycle(app_config, overpass_fixture_payload, session_facto
     a = _run(app_config, session_factory, _payload(base, "2026-10-15T20:00:00Z"), tmp_path)
     assert a.status == "succeeded" and a.added == len(base) and a.carried == 0
     with session_factory() as s:
-        active = SnapshotRepository(s).get_active("denver")
+        active = SnapshotRepository(s).get_active(app_config.region.region_id)
         assert active.snapshot_id == a.snapshot_id
-        # The M0 sample spans the wider query box, so some records lie outside the 20 km envelope.
-        assert active.in_envelope_alpr_count == _expected_in_envelope_alpr(app_config, base) < active.alpr_count
+        # The envelope flag is counted against the configured envelope: under the Denver pilot configuration part of the
+        # M0 sample lies outside the 20 km envelope, while the statewide envelope contains all of it (step B adds a
+        # record outside both).
+        assert active.in_envelope_alpr_count == _expected_in_envelope_alpr(app_config, base)
+        assert active.alpr_count == sum(1 for r in normalize_elements(base) if r.is_alpr)
         assert SnapshotRepository(s).diff_for(a.snapshot_id).added_count == len(base)
 
     # identical payload -> same snapshot, nothing new
@@ -130,7 +132,7 @@ def test_inventory_lifecycle(app_config, overpass_fixture_payload, session_facto
         assert rows[changed_key]["lifecycle_state"] == "removed" and rows[changed_key]["is_alpr"]
         far = rows["osm:node:999999999"]
         assert far["in_envelope"] is False and far["is_alpr"] and far["is_flock"]
-        snapshot = SnapshotRepository(s).get_active("denver")
+        snapshot = SnapshotRepository(s).get_active(app_config.region.region_id)
         assert snapshot.snapshot_id == b.snapshot_id
         assert snapshot.no_longer_mapped_count == 3
         assert snapshot.in_envelope_alpr_count == _expected_in_envelope_alpr(app_config, b_elements)  # the far record is ALPR but outside the envelope
@@ -169,20 +171,20 @@ def test_inventory_lifecycle(app_config, overpass_fixture_payload, session_facto
     q = _run(app_config, session_factory, tiny, tmp_path, clock=later)
     assert q.status == "quarantined"
     with session_factory() as s:
-        assert SnapshotRepository(s).get_active("denver").snapshot_id == d.snapshot_id
-    pending = list_snapshots(session_factory, "denver", states=["quarantined"])
+        assert SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id == d.snapshot_id
+    pending = list_snapshots(session_factory, app_config.region.region_id, states=["quarantined"])
     assert [p.snapshot_id for p in pending] == [q.snapshot_id] and "dropped" in pending[0].quarantine_reason
     with pytest.raises(ReviewError):
-        reject_snapshot(session_factory, "denver", q.snapshot_id, "   ")
-    reject_snapshot(session_factory, "denver", q.snapshot_id, "upstream returned a partial result")
+        reject_snapshot(session_factory, app_config.region.region_id, q.snapshot_id, "   ")
+    reject_snapshot(session_factory, app_config.region.region_id, q.snapshot_id, "upstream returned a partial result")
     with pytest.raises(ReviewError):
-        accept_snapshot(session_factory, "denver", q.snapshot_id, "already rejected")
+        accept_snapshot(session_factory, app_config.region.region_id, q.snapshot_id, "already rejected")
     q2 = _run(app_config, session_factory, _payload(c_elements[:3], "2026-10-16T21:00:00Z"), tmp_path, clock=later)
     assert q2.status == "quarantined"
-    accept_snapshot(session_factory, "denver", q2.snapshot_id, "corroborated: mass retirement confirmed in OSM history")
+    accept_snapshot(session_factory, app_config.region.region_id, q2.snapshot_id, "corroborated: mass retirement confirmed in OSM history")
     with session_factory() as s:
         repo = SnapshotRepository(s)
-        assert repo.get_active("denver").snapshot_id == q2.snapshot_id
+        assert repo.get_active(app_config.region.region_id).snapshot_id == q2.snapshot_id
         assert repo.get(d.snapshot_id).promotion_state == "superseded"
         assert repo.get(q.snapshot_id).promotion_state == "rejected" and repo.get(q.snapshot_id).review_note.startswith("rejected:")
         assert s.execute(text("SELECT count(*) FROM sync_jobs WHERE trigger='review'")).scalar() == 2
@@ -193,24 +195,24 @@ def test_inventory_lifecycle(app_config, overpass_fixture_payload, session_facto
     assert e.status == "succeeded" and e.pruned >= 1
     with session_factory() as s:
         repo = SnapshotRepository(s)
-        assert len(repo.list("denver", states=["superseded"], limit=100)) == 1
-        assert len(repo.list("denver", states=["quarantined", "rejected"], limit=100)) == 1
-        assert repo.get_active("denver").snapshot_id == e.snapshot_id
+        assert len(repo.list(app_config.region.region_id, states=["superseded"], limit=100)) == 1
+        assert len(repo.list(app_config.region.region_id, states=["quarantined", "rejected"], limit=100)) == 1
+        assert repo.get_active(app_config.region.region_id).snapshot_id == e.snapshot_id
     assert not (tmp_path / f"{a.snapshot_id}.json").exists()
     assert (tmp_path / f"{e.snapshot_id}.json").exists()
 
     # Concurrent sync: a second runner is skipped while the region lock is held
     with session_factory() as holder:
-        holder.execute(text("SELECT pg_advisory_lock(:k)"), {"k": _lock_key("denver")})
+        holder.execute(text("SELECT pg_advisory_lock(:k)"), {"k": _lock_key(app_config.region.region_id)})
         skipped = _run(app_config, session_factory, _payload(c_elements, "2026-10-17T03:00:00Z"), tmp_path)
         assert skipped.status == "skipped"
-        holder.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": _lock_key("denver")})
+        holder.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": _lock_key(app_config.region.region_id)})
 
     # Failure: upstream errors keep the last good snapshot
     failed = run_sync(app_config, session_factory, _client([(502, b"<html>bad gateway</html>")] * 3), snapshot_dir=tmp_path)
     assert failed.status == "failed"
     with session_factory() as s:
-        assert SnapshotRepository(s).get_active("denver").snapshot_id == e.snapshot_id
+        assert SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id == e.snapshot_id
         last_job = s.execute(text("SELECT status, message FROM sync_jobs ORDER BY id DESC LIMIT 1")).one()
         assert last_job.status == "failed" and "fetch failed" in last_job.message
 

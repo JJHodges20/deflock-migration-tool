@@ -1,5 +1,7 @@
 # Denver pilot audit and v1.0 release candidate (M8)
 
+> M9 (2026-10-19, decision 0003) made Colorado the default service area after this audit. The audit below describes the Denver pilot configuration, which remains available through `DEFLOCK_REGION_CONFIG=configs/regions/denver.yaml`; the statewide evidence is in the M9 entry of `docs/DEVELOPMENT_LOG.md`.
+
 Audited on 2026-10-19 on the pilot machine (Windows 11, Docker Desktop with about 8.3 GB allocated), version `1.0.0rc1`,
 against the roadmap's definition of done (section 21). Every line says what was executed, what was only inspected, and
 what remains unverified. Nothing here claims global route optimality, complete camera coverage, or guaranteed avoidance.

@@ -90,7 +90,7 @@ class PlanTripService:
         boundary = self._config.service_boundary
         outside = [name for name, point in (("origin", origin), ("destination", destination)) if not boundary.contains(point.lat, point.lon)]
         if outside:
-            raise AppError(OUTSIDE_SERVICE_AREA, "Trips must start and end inside the Denver pilot area.", details={"outside": outside, "service_boundary_id": boundary.boundary_id})
+            raise AppError(OUTSIDE_SERVICE_AREA, f"Trips must start and end inside the {self._config.region.display_name} service area.", details={"outside": outside, "service_boundary_id": boundary.boundary_id})
         if haversine_m((origin.lat, origin.lon), (destination.lat, destination.lon)) < MIN_TRIP_DISTANCE_M:
             raise AppError(VALIDATION_ERROR, "Start and destination are the same place. Choose two different points.", details={"min_distance_m": MIN_TRIP_DISTANCE_M})
 

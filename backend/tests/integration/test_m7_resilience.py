@@ -28,7 +28,7 @@ def test_manual_refresh_cooldown_and_force(app_config, overpass_fixture_payload,
     skipped = _run(app_config, session_factory, _payload(base[1:], "2026-10-20T00:10:00Z"), tmp_path, trigger="manual")
     assert skipped.status == "skipped" and "cooldown" in skipped.message and skipped.snapshot_id == first.snapshot_id
     with session_factory() as s:
-        assert SnapshotRepository(s).get_active("denver").snapshot_id == first.snapshot_id
+        assert SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id == first.snapshot_id
         job = s.execute(text("SELECT status, trigger, snapshot_id FROM sync_jobs ORDER BY id DESC LIMIT 1")).one()
         assert (job.status, job.trigger, job.snapshot_id) == ("skipped", "manual", first.snapshot_id)
     forced = run_sync(app_config, session_factory, _client([(200, json.dumps(_payload(base[1:], "2026-10-20T00:10:00Z")).encode())]), snapshot_dir=tmp_path, trigger="manual", force=True)
@@ -43,24 +43,24 @@ def test_rollback_restores_a_previously_active_snapshot_without_deleting_anythin
     b = _run(app_config, session_factory, _payload(base[3:], "2026-10-21T06:00:00Z"), tmp_path)
     assert a.status == "succeeded" and b.status == "succeeded"
     with pytest.raises(ReviewError):
-        rollback_snapshot(session_factory, "denver", None, "   ")  # a note is required
+        rollback_snapshot(session_factory, app_config.region.region_id, None, "   ")  # a note is required
     with pytest.raises(ReviewError):
-        rollback_snapshot(session_factory, "denver", b.snapshot_id, "already active")
+        rollback_snapshot(session_factory, app_config.region.region_id, b.snapshot_id, "already active")
     with pytest.raises(ReviewError):
-        rollback_snapshot(session_factory, "denver", "ovp-denver-00000000T000000Z-deadbeef", "unknown id")
-    message = rollback_snapshot(session_factory, "denver", None, "the newer snapshot dropped a corridor; restoring the previous one")
+        rollback_snapshot(session_factory, app_config.region.region_id, "ovp-denver-00000000T000000Z-deadbeef", "unknown id")
+    message = rollback_snapshot(session_factory, app_config.region.region_id, None, "the newer snapshot dropped a corridor; restoring the previous one")
     assert a.snapshot_id in message and "stays retained" in message
     with session_factory() as s:
         repo = SnapshotRepository(s)
-        assert repo.get_active("denver").snapshot_id == a.snapshot_id
+        assert repo.get_active(app_config.region.region_id).snapshot_id == a.snapshot_id
         assert repo.get(b.snapshot_id).promotion_state == "superseded"
         assert repo.get(a.snapshot_id).review_note.startswith("rolled back to:")
         assert CameraRepository(s).count(a.snapshot_id, present_only=False) >= len(base)
         assert s.execute(text("SELECT count(*) FROM sync_jobs WHERE trigger='rollback'")).scalar() == 1
     # The rollback itself can be undone the same way, because nothing was deleted.
-    rollback_snapshot(session_factory, "denver", b.snapshot_id, "restoring the newer snapshot after review")
+    rollback_snapshot(session_factory, app_config.region.region_id, b.snapshot_id, "restoring the newer snapshot after review")
     with session_factory() as s:
-        assert SnapshotRepository(s).get_active("denver").snapshot_id == b.snapshot_id
+        assert SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id == b.snapshot_id
 
 
 def test_pinned_snapshot_stays_assessable_while_a_newer_one_is_promoted(app_config, overpass_fixture_payload, session_factory, tmp_path):
@@ -75,7 +75,7 @@ def test_pinned_snapshot_stays_assessable_while_a_newer_one_is_promoted(app_conf
     b = _run(app_config, session_factory, _payload(base[5:], "2026-10-22T06:00:00Z"), tmp_path)  # promoted "during" the request
     assert b.status == "succeeded"
     with session_factory() as s:
-        assert SnapshotRepository(s).get_active("denver").snapshot_id == b.snapshot_id
+        assert SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id == b.snapshot_id
         assert CameraRepository(s).rows_by_key(a.snapshot_id).keys() == a_rows.keys()  # A is retained unchanged
     proximity = PostgisProximityIndex(session_factory, app_config.envelope.geojson_geometry())
     shape = [(row["lat"] - 0.0005, row["lon"]), (row["lat"] + 0.0005, row["lon"])]
@@ -87,18 +87,18 @@ def test_pinned_snapshot_stays_assessable_while_a_newer_one_is_promoted(app_conf
 
 def test_truncated_response_keeps_the_active_snapshot(app_config, session_factory, tmp_path):
     with session_factory() as s:
-        before = SnapshotRepository(s).get_active("denver").snapshot_id
+        before = SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id
     truncated = b'{"version": 0.6, "osm3s": {"timestamp_osm_base": "2026-10-22T12:00:00Z"}, "elements": [{"type": "node", "id": 1'
     outcome = run_sync(app_config, session_factory, _client([(200, truncated)] * 3), snapshot_dir=tmp_path)
     assert outcome.status == "failed"
     with session_factory() as s:
-        assert SnapshotRepository(s).get_active("denver").snapshot_id == before
+        assert SnapshotRepository(s).get_active(app_config.region.region_id).snapshot_id == before
         assert s.execute(text("SELECT status FROM sync_jobs ORDER BY id DESC LIMIT 1")).scalar() == "failed"
 
 
-def test_diff_history_lists_retained_snapshots_newest_first(session_factory):
+def test_diff_history_lists_retained_snapshots_newest_first(app_config, session_factory):
     with session_factory() as s:
-        pairs = SnapshotRepository(s).list_diffs("denver", limit=5)
+        pairs = SnapshotRepository(s).list_diffs(app_config.region.region_id, limit=5)
     assert len(pairs) >= 2 and all(diff.snapshot_id == snapshot.snapshot_id for diff, snapshot in pairs)
     created = [diff.created_at for diff, _ in pairs]
     assert created == sorted(created, reverse=True)

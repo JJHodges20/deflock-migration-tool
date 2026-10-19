@@ -25,6 +25,7 @@ class ServiceBoundaryConfig(_Strict):
     file: Path
     source: str
     retrieved_at: str
+    attribution: str | None = None  # shown in the planner footer and exports
     source_layer_last_edit: str | None = None
     area_km2: float | None = None
     geometry_notes: list[str] = Field(default_factory=list)

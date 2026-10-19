@@ -1,4 +1,4 @@
-# User guide (Denver pilot, v1.0 release candidate)
+# User guide (Colorado, v1.0 release candidate + M9)
 
 DeFlockMigration runs entirely in Docker. The host needs Docker Desktop (Compose v2) and Git; nothing else is installed on the computer.
 
@@ -48,6 +48,7 @@ docker compose up
 
 ## 3. Using the planner
 
+- **Service area:** trips must start and end inside Colorado (since M9; the Denver pilot area remains available by setting `DEFLOCK_REGION_CONFIG=configs/regions/denver.yaml`). The routing graph and address search cover the whole state; neighbouring states are outside even where roads continue.
 - **Start / Destination:** type an address or place name and press Search, then confirm one of the matches (matches inside the pilot area are listed first; the match type and any "outside the pilot area" note are shown); or type coordinates as `lat, lon` (a pair typed as `lon, lat` is recognised, swapped, and flagged for confirmation); or press "Use map pin" and click the map. A pin is labelled with the nearest mapped address or place by the local geocoder, while the pin's own coordinates are what gets routed. Address search needs the geocoder to have finished its import; until then the planner says so and coordinates and pins still work. There is deliberately no autocomplete: searches run only when you submit them.
 - **Use my location** (under Start) asks the browser for your position once, only when you press it, and fills the start with a device estimate labelled with its accuracy and the nearest mapped place; nothing is tracked or stored. A denied permission or an unavailable position is explained, and typed addresses, coordinates, and map pins keep working.
 - **Swap** exchanges start and destination. **km / mi** switches the displayed units; all values are converted on this computer from the engine's metres.

@@ -27,15 +27,16 @@ GEOCODE_CASES = [
     ("Denver Zoo", (39.7492, -104.9504), True),
     ("Colorado State Capitol, Denver", (39.7392, -104.9848), True),
     ("Denver International Airport", (39.8561, -104.6737), True),
-    ("Red Rocks Amphitheatre", (39.6654, -105.2057), False),
+    ("Red Rocks Amphitheatre", (39.6654, -105.2057), True),  # inside Colorado since M9
     ("1437 Bannock St, Denver, CO", (39.7392, -104.9911), True),
     ("200 E Colfax Ave, Denver, CO 80203", (39.7392, -104.9846), True),
     ("2300 Steele St, Denver, CO", (39.7492, -104.9504), True),
     ("Washington Park, Denver", (39.7021, -104.9710), True),
-    ("Glendale, Colorado", (39.7047, -104.9339), False),
+    ("Glendale, Colorado", (39.7047, -104.9339), True),
 ]
 # Documented ranking quirks (M0): the airport matches its large area, the park its centroid, and
-# "Glendale, Colorado" matches a Colorado Boulevard segment inside Glendale before the municipality itself.
+# "Glendale, Colorado" matches a Colorado Boulevard segment inside Glendale before the municipality itself; it is inside the
+# Colorado service area (it was outside the Denver pilot area).
 TOLERANCE_M = {"Denver International Airport": 2500, "Washington Park, Denver": 800, "Glendale, Colorado": 1200}
 ROUTE_CASES = [
     ("union_station_to_zoo", (39.7530, -105.0002), (39.7503, -104.9500)),

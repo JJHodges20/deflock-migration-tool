@@ -85,14 +85,15 @@ try {
 } catch { Report $false ("routing request: " + $_.Exception.Message) }
 
 try {
-  $req = [System.Net.HttpWebRequest]::Create("$base/basemap/denver.pmtiles")
+  $basemapPath = [string](Invoke-RestMethod -Uri "$base/api/v1/region" -TimeoutSec 15).basemap.path
+  $req = [System.Net.HttpWebRequest]::Create("$base$basemapPath")
   $req.Method = "GET"; $req.AddRange(0, 1023); $req.Timeout = 10000
   $resp = $req.GetResponse()
   # A 206 with a Content-Range header proves byte-range support (nginx only adds Accept-Ranges to full 200 responses).
   $contentRange = [string]$resp.Headers["Content-Range"]
   $ok = ([int]$resp.StatusCode -eq 206) -and ($contentRange -like "bytes 0-1023/*")
   $resp.Close()
-  Report $ok ("basemap archive served with HTTP range support (" + $contentRange + ")")
+  Report $ok ("basemap archive " + $basemapPath + " served with HTTP range support (" + $contentRange + ")")
 } catch { Report $false ("basemap: " + $_.Exception.Message) }
 
 try {

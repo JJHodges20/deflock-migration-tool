@@ -1,4 +1,4 @@
-# Operations runbook (Denver pilot, v1.0 release candidate)
+# Operations runbook (Colorado, v1.0 release candidate + M9)
 
 Everything here was executed on the pilot machine (Windows 11, Docker Desktop with about 8.3 GB allocated) before it was written down. Every command runs inside containers; nothing is installed on the host. No command here touches a person's trip: the only data this system keeps is public OpenStreetMap camera records, public road data, and job history.
 
@@ -13,7 +13,7 @@ Everything here was executed on the pilot machine (Windows 11, Docker Desktop wi
 
 ## 2. The single scheduler
 
-- One `camera-sync` container is the only scheduler. It queries the public Overpass instance for the fixed Denver envelope every 6 hours **while the stack is up**. No sync runs when the stack is down.
+- One `camera-sync` container is the only scheduler. It queries the public Overpass instance for the fixed Colorado envelope (statewide bounding box) every 6 hours **while the stack is up**. The statewide query is heavier than the Denver one and the shared instance sometimes answers 502/504 under load; the worker then keeps the last good snapshot and tries again at the next interval (a manual retry is `scripts\sync_cameras.ps1`), and M10 moves ingestion to the Geofabrik extract. No sync runs when the stack is down.
 - On start it reads the active snapshot's download time and waits for the remainder of the interval instead of querying again (`seconds_until_due`), so repeated `docker compose up` cycles do not hammer the shared instance. A stack that was down for a day catches up with **one** query.
 - Concurrent runs coalesce: a region lock lets exactly one sync run; a second runner reports "skipped" and the running sync's result applies.
 - Data Health shows the next due time, whether the scheduler is overdue (interval plus a one-hour grace), and the last trigger. "Overdue" with the stack up means the worker container is not running: `docker compose ps camera-sync`, `docker compose logs camera-sync`.

@@ -2,6 +2,70 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M9: Colorado service area
+
+### Built
+
+- **Owner decisions (decision 0003):** no public use for now and a separate approval before any public deployment; the owner tests personally; the service area expands to all of Colorado; licensing deferred; M10 (extract-based camera ingestion with daily diffs) approved in principle and started only after this gate.
+- **Service boundary `colorado-service-v1`:** the U.S. Census Bureau TIGERweb state boundary (State_County MapServer, layer 0 "States", GEOID 08, January 1, 2026 vintage), retrieved 2026-10-19T21:45:57Z as one GeoJSON polygon of 7,519 vertices (269,604.5 km²) and kept at full resolution in `data/boundaries/colorado_service_boundary_v1.geojson`; the raw download and the layer metadata are under `data/boundaries/raw/`; register section 6b; attribution "Boundary: U.S. Census Bureau TIGERweb state boundary (public domain)" in the footer, Data Health, print, and export.
+- **Camera data envelope `colorado-envelope-v1-20km`:** built in PostGIS from the boundary (20 km buffer in EPSG:26913, simplified to 25 m, clipped to the routing graph's tileset extent): 311,081 km², 190 vertices, bounding box W -109.2889956, S 36.8122307, E -101.8139749, N 41.1835420. Configuration validation still requires the envelope to contain the boundary.
+- **Statewide camera query:** `data/raw/overpass/colorado_alpr_envelope_query.overpassql`, the Denver filters over the fixed box [36.70, -109.40, 41.30, -101.70]; scheduler, cooldown, retries, and User-Agent unchanged.
+- **Statewide basemap:** `colorado.pmtiles` (Protomaps build 20261015, zoom 15, box -109.30, 36.80, -101.80, 41.20): 561 MB extracted in 44 s into the `basemap` volume; `BASEMAP_FILE` and `BASEMAP_BBOX` default to it; the Denver extract stays in the volume.
+- **Configuration and API:** `configs/regions/colorado.yaml` (config_version 2) is the default region; `denver.yaml` remains loadable through `DEFLOCK_REGION_CONFIG`. The plan request's `region_id` is optional and defaults to the configured region (a different id is a validation error). The region endpoint's attributions come from the configuration. Every wording that named the pilot area now comes from the region display name: planner subtitle, endpoint messages ("outside the Colorado service area"), map label, page description, and the footer non-affiliation (now including the U.S. Census Bureau).
+- **Review cases:** `data/fixtures/pilot_trips.json` grows from nine to eighteen planned trips (the Denver cases plus Union Station to Red Rocks, Colorado Springs, Boulder, Fort Collins, Pueblo, Grand Junction, Frisco to Vail, Denver to Colorado Springs, Denver to Grand Junction) and three expected rejections (Cheyenne, Santa Fe, same place). The Colorado Springs destination is the passenger terminal as the local geocoder places it (38.7985, -104.7009); the coordinate first chosen was on the airfield and snapped 804 m to a road, which the fixture's 300 m rule caught.
+- **Legality check corrected:** the live pilot-trip check treated an engine edge reported as `backward` as illegal. On the Colorado Springs case the standard route drives North 31st Street, which OpenStreetMap tags `oneway=-1` (one way against the drawn direction), and the engine reports `edge.traversability` relative to the drawn direction, so a legally driven `oneway=-1` way reads `backward`. Verified against the engine: the auto-costed `edge_walk` match refuses the same stretch walked the other way (HTTP 400, error 443), refuses a `oneway=yes` stretch walked backwards, accepts a two-way stretch both ways, and `/locate` shows the directed edge the route uses with car access and `forward: false`. The check now relies on the walk succeeding and confirms every `backward` edge through `/locate` (car access, against the drawn direction). The Denver trips never crossed such a way, which is why M8 did not see it.
+- **Tests follow the configured region:** the sync and resilience integration tests use `app_config.region.region_id` instead of the pilot id; the far record outside the envelope moved to Kansas (39.0, -98.0) so it is outside both envelopes; the first-snapshot envelope count is checked against the configured envelope; Glendale is inside the Colorado area; the boundary unit tests cover Denver, DEN, Glendale, Red Rocks, Grand Junction, Colorado Springs, and Durango inside and Cheyenne, Santa Fe, and Green River (Utah) outside, with the Denver configuration still loading; the contract tests use Cheyenne as the outside endpoint; the browser specs no longer send a region id and accept any region's snapshot id.
+- **Smoke test:** reads the basemap path from the region endpoint instead of a fixed file name.
+- **Documents:** decision 0003; data source register 6b; attribution (two boundary rows, Census policy row, independence statement); privacy flows; user guide; operations runbook (statewide Overpass load); project context; implementation plan rows M9 and M10 and the M8 outcome; test plan; audit note; README.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 178 passed in 19 s, including the eighteen planned trips and three rejections. Host: not run this time: the host interpreter has no backend dependencies (the Docker-only rule keeps them off the host), so the container suite is the authoritative backend run.
+- Frontend: type check clean; 52 Vitest tests passed (13 files).
+- Browser (Playwright, three viewports): 78 passed in 1.6 min with no page errors, after two spec fixes (the experience spec sent the pilot region id, which the API now rejects; the smoke spec expected the pilot snapshot prefix). A first run before those fixes failed the same two tests at all three viewports and passed the other 72.
+- `scripts\smoke_test.ps1 -CheckRestart`: passed on the Colorado configuration: the statewide snapshot and the graph survived the restart, and the basemap check now reads `/basemap/colorado.pmtiles` from the region endpoint.
+- Live statewide inventory: the worker's first statewide query failed three times (HTTP 502 and 504 from the shared instance within the bounded retries; the worker kept the Denver snapshot and scheduled the next attempt); a manual refresh about 90 s later (`scripts\sync_cameras.ps1`) succeeded and promoted `ovp-colorado-20261019T215551Z-f091c3f5` (source base 2026-10-19T21:55:51Z, downloaded 21:57:41Z): 3,011 records, 2,901 ALPR, 2,824 inside the envelope, 2,282 Flock, 240 unknown manufacturer. Associations for the statewide snapshot: 1,539 new in 9.4 s, 1,285 reused from the Denver cache.
+- Live pilot trips (E = exposure, matched plus uncertain; T = estimated time; counts come from this snapshot and are printed, never asserted):
+
+  | Trip | Search | Calls | Standard E / T | Balanced | Fewest mapped |
+  |---|---|---|---|---|---|
+  | union_station_to_zoo | completed | 1 | 4 / 618 s | 0 (+113 s) | same as balanced |
+  | capitol_to_washington_park | completed | 1 | 0 / 571 s | same as standard | same as standard |
+  | downtown_one_way_grid | completed | 1 | 0 / 184 s | same as standard | same as standard |
+  | union_station_to_den | completed | 5 | 7 / 1,669 s | 4 (+340 s) | 2 (+734 s) |
+  | cherry_creek_to_highlands | completed | 1 | 4 / 609 s | 0 (+61 s) | same as balanced |
+  | zoo_to_cherry_creek_mall | completed | 1 | 0 / 477 s | same as standard | same as standard |
+  | union_station_to_coors_field | completed | 1 | 0 / 120 s | same as standard | same as standard |
+  | botanic_gardens_to_union_station | completed | 2 | 4 / 582 s | 0 (+70 s) | same as balanced |
+  | washington_park_to_lowry | completed | 1 | 4 / 859 s | 0 (+49 s) | same as balanced |
+  | union_station_to_red_rocks | completed | 1 | 5 / 1,382 s | 0 (+185 s) | same as balanced |
+  | colorado_springs_garden_of_the_gods_to_airport | completed | 7 | 4 / 1,439 s | 1 (+127 s) | 0 (+758 s) |
+  | boulder_pearl_street_to_cu | completed | 3 | 4 / 278 s | 0 (+110 s) | same as balanced |
+  | fort_collins_csu_to_old_town | completed | 1 | 1 / 392 s | 0 (+58 s) | same as balanced |
+  | pueblo_riverwalk_to_csu_pueblo | budget exhausted | 8 | 2 / 532 s | 1 (+42 s) | same as balanced |
+  | grand_junction_downtown_to_cmu | completed | 1 | 0 / 300 s | same as standard | same as standard |
+  | frisco_to_vail | completed | 2 | 2 / 1,644 s | 0 (+90 s) | same as balanced |
+  | denver_to_colorado_springs | budget exhausted | 8 | 8 / 3,895 s | 4 (+151 s) | same as balanced |
+  | denver_to_grand_junction | partial (see observations) | 8 | 21 / 13,529 s | 16 (+275 s) | 14 (+645 s) |
+
+  Rejected as expected: `union_station_to_cheyenne` and `santa_fe_to_denver` (OUTSIDE_SERVICE_AREA), `same_place_twice` (VALIDATION_ERROR). Every displayed option passed the corrected legality check; every avoidance option is complete, lower in exposure, within its bound, and geometrically distinct. Plan requests took under 1.1 s except Denver to Colorado Springs (3.4 s) and Denver to Grand Junction (4.2 s).
+- Boundary checks (unit): Denver, DEN, Glendale, Red Rocks, Grand Junction, Colorado Springs, and Durango inside; Cheyenne, Santa Fe, and Green River outside; the envelope contains the boundary and lies inside the graph extent.
+- Live geocoder: "Colorado Springs Airport" resolves to Airport Road first; the terminal resolves from its street address (7770 Milton E. Proby Parkway). Place-name ranking in the local geocoder is a known limitation, unchanged by M9.
+
+### Gate check (M9 as proposed on 2026-10-19)
+
+- Trips anywhere in Colorado plan; endpoints in Wyoming and New Mexico are rejected with OUTSIDE_SERVICE_AREA although the routing graph continues across the state line (verified live and in the contract tests).
+- The region configuration drives wording, attribution, and the camera envelope; the Denver configuration still loads, and the M8 audit's statements remain valid for it.
+- No public deployment and no paid service. The only external calls remain the fixed-box camera query (now statewide) and the one-time boundary download, both recorded in the data source register. The browser privacy suite ran unchanged.
+- Carried to M10: the statewide Overpass query is heavier, and the shared instance answered 502/504 on the first attempt. The worker's response (keep the previous snapshot, retry at the next interval) is the designed one, but the dependency on a public endpoint is the reason M10 moves ingestion to the Geofabrik extract.
+
+### Observations
+
+- The engine's `edge.traversability` is relative to the OpenStreetMap way's drawn direction, not to the direction of travel; the auto-costed edge walk is what proves a direction is drivable. The pilot-trip check now says so in its docstring.
+- On the Denver to Grand Junction trip one penalized candidate request is answered by the engine with HTTP 400, error 233 "Failed to edge walk line feature": one of the 120 m route pieces that carry a `linear_cost_factors` penalty could not be walked by the engine. The planner reports the search as `partial` with the candidates assessed so far (two improved options, +275 s and +645 s), which is the honest outcome, but the search stops at that request. Follow-up candidate for a later milestone: drop the piece the engine rejects and continue the search.
+- Mapping density outside the Denver area is lower: Grand Junction and the Pueblo trip show zero to two records, Fort Collins one. Statewide, "no better route within your limit" and small counts will be common, and the "unmapped cameras may exist" caveat matters more.
+- Mistakes caught by the checks during the milestone: the first `region_id` default rejected every plan under the new configuration (contract tests); the first airport coordinate was on the airfield (the fixture's snapping rule); the integration tests carried the pilot's region id (the container suite); the browser specs carried the pilot's region id and snapshot prefix (the browser suite).
+
 ## 2026-10-19 - M8: Denver pilot audit and v1.0 release candidate
 
 ### Built

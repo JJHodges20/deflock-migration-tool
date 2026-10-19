@@ -3,7 +3,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "DeFlockMigration",
-  description: "Denver pilot route planner that compares driving routes by potential encounters with mapped ALPR cameras.",
+  description: "Colorado route planner that compares driving routes by potential encounters with mapped ALPR cameras.",
   robots: { index: false, follow: false },
 };
 

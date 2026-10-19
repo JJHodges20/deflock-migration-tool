@@ -6,7 +6,7 @@ import { expect, test, type Page } from "@playwright/test";
 // Public landmarks only. Coordinates avoid a geocoder dependency where the test is about the planner itself.
 const UNION_STATION = "39.7530, -105.0002";
 const DENVER_ZOO = "39.7503, -104.9500";
-const PLAN_BODY = { origin: { lat: 39.753, lon: -105.0002 }, destination: { lat: 39.7503, lon: -104.95 }, region_id: "denver", profiles: ["standard", "balanced", "fewest_mapped"], camera_scope: "all_alpr", units: "km" };
+const PLAN_BODY = { origin: { lat: 39.753, lon: -105.0002 }, destination: { lat: 39.7503, lon: -104.95 }, profiles: ["standard", "balanced", "fewest_mapped"], camera_scope: "all_alpr", units: "km" };
 
 async function confirmCoordinates(page: Page, label: "Start" | "Destination", text: string) {
   const field = page.getByLabel(label);

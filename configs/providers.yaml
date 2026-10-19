@@ -21,7 +21,7 @@ geocoding:
 
 basemap:
   provider: pmtiles_local
-  path: /basemap/denver.pmtiles
+  path: /basemap/colorado.pmtiles
   fonts_path: /basemap/fonts
   sprite_path: /basemap/sprites/v4/light
   attribution: "Protomaps © OpenStreetMap"

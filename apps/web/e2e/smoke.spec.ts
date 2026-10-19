@@ -60,12 +60,12 @@ test("plans a standard route through the containers and shows directions", async
   await expect(directions.locator("li").last()).toContainText(/arrived|destination/i);
 });
 
-test("rejects a trip that starts outside the pilot area with an explicit state", async ({ page }) => {
+test("rejects a trip that starts outside the service area with an explicit state", async ({ page }) => {
   await page.goto("/");
   const start = page.getByLabel("Start");
-  await start.fill("39.7047, -104.9339"); // Glendale enclave
+  await start.fill("41.1400, -104.8202"); // Cheyenne, Wyoming
   await start.press("Enter");
-  await expect(page.getByTestId("origin-field").getByText(/outside the Denver pilot area/)).toBeVisible();
+  await expect(page.getByTestId("origin-field").getByText(/outside the Colorado service area/)).toBeVisible();
   const destination = page.getByLabel("Destination");
   await destination.fill(DENVER_ZOO);
   await destination.press("Enter");
@@ -91,6 +91,6 @@ test("data health panel reports the published snapshot and graph", async ({ page
   await page.goto("/");
   await page.getByText("Data health").click();
   await expect(page.getByTestId("data-health")).toContainText("Camera snapshot");
-  await expect(page.getByTestId("data-health")).toContainText(/ovp-denver|none loaded yet/);
+  await expect(page.getByTestId("data-health")).toContainText(/ovp-[a-z]+-[0-9]{8}T[0-9]{6}Z|none loaded yet/);
   await expect(page.getByTestId("data-health")).toContainText(/Routing graph/);
 });

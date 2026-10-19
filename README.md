@@ -1,6 +1,6 @@
 # DeFlockMigration
 
-A Denver-first web route planner that compares practical driving routes by their potential encounters with mapped automated license-plate-reader (ALPR) cameras, explains each detour, and makes data limitations visible.
+A Colorado web route planner (Denver pilot first, statewide since M9) that compares practical driving routes by their potential encounters with mapped automated license-plate-reader (ALPR) cameras, explains each detour, and makes data limitations visible.
 
 DeFlockMigration is an independent project. It is not affiliated with or endorsed by DeFlock, Flock Safety, OpenStreetMap, or the City and County of Denver. It never promises an unrecorded journey and never labels an area surveillance-free.
 
@@ -8,7 +8,8 @@ DeFlockMigration is an independent project. It is not affiliated with or endorse
 
 - **M0 feasibility** through **M6 complete trip-planning experience**: complete and approved (2026-10-15 to 2026-10-19); evidence per milestone in `docs/DEVELOPMENT_LOG.md`, milestone table in `docs/IMPLEMENTATION_PLAN.md`.
 - **M7 scheduled updates, resilience, and operating instructions:** complete and approved 2026-10-19. The runbook is `docs/OPERATIONS.md`.
-- **M8 Denver pilot audit and v1.0 release candidate (`1.0.0rc1`):** built and audited 2026-10-19, awaiting the owner's gate review. The audit, known limitations, and release checklist are in `docs/AUDIT.md`; attribution and policies in `docs/ATTRIBUTION.md`. An invited pilot needs the owner's approval after reviewing that evidence; public deployment and any service-area change need separate approval.
+- **M8 Denver pilot audit and v1.0 release candidate (`1.0.0rc1`):** built and audited 2026-10-19; reviewed by the owner the same day, who chose personal use only with a separate approval before any public deployment (decision 0003). The audit, known limitations, and release checklist are in `docs/AUDIT.md`; attribution and policies in `docs/ATTRIBUTION.md`. An invited pilot or a public deployment needs the owner's separate approval.
+- **M9 Colorado service area:** built and verified 2026-10-19 (decision 0003): U.S. Census state boundary, 20 km envelope clipped to the routing graph, statewide camera inventory and basemap, region-driven wording, statewide review cases; awaiting the owner's gate review (evidence in the M9 entry of `docs/DEVELOPMENT_LOG.md`). **M10** (approved in principle) will move camera ingestion to the Geofabrik extract with daily diffs.
 
 ## Run it (Docker only)
 

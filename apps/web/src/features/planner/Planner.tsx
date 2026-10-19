@@ -15,7 +15,6 @@ import { canPlan, initialPlannerState, plannerReducer, selectedRoute, type Endpo
 const MapView = dynamic(() => import("@/features/camera-map/MapView").then((m) => m.MapView), { ssr: false });
 
 const ERROR_TEXT: Record<string, string> = {
-  OUTSIDE_SERVICE_AREA: "Trips must start and end inside the Denver pilot area.",
   ROUTER_UNAVAILABLE: "The route engine is unavailable right now. Try again in a moment.",
   NO_DRIVABLE_ROUTE: "No drivable route was found between these points.",
   VALIDATION_ERROR: "The request was rejected as invalid: unsupported route settings or input. Adjust the limits and try again.",
@@ -286,7 +285,7 @@ export function Planner() {
         </div>
         <header>
           <h1 className="app-title">DeFlockMigration</h1>
-          <p className="app-subtitle">{region ? region.display_name : "Denver pilot"} · compare routes by mapped ALPR cameras</p>
+          <p className="app-subtitle">{region ? region.display_name : "Colorado"} · compare routes by mapped ALPR cameras</p>
         </header>
         <DataStatusStrip region={region} health={health} />
         {regionError && (
@@ -300,8 +299,8 @@ export function Planner() {
           <h2 id="trip-heading" tabIndex={-1}>
             Trip
           </h2>
-          <EndpointInput {...endpointProps("origin", "Start")} onUseLocation={locationSupported ? useLocation : undefined} locating={locating} />
-          <EndpointInput {...endpointProps("destination", "Destination")} />
+          <EndpointInput {...endpointProps("origin", "Start")} onUseLocation={locationSupported ? useLocation : undefined} locating={locating} regionName={region?.display_name ?? "Colorado"} />
+          <EndpointInput {...endpointProps("destination", "Destination")} regionName={region?.display_name ?? "Colorado"} />
           <div className="row">
             <button type="button" className="btn btn-small" onClick={() => dispatch({ type: "SWAP" })} disabled={!state.origin.confirmed && !state.destination.confirmed}>
               Swap start and destination
@@ -458,7 +457,7 @@ export function Planner() {
               <li key={line}>{line}</li>
             ))}
           </ul>
-          <p className="disclaimer">DeFlockMigration is an independent project, not affiliated with DeFlock, Flock Safety, OpenStreetMap, or the City and County of Denver. No trip is stored, no account exists, and nothing leaves this computer except requests to the local services.</p>
+          <p className="disclaimer">DeFlockMigration is an independent project, not affiliated with DeFlock, Flock Safety, OpenStreetMap, the U.S. Census Bureau, or the City and County of Denver. No trip is stored, no account exists, and nothing leaves this computer except requests to the local services.</p>
         </footer>
       </aside>
       <main className="map-area">

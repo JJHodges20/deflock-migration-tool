@@ -13,7 +13,8 @@ local pilot. A public deployment needs its own review and the owner's separate a
 | Road network | Geofabrik Colorado extract (OpenStreetMap data) | ODbL as above; Geofabrik asks for reasonable download frequency | Weekly rebuild cadence, one download per rebuild, checksum verified; attribution as above |
 | Basemap | Protomaps PMTiles build (OpenStreetMap data), regional extract served locally | Protomaps builds are ODbL (OpenStreetMap) data; attribution "Protomaps © OpenStreetMap" | Attribution control on the map and in the footer; the extract is served from a local volume, never from Protomaps at runtime |
 | Basemap fonts and sprites | Protomaps basemaps assets (fonts under the SIL Open Font License; sprites from the Protomaps basemaps repository) | OFL permits bundling with attribution; sprites follow the basemaps repository license | Downloaded once by a setup job to the local volume; served same-origin |
-| Service boundary | City and County of Denver Open Data, "County Boundary" | Provided "as is", "not for engineering purposes", custom disclaimer; not ODbL | Used only to decide whether endpoints are inside the pilot area; attributed separately in the footer; never merged into ODbL exports |
+| Service boundary (Colorado, default since M9) | U.S. Census Bureau TIGERweb state boundary, GEOID 08, January 1, 2026 vintage | Public domain (U.S. federal government work); the layer says "Source: U.S. Census Bureau" | Used only to decide whether endpoints are inside the service area; attributed in the footer, Data Health, print, and export |
+| Service boundary (Denver pilot configuration) | City and County of Denver Open Data, "County Boundary" | Provided "as is", "not for engineering purposes", custom disclaimer; not ODbL | Used only for the retained `denver.yaml` configuration; attributed separately; never merged into ODbL exports |
 | Address search data | the same Geofabrik extract, imported into a self-hosted Nominatim | ODbL as above | Local only; the public OSMF Nominatim service is never called |
 | Timezone boundaries used by the routing graph build | `evansiroky/timezone-boundary-builder` release shapefile (derived from OpenStreetMap), downloaded by `valhalla_build_timezones` | data ODbL (OpenStreetMap derived); builder code MIT | Downloaded once per graph build into the `valhalla_tiles` volume; used only to attach time zones to road edges |
 
@@ -41,9 +42,10 @@ The project's own license has not been chosen by the owner; until it is, the rep
 | Geofabrik downloads | public extracts, be reasonable | one 385 MB download per weekly rebuild, checksum verified |
 | Protomaps build server, GitHub (basemap assets, timezone boundaries) | public downloads | one-time setup downloads and one per graph rebuild; no runtime traffic |
 | OpenStreetMap Foundation Nominatim and tile servers | usage policies forbid heavy or application-backend use | not used at all; the planner reaches only this computer |
+| U.S. Census Bureau TIGERweb (Colorado boundary) | public data service; no key or agreement needed for one download | one download per boundary version; attributed |
 
 ## Independence statement
 
 DeFlockMigration is an independent project. It is not affiliated with or endorsed by DeFlock, Flock Safety,
-OpenStreetMap, the OpenStreetMap Foundation, Protomaps, Geofabrik, or the City and County of Denver. It does not use
+OpenStreetMap, the OpenStreetMap Foundation, Protomaps, Geofabrik, the U.S. Census Bureau, or the City and County of Denver. It does not use
 DeFlock's interface or branding; it reads the same public OpenStreetMap records through the documented Overpass API.

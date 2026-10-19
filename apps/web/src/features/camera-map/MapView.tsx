@@ -362,7 +362,7 @@ export function MapView({ region, route, options, origin, destination, pinMode, 
   return (
     <>
       {/* Inline positioning wins over MapLibre's own `.maplibregl-map { position: relative }` rule, which would collapse the container's height. */}
-      <div ref={containerRef} className="map-container" style={{ position: "absolute", inset: 0 }} role="application" aria-label="Map of the Denver pilot area" data-testid="map" />
+      <div ref={containerRef} className="map-container" style={{ position: "absolute", inset: 0 }} role="application" aria-label={`Map of the ${region?.display_name ?? "Colorado"} service area`} data-testid="map" />
       {overlayState !== "hidden" && (
         <div className="map-legend" role="status" data-testid="camera-legend">
           {overlayState === "zoom" && <span>Zoom in to see mapped cameras.</span>}

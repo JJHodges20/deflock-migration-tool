@@ -13,7 +13,7 @@ class Settings(BaseSettings):
 
     app_env: str = Field(default="development", description="development | test | production")
     project_root: Path = Field(default=Path("/app"), description="Directory holding configs/ and data/boundaries/")
-    region_config: Path = Path("configs/regions/denver.yaml")
+    region_config: Path = Path("configs/regions/colorado.yaml")  # the Denver pilot config stays available via DEFLOCK_REGION_CONFIG
     providers_config: Path = Path("configs/providers.yaml")
     route_profiles_config: Path = Path("configs/route_profiles.yaml")
     data_quality_config: Path = Path("configs/data_quality.yaml")

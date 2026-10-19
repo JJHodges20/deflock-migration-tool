@@ -1,0 +1,61 @@
+# DeFlockMigration region configuration - Colorado service area (M9, approved by the owner on 2026-10-19)
+# Three boundaries are kept separately on purpose. None of them claims camera coverage.
+# The Denver pilot configuration (denver.yaml) remains available through DEFLOCK_REGION_CONFIG.
+
+region_id: colorado
+display_name: "Colorado"
+config_version: 2
+
+service_boundary:
+  id: colorado-service-v1
+  file: data/boundaries/colorado_service_boundary_v1.geojson
+  source: "U.S. Census Bureau TIGERweb, State_County MapServer layer 0 (States), feature GEOID 08, January 1, 2026 vintage, queried as GeoJSON in EPSG:4326"
+  retrieved_at: "2026-10-19T21:45:57Z"
+  attribution: "Boundary: U.S. Census Bureau TIGERweb state boundary (public domain)"
+  area_km2: 269604.5
+  geometry_notes:
+    - "Single polygon with 7,519 vertices as delivered by the Census service (made valid, not simplified)."
+    - "Endpoints anywhere in the state are accepted; neighbouring states are outside even where the routing graph has roads."
+  purpose: "Where trip origins and destinations may be placed."
+
+camera_data_envelope:
+  id: colorado-envelope-v1-20km
+  file: data/boundaries/colorado_camera_envelope_v1.geojson
+  based_on: colorado-service-v1
+  buffer_m: 20000
+  buffer_method: "metric buffer in EPSG:26913, simplified 25 m, clipped to the routing graph tileset extent, reprojected to EPSG:4326 (built in PostGIS)"
+  bbox_wsen: [-109.2889956, 36.8122307, -101.8139749, 41.1835420]
+  area_km2: 311081.0
+  purpose: "Every route candidate is assessed against all camera records inside this envelope. A candidate leaving it is not ranked for privacy."
+  review_note: "The envelope reaches 20 km into neighbouring states so that records just across the state line are assessed; the graph extent clips it where the Colorado extract ends."
+
+camera_source:
+  adapter: overpass_bounded
+  endpoint: https://overpass-api.de/api/interpreter
+  query_file: data/raw/overpass/colorado_alpr_envelope_query.overpassql
+  query_bbox_swne: [36.70, -109.40, 41.30, -101.70]   # contains the 20 km envelope with margin
+  refresh_interval_hours: 6
+  min_pause_after_429_seconds: 30
+  user_agent: "DeFlockMigration/<version> (local camera sync; fixed Colorado envelope)"
+  later_adapter: geofabrik_colorado_extract_with_daily_diffs   # M10
+
+routing_graph:
+  id: colorado-geofabrik-2026-10-14
+  extract_url: https://download.geofabrik.de/north-america/us/colorado-latest.osm.pbf
+  extract_data_timestamp: "2026-10-14T20:21:12Z"
+  extract_sha256: "4619ce93ddc8f2d3a365f4b2e492bb66f889a1c65a44bd72304b1c0cc39873cb"
+  engine_image: ghcr.io/valhalla/valhalla:3.9.1
+  coverage_note: "The extract outline covers the whole state with a margin of roughly 20 to 40 km; roads beyond it do not exist in the graph, so routes cannot detour through neighbouring states."
+  rebuild_cadence: weekly_staged
+
+basemap:
+  id: protomaps-20261015-colorado-envelope-z15
+  file: data/raw/basemap/colorado_envelope_z15_20261015.pmtiles
+  build: "https://build.protomaps.com/20261015.pmtiles (Protomaps Basemap 4.15.2)"
+  bbox_wsen: [-109.30, 36.80, -101.80, 41.20]
+  max_zoom: 15
+  attribution: "Protomaps © OpenStreetMap"
+
+geocoder:
+  provider: self_hosted_nominatim_colorado
+  external_fallback: none

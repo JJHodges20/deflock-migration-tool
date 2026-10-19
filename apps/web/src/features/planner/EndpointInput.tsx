@@ -16,9 +16,10 @@ interface Props {
   onTogglePinMode: () => void;
   onUseLocation?: () => void; // optional one-shot device location (roadmap section 12); only after this deliberate action
   locating?: boolean;
+  regionName?: string;
 }
 
-export function EndpointInput({ endpoint, label, state, pinModeActive, geocoderConfigured, onTextChange, onSearch, onConfirm, onClear, onTogglePinMode, onUseLocation, locating = false }: Props) {
+export function EndpointInput({ endpoint, label, state, pinModeActive, geocoderConfigured, onTextChange, onSearch, onConfirm, onClear, onTogglePinMode, onUseLocation, locating = false, regionName = "Colorado" }: Props) {
   const inputId = `${endpoint}-input`;
   const placeholder = geocoderConfigured ? "Address, place, or lat, lon" : "lat, lon (address search not configured)";
   const canLocate = Boolean(onUseLocation); // the planner decides support after mount, so server and client HTML match
@@ -75,7 +76,7 @@ export function EndpointInput({ endpoint, label, state, pinModeActive, geocoderC
         {state.confirmed && (
           <div className="confirmed">
             <strong>Confirmed:</strong> {state.confirmed.label}
-            {!state.confirmed.inside_service_boundary && <div className="notice notice-warn">This point is outside the Denver pilot area; planning will not work from here.</div>}
+            {!state.confirmed.inside_service_boundary && <div className="notice notice-warn">This point is outside the {regionName} service area; planning will not work from here.</div>}
           </div>
         )}
         {state.error && (
@@ -98,7 +99,7 @@ export function EndpointInput({ endpoint, label, state, pinModeActive, geocoderC
                   <label htmlFor={`${endpoint}-candidate-${index}`}>
                     {candidate.label}
                     {candidate.category && candidate.category !== "coordinates" && <span className="desc"> {candidate.category}</span>}
-                    {!candidate.inside_service_boundary && <span className="desc"> (outside the pilot area)</span>}
+                    {!candidate.inside_service_boundary && <span className="desc"> (outside the service area)</span>}
                     {candidate.note && <span className="desc"> {candidate.note}</span>}
                   </label>
                 </li>

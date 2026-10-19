@@ -62,6 +62,6 @@ def get_region(request: Request) -> RegionResponse:
         },
         profiles={name: ProfileOut(label=p.label, description=p.description, max_extra_seconds=p.max_extra_seconds, max_relative_factor=p.max_relative_factor) for name, p in config.route_profiles.profiles.items()},
         camera_scopes=[scope.value for scope in CameraScope],
-        attributions=ATTRIBUTIONS,
+        attributions=[*ATTRIBUTIONS[:2], config.region.service_boundary.attribution or ATTRIBUTIONS[2]],
         disclaimer=DISCLAIMER,
     )

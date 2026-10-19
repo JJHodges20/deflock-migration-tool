@@ -42,7 +42,7 @@ class DetourLimitsIn(_Strict):
 class PlanRequest(_Strict):
     origin: LatLonIn
     destination: LatLonIn
-    region_id: str = Field(default="denver", max_length=40)
+    region_id: str | None = Field(default=None, max_length=40)  # defaults to the configured region; a different id is rejected
     profiles: list[RouteProfile] = Field(default_factory=lambda: [RouteProfile.STANDARD], max_length=3)
     camera_scope: CameraScope = CameraScope.ALL_ALPR
     detour_limits: DetourLimitsIn | None = None

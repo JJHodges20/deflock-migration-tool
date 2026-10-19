@@ -255,7 +255,7 @@ services:
       - egress
     image: protomaps/go-pmtiles:v1.31.2
     profiles: ["setup"]
-    command: ["extract", "${PROTOMAPS_BUILD_URL:-https://build.protomaps.com/20261015.pmtiles}", "/basemap/denver.pmtiles", "--bbox=${BASEMAP_BBOX:--105.34301,39.4341,-104.36565,40.09437}", "--maxzoom=15"]
+    command: ["extract", "${PROTOMAPS_BUILD_URL:-https://build.protomaps.com/20261015.pmtiles}", "/basemap/${BASEMAP_FILE:-colorado.pmtiles}", "--bbox=${BASEMAP_BBOX:--109.30,36.80,-101.80,41.20}", "--maxzoom=15"]
     volumes:
       - basemap:/basemap
 

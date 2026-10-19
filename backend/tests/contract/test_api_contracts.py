@@ -11,13 +11,14 @@ from tests.conftest import FakeRoutingProvider
 UNION_STATION = {"lat": 39.7530, "lon": -105.0002}
 ZOO = {"lat": 39.7503, "lon": -104.9500}
 GLENDALE = {"lat": 39.7047, "lon": -104.9339}
+CHEYENNE = {"lat": 41.1400, "lon": -104.8202}  # Wyoming: outside the Colorado service area
 
 
 def test_region_contract(client: TestClient):
     resp = client.get("/api/v1/region")
     assert resp.status_code == 200 and resp.headers["X-Request-ID"]
     body = resp.json()
-    assert body["region_id"] == "denver" and body["service_boundary"]["id"] == "denver-service-v1"
+    assert body["region_id"] == "colorado" and body["service_boundary"]["id"] == "colorado-service-v1"
     assert body["service_boundary"]["geometry"]["type"] in ("Polygon", "MultiPolygon")
     assert body["camera_data_envelope"]["buffer_m"] == 20000
     assert body["capabilities"]["geocoder_configured"] is False and body["capabilities"]["map_pins"] is True
@@ -57,7 +58,7 @@ def test_plan_returns_standard_route_without_camera_claims(client: TestClient, f
 
 
 def test_plan_outside_service_area(client: TestClient):
-    resp = client.post("/api/v1/routes/plan", json={"origin": GLENDALE, "destination": ZOO})
+    resp = client.post("/api/v1/routes/plan", json={"origin": CHEYENNE, "destination": ZOO})
     assert resp.status_code == 422
     body = resp.json()
     assert body["error"]["code"] == "OUTSIDE_SERVICE_AREA" and body["error"]["details"]["outside"] == ["origin"]
@@ -86,7 +87,7 @@ def test_geocode_coordinates_bypass_provider(client: TestClient):
     assert resp.status_code == 200
     body = resp.json()
     assert body["query_kind"] == "coordinates" and body["candidates"][0]["inside_service_boundary"] is True
-    resp = client.post("/api/v1/geocode", json={"query": "39.7047, -104.9339"})
+    resp = client.post("/api/v1/geocode", json={"query": "41.1400, -104.8202"})  # Cheyenne, Wyoming
     assert resp.json()["candidates"][0]["inside_service_boundary"] is False
 
 

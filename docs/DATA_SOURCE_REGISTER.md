@@ -60,6 +60,13 @@ Nothing in this register is a complete camera inventory, a deployment plan, or a
 - **Use:** service boundary `denver-service-v1` (400.47 km², airport arm included and contiguous, 10 enclave holes); see `docs/evidence/boundary_analysis_2026-10-15.md`.
 - **Alternative not used:** OSM relation 1411339 (`official_name=City and County of Denver`, `admin_level=6`), available under ODbL if the official layer ever becomes unavailable.
 
+## 6b. U.S. Census Bureau TIGERweb state boundary - *executed (download, M9)*
+
+- **Pages:** https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/State_County/MapServer (layer 0 "States", January 1, 2026 vintage)
+- **Fetched:** `.../MapServer/0/query?where=GEOID='08'&outFields=*&outSR=4326&f=geojson` on 2026-10-19T21:45:57Z; one Polygon feature, 7,519 vertices, 307,051 bytes, SHA-256 `ffdc7e51bbfbb67f...`; `AREALAND` 268,419 km², `AREAWATER` 1,185 km²; raw file and layer metadata kept under `data/boundaries/raw/`.
+- **Terms:** Census Bureau data are in the public domain in the United States; the layer's copyright text is "Source: U.S. Census Bureau". Attributed as "Boundary: U.S. Census Bureau TIGERweb state boundary (public domain)".
+- **Use:** service boundary `colorado-service-v1` (269,604.5 km² by geography area) and, buffered 20 km in EPSG:26913 and clipped to the routing graph extent, the envelope `colorado-envelope-v1-20km` (311,081 km²). The Denver boundary from the City and County of Denver remains the source for the retained `denver.yaml` configuration.
+
 ## 7. Valhalla routing engine - *executed (pinned container build + spike)*
 
 - **Pages:** https://valhalla.github.io/valhalla/api/route/api-reference/ , https://raw.githubusercontent.com/valhalla/valhalla/master/scripts/valhalla_build_config , https://raw.githubusercontent.com/valhalla/valhalla/master/docker/README.md , https://raw.githubusercontent.com/valhalla/valhalla/master/docs/docs/api/status.md , https://github.com/valhalla/valhalla/pkgs/container/valhalla
