@@ -14,6 +14,7 @@ function fakeResult(id = "r1"): PlanResponse {
     assessment_coverage_status: "not_assessed",
     warnings: [],
     disclaimer: "advisory",
+    search: { status: "completed", method_version: "search-1.0", routing_calls_used: 1, routing_calls_budget: 8, planning_deadline_seconds: 20, elapsed_seconds: 0.2, candidates_generated: 3, candidates_assessed: 0, iterations: 0, notes: [], profile_outcomes: [], meaning: "best among evaluated" },
     options: [
       {
         route_id: id,
@@ -27,6 +28,9 @@ function fakeResult(id = "r1"): PlanResponse {
         destination_snap_distance_meters: 80.0,
         matched_camera_record_count: null,
         uncertain_nearby_camera_count: null,
+        exposure_count: null,
+        generated_by: "baseline",
+        detour_bound_seconds: null,
         counting_method_version: null,
         camera_scope: "all_alpr",
         camera_snapshot_id: null,

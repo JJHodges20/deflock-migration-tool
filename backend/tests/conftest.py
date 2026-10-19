@@ -98,6 +98,17 @@ class FakeRoutingProvider:
             routes.append(route_from_trip(alt["trip"], "alternate", i))
         return routes
 
+    def avoiding_candidates(self, origin: LatLon, destination: LatLon, *, alternates: int, request_id: str, avoidance) -> list[EngineRoute]:
+        """The fixture has no other geometry to offer, so penalized and excluded requests return the same routes
+        (what a real engine does when nothing cheaper exists); the search must converge on that."""
+        self.calls.append({"alternates": alternates, "request_id": request_id, "avoidance": avoidance.kind, "penalties": len(avoidance.penalties), "exclusions": len(avoidance.exclusions)})
+        if self.mode != "ok":
+            raise AppError(ROUTER_UNAVAILABLE, "The routing engine is not reachable.")
+        routes = [route_from_trip(self.payload["trip"], avoidance.kind, 0)]
+        for i, alt in enumerate(self.payload.get("alternates", [])[:alternates], start=1):
+            routes.append(route_from_trip(alt["trip"], avoidance.kind, i))
+        return routes
+
     def status(self) -> RouterStatus:
         return RouterStatus(available=self.mode == "ok", version="fixture-3.9.1", has_tiles=True, has_admins=True, has_timezones=True)
 

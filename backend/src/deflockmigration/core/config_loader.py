@@ -140,9 +140,27 @@ class SearchBudgetConfig(_Strict):
     planning_deadline_seconds: int = 20
 
 
+class AvoidanceConfig(_Strict):
+    """Candidate-generation knobs (decision 0001 D5). Factors are artificial search costs, never travel time."""
+
+    penalty_factor: float = Field(default=10.0, ge=1.0)          # engine minimum is 1 (no penalty)
+    penalty_escalation: float = Field(default=4.0, gt=1.0)       # multiply the factor between penalized requests
+    penalty_factor_max: float = Field(default=160.0, ge=1.0)
+    penalty_segment_half_length_m: float = Field(default=60.0, ge=5.0)  # route geometry penalized on each side of a pass
+    endpoint_margin_m: float = Field(default=100.0, ge=0.0)      # encounters this close to the start or end are unavoidable
+    max_exclusions_per_request: int = Field(default=50, ge=1, le=50)  # engine limit (error 157 above 50)
+
+    @model_validator(mode="after")
+    def _ordered(self) -> AvoidanceConfig:
+        if self.penalty_factor_max < self.penalty_factor:
+            raise ValueError("penalty_factor_max must be >= penalty_factor")
+        return self
+
+
 class RouteProfilesConfig(_Strict):
     profiles: dict[str, ProfileConfig]
     search_budget: SearchBudgetConfig
+    avoidance: AvoidanceConfig = Field(default_factory=AvoidanceConfig)
 
     @model_validator(mode="after")
     def _require_standard(self) -> RouteProfilesConfig:

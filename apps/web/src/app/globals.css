@@ -136,3 +136,10 @@ details > summary { cursor: pointer; font-weight: 600; }
 @media (prefers-reduced-motion: reduce) {
   .panel { transition: none; }
 }
+
+/* M5: comparison disclosure above the route cards */
+.search-summary { display: flex; flex-direction: column; gap: 6px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-muted); font-size: 0.9rem; }
+.search-summary p { margin: 0; }
+.search-summary .notes { margin: 0; padding-left: 18px; }
+.compare-list { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; font-size: 0.9rem; }
+.compare-list .desc { display: block; color: var(--text-muted); font-size: 0.85rem; }

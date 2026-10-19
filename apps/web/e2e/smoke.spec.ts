@@ -38,7 +38,20 @@ test("plans a standard route through the containers and shows directions", async
     expect(option.assessment.encounters.every((e: { status: string }) => typeof e.status === "string")).toBe(true);
   }
 
+  // M5: the planner always compares all three preferences; the response discloses the bounded search.
+  expect(["completed", "budget_exhausted", "partial", "not_run"]).toContain(body.search.status);
+  expect(body.search.profile_outcomes.map((o: { profile: string }) => o.profile).sort()).toEqual(["balanced", "fewest_mapped"]);
+  expect(body.search.routing_calls_used).toBeLessThanOrEqual(body.search.routing_calls_budget);
+  expect(body.options.length).toBeLessThanOrEqual(3);
+  for (const candidate of body.options.slice(1)) {
+    expect(candidate.assessment_coverage_status).toBe("complete"); // every displayed avoidance route is fully assessed
+    expect(candidate.exposure_count).toBeLessThan(option.exposure_count);
+  }
+  expect(new Set(body.options.map((o: { geometry: { coordinates: unknown[] } }) => JSON.stringify(o.geometry.coordinates))).size).toBe(body.options.length); // genuinely different paths
+
   await expect(page.getByTestId("route-cards")).toBeVisible();
+  await expect(page.getByTestId("search-summary")).toBeVisible();
+  await expect(page.getByTestId("search-status")).toContainText(/search completed|budget exhausted|cut short|not run/);
   await expect(page.getByTestId("route-card").first()).toContainText("Standard route");
   await expect(page.getByTestId("encounter-summary").first()).toContainText(/mapped record|No mapped encounters|Not assessed/);
   const directions = page.getByTestId("directions");

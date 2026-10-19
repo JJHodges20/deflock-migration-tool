@@ -169,3 +169,41 @@ def test_health_data_inventory_block(client: TestClient):
 def test_oversized_body_is_rejected(client: TestClient):
     resp = client.post("/api/v1/routes/plan", content=b"{}", headers={"Content-Type": "application/json", "Content-Length": str(70 * 1024)})
     assert resp.status_code == 413
+
+
+def test_plan_discloses_the_search_and_never_degrades_a_preference_silently(client: TestClient, fake_routing: FakeRoutingProvider):
+    body = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO, "profiles": ["standard", "balanced", "fewest_mapped"], "detour_limits": {"max_extra_seconds": 900, "max_relative_factor": 2.0}}).json()
+    search = body["search"]
+    assert search["status"] == "not_run" and body["search_status"] == "not_run"  # no assessment without a database
+    assert search["method_version"] == "search-1.0" and search["routing_calls_used"] == 1 and search["routing_calls_budget"] == 8
+    assert {o["profile"]: o["outcome"] for o in search["profile_outcomes"]} == {"balanced": "not_assessed", "fewest_mapped": "not_assessed"}
+    assert all("could not be evaluated" in o["message"] for o in search["profile_outcomes"])
+    assert len(body["options"]) == 1 and body["options"][0]["profiles"] == ["standard"]
+    assert body["options"][0]["exposure_count"] is None and body["options"][0]["generated_by"] == "baseline"
+    assert "not a proof of a globally optimal" in search["meaning"]
+    assert any("could not be evaluated" in w for w in body["warnings"])
+    assert len(fake_routing.calls) == 1
+
+
+def test_plan_with_assessment_runs_the_bounded_search_and_labels_shared_paths(settings, app_config, valhalla_fixture_payload):
+    from deflockmigration.domain.assessment import AssessmentResult, Association, Encounter, EncounterStatus, SensitivityCount
+
+    def fake_assessor(route, scope, snapshot_id):
+        association = Association("valhalla_locate_nearest_way", 50.0, "g@2026", 1, ["Main Street"], 4.0, 1, ["Main Street"], 4.0, 1, True, False, False, "nearest road traversed")
+        encounter = Encounter("osm:node:1", route.shape[len(route.shape) // 2][0], route.shape[len(route.shape) // 2][1], EncounterStatus.ASSOCIATED, 4.0, 0.5, route.length_m / 2, 1, "osm:node:1", "flock_safety", True, "mapped", None, False, None, True, "https://www.openstreetmap.org/node/1", association, "nearest road traversed")
+        return AssessmentResult("complete", "assess-1.0", 50.0, scope.value, "snap-1", "g@2026", 1, 0, 1.0, [encounter], [SensitivityCount(25, 1), SensitivityCount(50, 1), SensitivityCount(100, 1)], [])
+
+    routing = FakeRoutingProvider(valhalla_fixture_payload)
+    app = create_app(settings, config=app_config, routing=routing, geocoder=NullGeocoder(), assessor=fake_assessor)
+    body = TestClient(app).post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO, "profiles": ["standard", "balanced", "fewest_mapped"]}).json()
+    search = body["search"]
+    # Every candidate the fixture engine can offer carries the same single record, so nothing beats Standard; the
+    # search escalates penalties, tries exclusions once, and converges within the budget.
+    assert search["status"] == "completed" and 2 <= search["routing_calls_used"] <= 8 and search["candidates_assessed"] == 3
+    assert [c["avoidance"] for c in routing.calls[1:]] == ["penalized", "penalized", "penalized", "excluded"]
+    assert routing.calls[1]["penalties"] >= 1 and routing.calls[4]["exclusions"] >= 1
+    assert len(body["options"]) == 1 and body["options"][0]["profiles"] == ["standard", "balanced", "fewest_mapped"]
+    outcomes = {o["profile"]: o for o in search["profile_outcomes"]}
+    assert outcomes["balanced"]["outcome"] == "same_as_standard" and "No lower-exposure route found" in outcomes["balanced"]["message"]
+    assert outcomes["balanced"]["route_id"] == body["options"][0]["route_id"] and outcomes["balanced"]["bound_seconds"] is not None
+    assert body["options"][0]["exposure_count"] == 1 and body["options"][0]["search_status"] == "completed"

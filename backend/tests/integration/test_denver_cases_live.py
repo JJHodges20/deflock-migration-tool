@@ -8,6 +8,7 @@ traversed backward (one-way), every edge must be a drivable road class, and dest
 
 from __future__ import annotations
 
+import json
 import math
 
 import httpx
@@ -124,3 +125,57 @@ def test_reviewed_denver_trips_are_legal_and_aligned(live_client, name, origin, 
     assert all(i < 3 or i >= len(edges) - 3 for i in destination_only), (name, destination_only)
     # The engine shape and the API geometry agree.
     assert len(decode_polyline6("")) == 0  # codec sanity
+
+
+def _assert_legal(settings, name: str, option: dict) -> None:
+    maneuvers = option["maneuvers"]
+    coords = option["geometry"]["coordinates"]
+    assert maneuvers[0]["begin_shape_index"] == 0 and maneuvers[-1]["end_shape_index"] == len(coords) - 1, name
+    assert abs(sum(m["length_meters"] for m in maneuvers) - option["length_meters"]) / option["length_meters"] < 0.03, name
+    shape = [{"lat": lat, "lon": lon} for lon, lat in coords]
+    trace = httpx.post(
+        f"{settings.valhalla_url.rstrip('/')}/trace_attributes",
+        json={"shape": shape, "costing": "auto", "shape_match": "edge_walk", "filters": {"attributes": ["edge.traversability", "edge.use", "edge.destination_only"], "action": "include"}},
+        timeout=30.0,
+    )
+    assert trace.status_code == 200, (name, trace.text[:200])
+    edges = trace.json().get("edges") or []
+    assert edges and not any(e.get("traversability") == "backward" for e in edges), name
+    uses = {e.get("use") for e in edges}
+    assert not (uses & NON_DRIVABLE_USES) and uses <= DRIVABLE_USES | {None}, (name, uses)
+    destination_only = [i for i, e in enumerate(edges) if e.get("destination_only")]
+    assert all(i < 3 or i >= len(edges) - 3 for i in destination_only), (name, destination_only)
+
+
+@pytest.mark.parametrize("name,origin,destination", ROUTE_CASES)
+def test_reviewed_denver_trips_compare_camera_aware_options_honestly(live_client, name, origin, destination):
+    """M5 gate on real data: every displayed avoidance route is road-legal and fully assessed, differs in geometry,
+    has lower exposure than Standard, stays within its declared detour bound, and the search is disclosed."""
+    client, settings = live_client
+    body = {"origin": {"lat": origin[0], "lon": origin[1]}, "destination": {"lat": destination[0], "lon": destination[1]}, "profiles": ["standard", "balanced", "fewest_mapped"]}
+    resp = client.post("/api/v1/routes/plan", json=body)
+    assert resp.status_code == 200, (name, resp.text)
+    plan = resp.json()
+    search = plan["search"]
+    assert search["status"] in {"completed", "budget_exhausted", "partial"}, (name, search)
+    assert 1 <= search["routing_calls_used"] <= search["routing_calls_budget"] and search["elapsed_seconds"] < search["planning_deadline_seconds"]
+    assert {o["profile"] for o in search["profile_outcomes"]} == {"balanced", "fewest_mapped"}
+    assert all(o["outcome"] in {"improved", "same_as_standard"} for o in search["profile_outcomes"]), (name, search["profile_outcomes"])
+    options = plan["options"]
+    standard = options[0]
+    assert standard["profiles"][0] == "standard" and standard["exposure_count"] is not None
+    assert len({json.dumps(o["geometry"]["coordinates"]) for o in options}) == len(options), name  # genuinely different paths
+    for option in options:
+        _assert_legal(settings, f"{name}/{'+'.join(option['profiles'])}", option)
+    for option in options[1:]:
+        assert option["assessment_coverage_status"] == "complete", (name, option["profiles"])
+        assert option["exposure_count"] < standard["exposure_count"], (name, option["profiles"])
+        assert option["estimated_duration_seconds"] <= option["detour_bound_seconds"] + 0.05, (name, option["profiles"])
+        assert option["generated_by"] != "baseline" or search["routing_calls_used"] >= 1
+    improved = [o for o in search["profile_outcomes"] if o["outcome"] == "improved"]
+    assert {o["route_id"] for o in improved} <= {o["route_id"] for o in options[1:]}
+    # Repeating the request on the same snapshot and graph is deterministic apart from random ids and timing.
+    again = client.post("/api/v1/routes/plan", json=body).json()
+    assert [(o["profiles"], o["geometry"]["coordinates"], o["exposure_count"]) for o in again["options"]] == [(o["profiles"], o["geometry"]["coordinates"], o["exposure_count"]) for o in options], name
+    assert again["search"]["routing_calls_used"] == search["routing_calls_used"]
+    print(f"\n{name}: status={search['status']} calls={search['routing_calls_used']}/{search['routing_calls_budget']} assessed={search['candidates_assessed']} elapsed={search['elapsed_seconds']}s options=" + "; ".join(f"{'+'.join(o['profiles'])} E={o['exposure_count']} T={o['estimated_duration_seconds']}s (+{o['extra_duration_seconds']}s) by={o['generated_by']}" for o in options) + " | " + " | ".join(f"{o['profile']}: {o['outcome']}" for o in search["profile_outcomes"]))

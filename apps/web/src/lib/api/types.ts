@@ -91,6 +91,9 @@ export interface RouteOptionOut {
   destination_snap_distance_meters: number;
   matched_camera_record_count: number | null;
   uncertain_nearby_camera_count: number | null;
+  exposure_count: number | null;
+  generated_by: string;
+  detour_bound_seconds: number | null;
   counting_method_version: string | null;
   camera_scope: CameraScope;
   camera_snapshot_id: string | null;
@@ -117,15 +120,45 @@ export interface PlanRequest {
   units: "km" | "mi";
 }
 
+export type ProfileOutcomeKind = "improved" | "same_as_standard" | "not_assessed";
+export type SearchStatus = "completed" | "budget_exhausted" | "partial" | "not_run";
+
+export interface ProfileOutcomeOut {
+  profile: RouteProfileName;
+  outcome: ProfileOutcomeKind;
+  message: string;
+  max_extra_seconds: number | null;
+  max_relative_factor: number | null;
+  bound_seconds: number | null;
+  best_exposure_count: number | null;
+  route_id: string | null;
+}
+
+export interface SearchOut {
+  status: SearchStatus;
+  method_version: string;
+  routing_calls_used: number;
+  routing_calls_budget: number;
+  planning_deadline_seconds: number;
+  elapsed_seconds: number;
+  candidates_generated: number;
+  candidates_assessed: number;
+  iterations: number;
+  notes: string[];
+  profile_outcomes: ProfileOutcomeOut[];
+  meaning: string;
+}
+
 export interface PlanResponse {
   request_id: string;
   region_id: string;
   reference_duration_seconds: number;
   candidates_evaluated: number;
-  search_status: string;
+  search_status: SearchStatus;
   assessment_coverage_status: "not_assessed" | "complete" | "partial";
   warnings: string[];
   options: RouteOptionOut[];
+  search: SearchOut;
   disclaimer: string;
 }
 

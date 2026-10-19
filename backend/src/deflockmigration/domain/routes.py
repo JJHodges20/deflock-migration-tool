@@ -65,6 +65,36 @@ class EngineRoute:
 
 
 @dataclass(frozen=True)
+class PenaltySegment:
+    """A short piece of road geometry (lat, lon points taken from an assessed route) that the engine should make
+    more expensive during path finding. Factors are artificial search costs; they never touch reported travel time."""
+
+    points: list[tuple[float, float]]
+    factor: float
+    source_keys: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class AvoidanceRequest:
+    """What to ask the engine to steer around: soft linear penalties and/or hard point exclusions (decision 0001 D5)."""
+
+    kind: str  # penalized | excluded
+    penalties: list[PenaltySegment] = field(default_factory=list)
+    exclusions: list[LatLon] = field(default_factory=list)
+
+
+@dataclass(frozen=True)
+class DetourLimit:
+    """Both constraints apply: T(r) <= min(T0 + max_extra, factor * T0). No division, so T0 = 0 is safe."""
+
+    max_extra_s: float
+    max_relative_factor: float
+
+    def bound_s(self, reference_s: float) -> float:
+        return min(reference_s + self.max_extra_s, self.max_relative_factor * reference_s)
+
+
+@dataclass(frozen=True)
 class RouterStatus:
     available: bool
     version: str | None = None

@@ -124,6 +124,32 @@ class AssessmentOut(BaseModel):
     meaning: str
 
 
+class ProfileOutcomeOut(BaseModel):
+    profile: str
+    outcome: str  # improved | same_as_standard | not_assessed
+    message: str
+    max_extra_seconds: float | None
+    max_relative_factor: float | None
+    bound_seconds: float | None
+    best_exposure_count: int | None
+    route_id: str | None
+
+
+class SearchOut(BaseModel):
+    status: str  # completed | budget_exhausted | partial | not_run
+    method_version: str
+    routing_calls_used: int
+    routing_calls_budget: int
+    planning_deadline_seconds: float
+    elapsed_seconds: float
+    candidates_generated: int
+    candidates_assessed: int
+    iterations: int
+    notes: list[str]
+    profile_outcomes: list[ProfileOutcomeOut]
+    meaning: str
+
+
 class RouteOptionOut(BaseModel):
     route_id: str
     profiles: list[str]
@@ -136,6 +162,9 @@ class RouteOptionOut(BaseModel):
     destination_snap_distance_meters: float
     matched_camera_record_count: int | None
     uncertain_nearby_camera_count: int | None
+    exposure_count: int | None  # matched plus uncertain, the quantity the comparison minimises
+    generated_by: str  # baseline | penalized@<factor> | excluded
+    detour_bound_seconds: float | None
     counting_method_version: str | None
     camera_scope: str
     camera_snapshot_id: str | None
@@ -161,6 +190,7 @@ class PlanResponse(BaseModel):
     assessment_coverage_status: str
     warnings: list[str]
     options: list[RouteOptionOut]
+    search: SearchOut
     disclaimer: str
 
 

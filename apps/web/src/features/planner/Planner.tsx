@@ -111,7 +111,7 @@ export function Planner() {
           origin: { lat: origin.lat, lon: origin.lon },
           destination: { lat: destination.lat, lon: destination.lon },
           region_id: region.region_id,
-          profiles: [state.profile],
+          profiles: ["standard", "balanced", "fewest_mapped"],
           camera_scope: state.scope,
           detour_limits: { max_extra_seconds: state.maxExtraMinutes * 60, max_relative_factor: state.relativeLimit },
           units: state.units,
@@ -130,6 +130,18 @@ export function Planner() {
     planAbort.current?.abort();
     dispatch({ type: "PLAN_CANCEL" });
   }, []);
+
+  // "Raise the limit and plan again": the slider moves first, then the next render re-plans with the new limit.
+  const replanRef = useRef(false);
+  const raiseLimit = useCallback((minutes: number) => {
+    replanRef.current = true;
+    dispatch({ type: "SET_MAX_EXTRA", minutes });
+  }, []);
+  useEffect(() => {
+    if (!replanRef.current) return;
+    replanRef.current = false;
+    void plan();
+  }, [state.maxExtraMinutes, plan]);
 
   const route = useMemo(() => selectedRoute(state), [state]);
   const highlightRange = useMemo<[number, number] | null>(() => {
@@ -189,16 +201,26 @@ export function Planner() {
         <section className="section" aria-labelledby="prefs-heading">
           <h2 id="prefs-heading">Preferences</h2>
           <fieldset>
-            <legend>Route preference</legend>
-            {(["standard", "balanced", "fewest_mapped"] as const).map((profile) => (
-              <label key={profile} className="radio">
-                <input type="radio" name="profile" value={profile} checked={state.profile === profile} onChange={() => dispatch({ type: "SET_PROFILE", profile })} />
-                <span>
-                  {region?.profiles[profile]?.label ?? profile}
-                  <span className="desc">{region?.profiles[profile]?.description ?? ""}{profile !== "standard" ? " Camera-aware comparison arrives in a later milestone; this version returns the standard route." : ""}</span>
+            <legend>Routes compared</legend>
+            <ul className="compare-list" data-testid="compare-list">
+              <li>
+                <strong>{region?.profiles.standard?.label ?? "Standard route"}</strong>
+                <span className="desc">Fastest baseline by the engine&apos;s reported time, with no camera preference.</span>
+              </li>
+              <li>
+                <strong>{region?.profiles.balanced?.label ?? "Balanced"}</strong>
+                <span className="desc">
+                  Fewest mapped encounters among evaluated candidates within your limit: {state.maxExtraMinutes} min extra or {state.relativeLimit.toFixed(2)} × the standard time, whichever is smaller.
                 </span>
-              </label>
-            ))}
+              </li>
+              <li>
+                <strong>{region?.profiles.fewest_mapped?.label ?? "Fewest mapped cameras found"}</strong>
+                <span className="desc">
+                  Fewest mapped encounters within a wider limit: {Math.round((region?.profiles.fewest_mapped?.max_extra_seconds ?? 1200) / 60)} min extra or {(region?.profiles.fewest_mapped?.max_relative_factor ?? 1.75).toFixed(2)} × the standard time, and never tighter than your limit.
+                </span>
+              </li>
+            </ul>
+            <span className="disclaimer">Best among the candidates evaluated within a bounded search, never a guaranteed minimum. Encounters count mapped records (matched plus uncertain), each record once.</span>
           </fieldset>
           <fieldset>
             <legend>Camera scope</legend>
@@ -250,7 +272,7 @@ export function Planner() {
             </button>
           </div>
           <div aria-live="polite">
-            {state.request.status === "loading" && <div className="notice notice-info">Calculating a standard route…</div>}
+            {state.request.status === "loading" && <div className="notice notice-info">Calculating the standard route, then searching camera-aware alternatives (up to about 20 s)…</div>}
             {state.request.status === "error" && state.request.error && (
               <div className="notice notice-error" data-testid="plan-error">
                 {state.request.error.message} <span className="disclaimer">({state.request.error.code})</span>
@@ -260,7 +282,17 @@ export function Planner() {
           </div>
         </section>
 
-        {state.result && <RouteCards result={state.result} region={region} selectedRouteId={state.selectedRouteId} units={state.units} onSelect={(routeId) => dispatch({ type: "SELECT_ROUTE", routeId })} />}
+        {state.result && (
+          <RouteCards
+            result={state.result}
+            region={region}
+            selectedRouteId={state.selectedRouteId}
+            units={state.units}
+            maxExtraMinutes={state.maxExtraMinutes}
+            onSelect={(routeId) => dispatch({ type: "SELECT_ROUTE", routeId })}
+            onRaiseLimit={raiseLimit}
+          />
+        )}
         {route && <Directions route={route} units={state.units} highlighted={highlighted} onHighlight={setHighlighted} />}
 
         <DataHealthPanel />
@@ -284,6 +316,7 @@ export function Planner() {
           <MapView
             region={region}
             route={route}
+            options={state.result?.options ?? null}
             origin={state.origin.confirmed}
             destination={state.destination.confirmed}
             pinMode={state.pinMode !== null}

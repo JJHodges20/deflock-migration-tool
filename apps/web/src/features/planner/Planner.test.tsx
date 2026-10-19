@@ -84,9 +84,15 @@ describe("Planner shell", () => {
     expect(miles).toHaveAttribute("aria-pressed", "true");
   });
 
-  it("offers the scope and preference controls with explicit labels", async () => {
+  it("offers the scope control and explains the three compared routes with the extra-time limit", async () => {
     render(<Planner />);
     await screen.findByText("Standard route");
+    const compared = screen.getByTestId("compare-list");
+    expect(compared).toHaveTextContent("Balanced");
+    expect(compared).toHaveTextContent("within your limit: 10 min extra or 1.50 × the standard time");
+    expect(compared).toHaveTextContent("Fewest mapped cameras found");
+    expect(compared).toHaveTextContent("20 min extra or 1.75 × the standard time, and never tighter than your limit");
+    expect(screen.queryByRole("radio", { name: /Balanced/ })).not.toBeInTheDocument(); // all three are always compared
     expect(screen.getByLabelText(/All mapped ALPRs/)).toBeChecked();
     fireEvent.click(screen.getByLabelText(/Flock-tagged ALPRs only/));
     expect(screen.getByLabelText(/Flock-tagged ALPRs only/)).toBeChecked();

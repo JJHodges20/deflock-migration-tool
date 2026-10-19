@@ -1,5 +1,7 @@
 """Valhalla adapter (pinned build 3.9.1). Only documented request options are used:
-locations, costing=auto, units, alternates, id. Legality options stay at engine defaults.
+locations, costing=auto, units, alternates, id, linear_cost_factors, exclude_locations.
+Legality options stay at engine defaults. Verified in M0 (docs/FEASIBILITY_REPORT.md): `linear_cost_factors`
+changes path choice without changing reported time; `exclude_locations` is hard and limited to 50 points.
 """
 
 from __future__ import annotations
@@ -10,13 +12,16 @@ import logging
 import httpx
 
 from deflockmigration.core.errors import NO_DRIVABLE_ROUTE, ROUTER_UNAVAILABLE, AppError
-from deflockmigration.domain.routes import EngineRoute, LatLon, Maneuver, RouterStatus
-from deflockmigration.geospatial.polyline import decode_polyline6
+from deflockmigration.domain.routes import AvoidanceRequest, EngineRoute, LatLon, Maneuver, RouterStatus
+from deflockmigration.geospatial.polyline import decode_polyline6, encode_polyline6
 
 log = logging.getLogger(__name__)
 
 # Valhalla error codes that mean "the graph has no legal path for these inputs" rather than an outage.
 NO_PATH_CODES = {170, 171, 442, 443, 444}
+# Documented service limits of the pinned build (docs/DATA_SOURCE_REGISTER.md section 7).
+MAX_EXCLUDE_LOCATIONS = 50
+MIN_LINEAR_COST_FACTOR = 1.0
 
 
 class ValhallaProvider:
@@ -48,14 +53,35 @@ class ValhallaProvider:
             has_timezones=data.get("has_timezones"),
         )
 
-    def baseline_candidates(self, origin: LatLon, destination: LatLon, *, alternates: int, request_id: str) -> list[EngineRoute]:
-        body = {
+    @staticmethod
+    def _body(origin: LatLon, destination: LatLon, alternates: int, request_id: str) -> dict:
+        return {
             "locations": [{"lat": origin.lat, "lon": origin.lon}, {"lat": destination.lat, "lon": destination.lon}],
             "costing": "auto",
             "units": "kilometers",
             "alternates": max(0, alternates),
             "id": request_id,
         }
+
+    def baseline_candidates(self, origin: LatLon, destination: LatLon, *, alternates: int, request_id: str) -> list[EngineRoute]:
+        return self._route(self._body(origin, destination, alternates, request_id), source="primary", alternate_source="alternate")
+
+    def avoiding_candidates(self, origin: LatLon, destination: LatLon, *, alternates: int, request_id: str, avoidance: AvoidanceRequest) -> list[EngineRoute]:
+        body = self._body(origin, destination, alternates, request_id)
+        if avoidance.penalties:
+            for p in avoidance.penalties:
+                if p.factor < MIN_LINEAR_COST_FACTOR or len(p.points) < 2:
+                    raise ValueError("linear cost factors need at least two points and a factor >= 1")
+            body["linear_cost_factors"] = [{"shape": encode_polyline6(p.points), "factor": float(p.factor)} for p in avoidance.penalties]
+        if avoidance.exclusions:
+            if len(avoidance.exclusions) > MAX_EXCLUDE_LOCATIONS:
+                raise ValueError(f"at most {MAX_EXCLUDE_LOCATIONS} exclude_locations per request")
+            body["exclude_locations"] = [{"lat": e.lat, "lon": e.lon} for e in avoidance.exclusions]
+        if not avoidance.penalties and not avoidance.exclusions:
+            raise ValueError("an avoidance request needs penalties or exclusions")
+        return self._route(body, source=avoidance.kind, alternate_source=avoidance.kind)
+
+    def _route(self, body: dict, *, source: str, alternate_source: str) -> list[EngineRoute]:
         try:
             resp = self._client.post(f"{self._base}/route", json=body)
         except httpx.TimeoutException as exc:
@@ -65,9 +91,9 @@ class ValhallaProvider:
 
         if resp.status_code == 200:
             payload = resp.json()
-            routes = [self._parse_trip(payload.get("trip") or {}, payload.get("warnings") or [], "primary", 0)]
+            routes = [self._parse_trip(payload.get("trip") or {}, payload.get("warnings") or [], source, 0)]
             for index, alt in enumerate(payload.get("alternates") or [], start=1):
-                routes.append(self._parse_trip(alt.get("trip") or {}, alt.get("warnings") or [], "alternate", index))
+                routes.append(self._parse_trip(alt.get("trip") or {}, alt.get("warnings") or [], alternate_source, index))
             return routes
 
         try:

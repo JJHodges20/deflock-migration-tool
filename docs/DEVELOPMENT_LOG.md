@@ -2,6 +2,45 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M5: camera-aware route generation and comparison
+
+### Built
+
+- **Avoidance requests (decision 0001 D5):** the Valhalla adapter gained `avoiding_candidates`, which adds only `linear_cost_factors` (encoded polyline pieces with a factor) and `exclude_locations` (at most 50 points) to the documented baseline request. Engine warnings are surfaced; undocumented, over-limit, or empty inputs are refused before the engine sees them.
+- **Bounded candidate search:** targets are 120 m pieces of each assessed candidate's own geometry around every counted record (matched or uncertain), accumulated across candidates so the search learns the corridor. Penalized requests escalate 10, 40, 160; then one hard-exclusion request on the current best candidate's records; then penalized requests at the maximum factor while new candidates keep appearing. Records within 100 m of the start or destination are never targeted (no route can avoid them) and are reported as unavoidable. The search stops on zero exposure within the tightest requested limit, on convergence, on the 8-call budget, or on the 20 s deadline; an engine refusal of exclusions is disclosed and ends the search rather than being retried blindly.
+- **Full reassessment:** every engine answer is de-duplicated by geometry, validated (start and destination maneuvers, ordered indices covering the shape), and assessed over its entire path against the whole envelope with the M4 assessor. Candidates that leave the envelope are excluded from ranking and reported as not ranked.
+- **Deterministic ranking (roadmap 10.4):** exposure is matched plus uncertain records, each once. Per preference, among fully assessed candidates within min(T0 + max_extra, factor x T0): minimise exposure, then duration, distance, and a geometry key. The user's extra-time control replaces the Balanced limit; Fewest mapped is never tighter than the user's limit. Ties never favour a longer route. Preferences that choose the same path share one card; a preference that finds nothing better is labelled on the Standard card with that message; when the assessment is unavailable every preference reports `not_assessed` and the response warns, so nothing degrades silently.
+- **Contract:** a `search` block (status `completed` / `budget_exhausted` / `partial` / `not_run`, routing calls used and budget, deadline and elapsed time, candidates generated and assessed, iterations, notes, one outcome per preference with its limit and bound, method `search-1.0`, meaning); options carry `exposure_count`, `generated_by`, and `detour_bound_seconds`.
+- **UI:** the planner always compares the three preferences ("Routes compared" explains each with its limit); a comparison summary above the cards shows calls, candidates, elapsed time, status, notes, and per-preference outcomes with a "raise the limit and plan again" action; cards show exposure, how the route was found, and the detour limit it satisfied; the map keeps the other options as thin dashed grey lines under the selected route.
+- **Synthetic routing fixture (roadmap 16):** `backend/tests/support/synthetic_graph.py`, a deterministic grid engine that searches on penalized cost but reports physical time, with locate and route_edges services so a whole plan runs end to end without a network.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 142 passed, including the 16-case M5 matrix on the synthetic network (lower-exposure detour found and shared by both preferences; a longer detour with unchanged exposure not presented as a benefit and an over-budget zero-exposure candidate rejected, then admitted when the limit is raised; deterministic repeats; a record at the destination unavoidable and never excluded; an engine refusing exclusions handled; penalized cost never changes reported time; no silent degradation without assessment; a zero-exposure Standard needs no search; baseline alternates ranked without extra calls; budget exhaustion and the deadline disclosed; candidates leaving the envelope not ranked; a frontage-road camera counted as uncertain; Standard always present and first), adapter tests for the avoidance request, contract tests for the search block, and the live Denver cases. Host: 116 passed, 21 skipped.
+- Live Denver cases, all three preferences, every option checked for legality with `trace_attributes`, complete assessment, lower exposure within its bound, distinct geometry, and a deterministic repeat:
+  - Union Station to Zoo: Standard exposure 4 (618 s); Balanced and Fewest mapped share one option with exposure 0 at +113 s, a baseline alternate (the engine's own primary); 1 routing call, 3 candidates assessed, 0.16 s.
+  - Capitol to Washington Park and the downtown one-way grid: Standard exposure 0, nothing to avoid, 1 call each.
+  - Union Station to DEN: Standard exposure 7 (1,669 s); Balanced exposure 4 at +340 s (baseline alternate); Fewest mapped exposure 2 at +734 s, found by penalties at factor 160; 5 of 8 routing calls, 10 candidates assessed, 0.71 s.
+  - Cherry Creek to Highlands: Standard exposure 4 (609 s); Balanced and Fewest mapped share one option with exposure 0 at +61 s (baseline alternate); 1 call, 0.11 s.
+- Frontend: type check clean; 28 Vitest tests passed (comparison summary, shared labels, outcome messages, raise-limit action, not-assessed warning, the compare list in the shell, plus the earlier suites).
+- Browser (Playwright, three viewports): 30 passed in 25 s. The routing smoke now requests all three preferences and asserts the search block, that every avoidance option is fully assessed with lower exposure and a distinct geometry, and that the comparison summary renders.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed on the M5 images; the Union Station to Denver Zoo request reported "0 mapped record encounters, 4 uncertain, assessment complete"; the snapshot and graph survived the restart.
+
+### Gate check (roadmap M5)
+
+- Routing changes, not just overlay colours: the airport trip's Fewest-mapped option is a different path the engine produced under penalties; the live test asserts distinct geometries for every option.
+- Every displayed avoidance route is road-valid and fully assessed for its declared scope: legality per `trace_attributes` (no backward edges, drivable uses only, destination-only edges only at the ends) and a complete assessment are asserted live for every option, and the synthetic matrix shows partial candidates are never ranked.
+- Limited candidate search is disclosed: the `search` block and the comparison summary carry status, calls, budget, deadline, elapsed time, notes, and per-preference outcomes.
+- Artificial cost penalties do not contaminate ETA: the synthetic engine proves the planner reports physical time while the engine searched on penalized cost; M0 showed the same for Valhalla (factor 1000 left the reported time unchanged).
+- Honest partial and no-improvement states: `same_as_standard` with the limit in the message and a raise-limit action; `budget_exhausted`, `partial` (deadline or engine failure), and `not_run` are distinct and tested.
+
+### Observations
+
+- On real Denver trips the engine's own alternates often carry the improvement: in three of five reviewed trips the Balanced option was a baseline alternate with zero exposure. Penalties mattered on the airport trip, where factor 160 produced a 2-exposure route the alternates did not offer.
+- Exposure counts uncertain records (roadmap 10.4), so the corner ambiguity seen in M4 drives the comparison as much as matched records do; the cards show both numbers separately.
+- The search is cheap on the local stack: under a second for every reviewed trip. The 20 s deadline and the 8-call budget were never reached live, only in the synthetic tests.
+- The first synthetic scenario I wrote expected the full Ridge Road detour, but the search found a cheaper zig-zag through the grid with the same zero exposure; the test now encodes the engine's answer, which is the point of a real path search over a hand-picked "detour".
+
 ## 2026-10-19 - M4: encounter assessment and road-association validation
 
 ### Built

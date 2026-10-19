@@ -1,8 +1,10 @@
-import { render, screen } from "@testing-library/react";
-import type { AssessmentOut, PlanResponse, RouteOptionOut } from "@/lib/api/types";
-import { RouteCards } from "./RouteCards";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { vi } from "vitest";
+import type { AssessmentOut, PlanResponse, ProfileOutcomeOut, RouteOptionOut, SearchOut } from "@/lib/api/types";
+import { RouteCards, generatedByText } from "./RouteCards";
 
-function option(assessment: AssessmentOut | null): RouteOptionOut {
+function option(assessment: AssessmentOut | null, overrides: Partial<RouteOptionOut> = {}): RouteOptionOut {
+  const assessed = assessment !== null && assessment.status !== "not_assessed";
   return {
     route_id: "r1",
     profiles: ["standard"],
@@ -15,6 +17,9 @@ function option(assessment: AssessmentOut | null): RouteOptionOut {
     destination_snap_distance_meters: 80,
     matched_camera_record_count: assessment?.matched_record_count ?? null,
     uncertain_nearby_camera_count: assessment?.uncertain_record_count ?? null,
+    exposure_count: assessed ? (assessment.matched_record_count ?? 0) + (assessment.uncertain_record_count ?? 0) : null,
+    generated_by: "baseline",
+    detour_bound_seconds: null,
     counting_method_version: assessment ? "assess-1.0" : null,
     camera_scope: "all_alpr",
     camera_snapshot_id: "snap-1",
@@ -29,11 +34,30 @@ function option(assessment: AssessmentOut | null): RouteOptionOut {
     has_toll: false,
     engine_candidate: "alternate-2",
     assessment,
+    ...overrides,
   };
 }
 
-function result(assessment: AssessmentOut | null): PlanResponse {
-  return { request_id: "req", region_id: "denver", reference_duration_seconds: 618, candidates_evaluated: 3, search_status: "completed", assessment_coverage_status: assessment?.status ?? "not_assessed", warnings: [], options: [option(assessment)], disclaimer: "advisory" };
+function search(overrides: Partial<SearchOut> = {}): SearchOut {
+  return {
+    status: "completed",
+    method_version: "search-1.0",
+    routing_calls_used: 1,
+    routing_calls_budget: 8,
+    planning_deadline_seconds: 20,
+    elapsed_seconds: 0.4,
+    candidates_generated: 3,
+    candidates_assessed: 3,
+    iterations: 0,
+    notes: [],
+    profile_outcomes: [],
+    meaning: "Best among the candidates this bounded search evaluated, not a proof of a globally optimal camera-minimum path.",
+    ...overrides,
+  };
+}
+
+function result(assessment: AssessmentOut | null, extra: Partial<PlanResponse> = {}): PlanResponse {
+  return { request_id: "req", region_id: "denver", reference_duration_seconds: 618, candidates_evaluated: 3, search_status: "completed", assessment_coverage_status: assessment?.status ?? "not_assessed", warnings: [], options: [option(assessment)], search: search(), disclaimer: "advisory", ...extra };
 }
 
 const assessed: AssessmentOut = {
@@ -56,11 +80,15 @@ const assessed: AssessmentOut = {
   ],
 };
 
+const complete: AssessmentOut = { ...assessed, status: "complete", coverage_fraction: 1, warnings: [] };
+const zero: AssessmentOut = { ...complete, matched_record_count: 0, uncertain_record_count: 0, encounters: [] };
+
 describe("RouteCards assessment display", () => {
   it("shows counts, uncertainty, sensitivity, partial coverage, and per-record evidence", () => {
     render(<RouteCards result={result(assessed)} region={null} selectedRouteId="r1" units="km" onSelect={() => undefined} />);
     expect(screen.getByTestId("encounter-summary")).toHaveTextContent("2 mapped records on roads this route uses");
     expect(screen.getByText(/^1 \(different or ambiguous road/)).toBeInTheDocument();
+    expect(screen.getByTestId("exposure")).toHaveTextContent("3 (matched plus uncertain, each record once)");
     expect(screen.getByText("1 / 3 / 4")).toBeInTheDocument();
     expect(screen.getByText(/partial: 62% of the route/)).toBeInTheDocument();
     const list = screen.getByTestId("encounter-list");
@@ -77,7 +105,7 @@ describe("RouteCards assessment display", () => {
   });
 
   it("states the zero case and the not-assessed case honestly", () => {
-    render(<RouteCards result={result({ ...assessed, status: "complete", coverage_fraction: 1, matched_record_count: 0, uncertain_record_count: 0, encounters: [], warnings: [] })} region={null} selectedRouteId="r1" units="km" onSelect={() => undefined} />);
+    render(<RouteCards result={result(zero)} region={null} selectedRouteId="r1" units="km" onSelect={() => undefined} />);
     expect(screen.getByTestId("encounter-summary")).toHaveTextContent("No mapped encounters detected by this assessment. Unmapped or mislocated cameras may still be present.");
     expect(screen.getByText(/complete: the whole route/)).toBeInTheDocument();
   });
@@ -85,6 +113,73 @@ describe("RouteCards assessment display", () => {
   it("never shows zero when nothing was assessed", () => {
     render(<RouteCards result={result(null)} region={null} selectedRouteId="r1" units="km" onSelect={() => undefined} />);
     expect(screen.getByTestId("encounter-summary")).toHaveTextContent("Not assessed");
+    expect(screen.getByTestId("exposure")).toHaveTextContent("not assessed");
     expect(screen.queryByTestId("encounter-list")).not.toBeInTheDocument();
+  });
+});
+
+describe("RouteCards comparison display (M5)", () => {
+  const improved: ProfileOutcomeOut[] = [
+    { profile: "balanced", outcome: "improved", message: "0 mapped encounter(s) versus 3", max_extra_seconds: 600, max_relative_factor: 1.5, bound_seconds: 927, best_exposure_count: 0, route_id: "r2" },
+    { profile: "fewest_mapped", outcome: "improved", message: "0 mapped encounter(s) versus 3", max_extra_seconds: 1200, max_relative_factor: 1.75, bound_seconds: 1081, best_exposure_count: 0, route_id: "r2" },
+  ];
+
+  it("shows the comparison summary, shared labels on one card, and how a route was found", () => {
+    const detour = option(zero, { route_id: "r2", profiles: ["balanced", "fewest_mapped"], estimated_duration_seconds: 790, extra_duration_seconds: 172, generated_by: "penalized@40", detour_bound_seconds: 1081 });
+    const plan = result(complete, { options: [option(complete), detour], search: search({ routing_calls_used: 3, candidates_assessed: 4, elapsed_seconds: 1.3, iterations: 2, profile_outcomes: improved }) });
+    const region = { profiles: { standard: { label: "Standard route" }, balanced: { label: "Balanced" }, fewest_mapped: { label: "Fewest mapped cameras found" } } } as never;
+    render(<RouteCards result={plan} region={region} selectedRouteId="r2" units="km" maxExtraMinutes={10} onSelect={() => undefined} onRaiseLimit={() => undefined} />);
+    const summary = screen.getByTestId("search-summary");
+    expect(summary).toHaveTextContent("4 candidate routes fully assessed using 3 of 8 routing calls in 1.3 s");
+    expect(screen.getByTestId("search-status")).toHaveTextContent("search completed");
+    expect(screen.queryByTestId("profile-outcome")).not.toBeInTheDocument(); // both preferences produced a route
+    expect(screen.queryByTestId("raise-limit")).not.toBeInTheDocument();
+    const cards = screen.getAllByTestId("route-card");
+    expect(cards).toHaveLength(2);
+    expect(cards[1]).toHaveTextContent("Balanced");
+    expect(cards[1]).toHaveTextContent("Fewest mapped cameras found");
+    expect(cards[1]).toHaveTextContent("+3 min");
+    expect(cards[1]).toHaveTextContent("soft road penalties during path search (factor 40); reported time is unaffected");
+    expect(cards[1]).toHaveTextContent("Detour limit applied");
+    expect(cards[0]).toHaveTextContent("engine baseline (no camera preference)");
+    expect(summary).toHaveTextContent("not a proof of a globally optimal camera-minimum path");
+  });
+
+  it("explains a preference that found nothing within the limit and offers to raise it", () => {
+    const onRaiseLimit = vi.fn();
+    const outcomes: ProfileOutcomeOut[] = [
+      { profile: "balanced", outcome: "same_as_standard", message: "No lower-exposure route found within your detour limit (up to 10 min extra or 1.50 x the Standard time, whichever is smaller (927 s for this trip)); 5 candidate(s) were assessed. Increase the limit to search further.", max_extra_seconds: 600, max_relative_factor: 1.5, bound_seconds: 927, best_exposure_count: 3, route_id: "r1" },
+      { profile: "fewest_mapped", outcome: "same_as_standard", message: "No lower-exposure route found within your detour limit (up to 20 min extra or 1.75 x the Standard time, whichever is smaller (1081 s for this trip)); 5 candidate(s) were assessed. Increase the limit to search further.", max_extra_seconds: 1200, max_relative_factor: 1.75, bound_seconds: 1081, best_exposure_count: 3, route_id: "r1" },
+    ];
+    const plan = result(complete, { options: [option(complete, { profiles: ["standard", "balanced", "fewest_mapped"] })], search: search({ status: "budget_exhausted", routing_calls_used: 8, candidates_assessed: 5, notes: ["The routing-call budget (8) ran out while new candidates were still appearing; a larger budget might find more."], profile_outcomes: outcomes }) });
+    render(<RouteCards result={plan} region={null} selectedRouteId="r1" units="km" maxExtraMinutes={10} onSelect={() => undefined} onRaiseLimit={onRaiseLimit} />);
+    expect(screen.getByTestId("search-status")).toHaveTextContent("routing-call budget exhausted");
+    expect(screen.getByText(/ran out while new candidates/)).toBeInTheDocument();
+    const outcomesShown = screen.getAllByTestId("profile-outcome");
+    expect(outcomesShown).toHaveLength(2);
+    expect(outcomesShown[0]).toHaveTextContent("balanced: No lower-exposure route found within your detour limit");
+    expect(screen.getAllByTestId("route-card")).toHaveLength(1);
+    expect(screen.getByTestId("route-card")).toHaveTextContent("fewest_mapped"); // the Standard card carries every label that resolved to it
+    fireEvent.click(screen.getByTestId("raise-limit"));
+    expect(onRaiseLimit).toHaveBeenCalledWith(20);
+  });
+
+  it("warns when preferences could not be evaluated and offers no false improvement", () => {
+    const outcomes: ProfileOutcomeOut[] = [
+      { profile: "balanced", outcome: "not_assessed", message: "Camera assessment is unavailable, so this preference could not be evaluated; only the Standard route is shown, unassessed.", max_extra_seconds: 600, max_relative_factor: 1.5, bound_seconds: 927, best_exposure_count: null, route_id: null },
+    ];
+    const plan = result(null, { search_status: "not_run", search: search({ status: "not_run", candidates_assessed: 0, profile_outcomes: outcomes }) });
+    render(<RouteCards result={plan} region={null} selectedRouteId="r1" units="km" maxExtraMinutes={10} onSelect={() => undefined} onRaiseLimit={() => undefined} />);
+    expect(screen.getByTestId("search-status")).toHaveTextContent("camera-aware search not run");
+    expect(screen.getByTestId("profile-outcome")).toHaveClass("notice-warn");
+    expect(screen.getByTestId("profile-outcome")).toHaveTextContent("could not be evaluated");
+    expect(screen.queryByTestId("raise-limit")).not.toBeInTheDocument();
+    expect(screen.getByTestId("route-card")).not.toHaveTextContent("Balanced");
+  });
+
+  it("describes every generation method in plain words", () => {
+    expect(generatedByText("baseline")).toContain("engine baseline");
+    expect(generatedByText("penalized@160")).toContain("factor 160");
+    expect(generatedByText("excluded")).toContain("hard road exclusions");
   });
 });

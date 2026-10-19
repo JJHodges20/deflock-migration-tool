@@ -17,5 +17,16 @@ profiles:
     max_relative_factor: 1.75
 
 search_budget:
-  max_routing_calls_per_trip: 8
-  planning_deadline_seconds: 20
+  max_routing_calls_per_trip: 8      # baseline request plus avoidance requests
+  planning_deadline_seconds: 20      # whole plan; a deadline returns a labelled partial search, never invented routes
+
+# Candidate generation (decision 0001 D5): soft linear_cost_factors on short pieces of assessed routes around
+# each counted record, escalating 10 -> 40 -> 160, then one hard exclude_locations request, then more penalized
+# requests while new candidates keep appearing. Factors are artificial search costs and never change reported time.
+avoidance:
+  penalty_factor: 10
+  penalty_escalation: 4
+  penalty_factor_max: 160
+  penalty_segment_half_length_m: 60
+  endpoint_margin_m: 100              # records this close to the start or destination cannot be avoided by any route
+  max_exclusions_per_request: 50      # engine limit

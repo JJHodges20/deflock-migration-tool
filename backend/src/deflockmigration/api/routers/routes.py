@@ -13,14 +13,16 @@ from deflockmigration.api.schemas import (
     ManeuverOut,
     PlanRequest,
     PlanResponse,
+    ProfileOutcomeOut,
     RouteOptionOut,
+    SearchOut,
     SensitivityOut,
 )
-from deflockmigration.application.plan_trip import PlanTripService
+from deflockmigration.application.plan_trip import PlanResult, PlanTripService
 from deflockmigration.core.clock import isoformat_z
 from deflockmigration.core.errors import VALIDATION_ERROR, AppError
 from deflockmigration.domain.assessment import AssessmentResult
-from deflockmigration.domain.routes import LatLon
+from deflockmigration.domain.routes import DetourLimit, LatLon
 from deflockmigration.geospatial.polyline import to_geojson_linestring
 from deflockmigration.storage.repositories import SnapshotRepository
 
@@ -29,6 +31,11 @@ log = logging.getLogger(__name__)
 ASSESSMENT_MEANING = (
     "Counts are mapped OpenStreetMap records associated with roads the route traverses, within the counting radius; "
     "they are not observed recordings, people, or plates, and unmapped or mislocated cameras may still be present."
+)
+SEARCH_MEANING = (
+    "Best among the candidates this bounded search evaluated, not a proof of a globally optimal camera-minimum path. "
+    "Exposure counts mapped records associated with or unresolved near a route (matched plus uncertain), each record once. "
+    "Artificial search penalties never change reported travel times."
 )
 
 
@@ -74,6 +81,32 @@ def _assessment_out(a: AssessmentResult) -> AssessmentOut:
     )
 
 
+def _search_out(result: PlanResult) -> SearchOut:
+    s = result.search
+    route_ids = {option.route.encoded_shape_key(): option.route_id for option in result.options}
+    return SearchOut(
+        status=s.status.value,
+        method_version=s.method_version,
+        routing_calls_used=s.routing_calls_used,
+        routing_calls_budget=s.routing_calls_budget,
+        planning_deadline_seconds=s.planning_deadline_s,
+        elapsed_seconds=s.elapsed_s,
+        candidates_generated=s.candidates_generated,
+        candidates_assessed=s.candidates_assessed,
+        iterations=s.iterations,
+        notes=s.notes,
+        profile_outcomes=[
+            ProfileOutcomeOut(
+                profile=o.profile, outcome=o.outcome.value, message=o.message, max_extra_seconds=o.max_extra_s, max_relative_factor=o.max_relative_factor,
+                bound_seconds=round(o.bound_s, 1) if o.bound_s is not None else None, best_exposure_count=o.best_exposure,
+                route_id=route_ids.get(o.route_key) if o.route_key else None,
+            )
+            for o in s.profile_outcomes
+        ],
+        meaning=SEARCH_MEANING,
+    )
+
+
 @router.post("/routes/plan", response_model=PlanResponse)
 def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
     state = request.app.state
@@ -83,12 +116,14 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
     snapshot_id, as_of, downloaded_at = _active_snapshot_versions(state.session_factory, config.region.region_id)
     assessor = getattr(state, "assessor", None)
     service = PlanTripService(config, state.routing, assessor)
+    detour = DetourLimit(float(body.detour_limits.max_extra_seconds), float(body.detour_limits.max_relative_factor)) if body.detour_limits else None
     result = service.plan(
         LatLon(body.origin.lat, body.origin.lon),
         LatLon(body.destination.lat, body.destination.lon),
         profiles=body.profiles,
         camera_scope=body.camera_scope,
         snapshot_id=snapshot_id,
+        detour_limits=detour,
     )
     options = []
     for option in result.options:
@@ -106,6 +141,9 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
             destination_snap_distance_meters=option.destination_snap_m,
             matched_camera_record_count=assessment.matched_record_count if assessment else None,
             uncertain_nearby_camera_count=assessment.uncertain_record_count if assessment else None,
+            exposure_count=option.exposure,
+            generated_by=option.generated_by,
+            detour_bound_seconds=round(option.detour_bound_s, 1) if option.detour_bound_s is not None else None,
             counting_method_version=assessment.counting_method_version if assessment and assessment.status != "not_assessed" else None,
             camera_scope=body.camera_scope.value,
             camera_snapshot_id=snapshot_id,
@@ -147,5 +185,6 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
         assessment_coverage_status=result.assessment_coverage_status.value,
         warnings=result.warnings,
         options=options,
+        search=_search_out(result),
         disclaimer=DISCLAIMER,
     )

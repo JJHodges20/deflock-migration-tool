@@ -13,6 +13,7 @@ import { emptySummary, summarizeCameraFeatures, type CameraSummary } from "./cam
 interface Props {
   region: RegionResponse | null;
   route: RouteOptionOut | null;
+  options: RouteOptionOut[] | null;
   origin: GeocodeCandidate | null;
   destination: GeocodeCandidate | null;
   pinMode: boolean;
@@ -112,7 +113,7 @@ function encounterPopup(properties: Record<string, unknown>): HTMLElement {
   return root;
 }
 
-export function MapView({ region, route, origin, destination, pinMode, showCameras, scope, highlightRange, encounters, onPinPlaced, onStatus }: Props) {
+export function MapView({ region, route, options, origin, destination, pinMode, showCameras, scope, highlightRange, encounters, onPinPlaced, onStatus }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<{ origin?: Marker; destination?: Marker }>({});
@@ -155,6 +156,10 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
       map.on("load", () => {
         map.addSource("service-boundary", { type: "geojson", data: { type: "Feature", properties: {}, geometry: region.service_boundary.geometry } });
         map.addLayer({ id: "service-boundary-line", type: "line", source: "service-boundary", paint: { "line-color": "#1f5f8b", "line-width": 2, "line-dasharray": [2, 2] } });
+        // Unselected options: thin dashed grey, drawn under the selected route (pattern and width, not only colour).
+        map.addSource("routes-other", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        map.addLayer({ id: "routes-other-casing", type: "line", source: "routes-other", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": 6 } });
+        map.addLayer({ id: "routes-other-line", type: "line", source: "routes-other", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#5b6b7a", "line-width": 3, "line-dasharray": [2, 2] } });
         map.addSource("route", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
         map.addLayer({ id: "route-casing", type: "line", source: "route", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#ffffff", "line-width": 9 } });
         map.addLayer({ id: "route-line", type: "line", source: "route", layout: { "line-cap": "round", "line-join": "round" }, paint: { "line-color": "#1f5f8b", "line-width": 5 } });
@@ -246,6 +251,16 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
       source.setData({ type: "FeatureCollection", features: [] });
     }
   }, [route, loaded]);
+
+  // The other route options stay visible as dashed lines so a comparison is a comparison of paths, not of colours.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded) return;
+    const source = map.getSource("routes-other") as GeoJSONSource | undefined;
+    if (!source) return;
+    const others = (options ?? []).filter((option) => option.route_id !== route?.route_id);
+    source.setData({ type: "FeatureCollection", features: others.map((option) => ({ type: "Feature", properties: { route_id: option.route_id, profiles: option.profiles.join(",") }, geometry: option.geometry })) });
+  }, [options, route, loaded]);
 
   // Encounter rings for the selected route's assessment (counted = red, uncertain = orange, beyond radius = grey).
   useEffect(() => {

@@ -1,4 +1,4 @@
-import type { CameraScope, GeocodeCandidate, PlanResponse, RouteProfileName } from "@/lib/api/types";
+import type { CameraScope, GeocodeCandidate, PlanResponse } from "@/lib/api/types";
 import type { Units } from "@/lib/format";
 
 export type EndpointKey = "origin" | "destination";
@@ -17,7 +17,6 @@ export interface PlannerState {
   origin: EndpointState;
   destination: EndpointState;
   pinMode: EndpointKey | null;
-  profile: RouteProfileName;
   scope: CameraScope;
   maxExtraMinutes: number;
   relativeLimit: number;
@@ -40,7 +39,6 @@ export type PlannerAction =
   | { type: "SET_PIN_MODE"; endpoint: EndpointKey | null }
   | { type: "PIN_PLACED"; lat: number; lon: number }
   | { type: "SWAP" }
-  | { type: "SET_PROFILE"; profile: RouteProfileName }
   | { type: "SET_SCOPE"; scope: CameraScope }
   | { type: "SET_MAX_EXTRA"; minutes: number }
   | { type: "SET_RELATIVE"; factor: number }
@@ -62,7 +60,6 @@ export const initialPlannerState: PlannerState = {
   origin: { ...emptyEndpoint },
   destination: { ...emptyEndpoint },
   pinMode: null,
-  profile: "standard",
   scope: "all_alpr",
   maxExtraMinutes: 10,
   relativeLimit: 1.5,
@@ -107,8 +104,6 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
     }
     case "SWAP":
       return invalidateResult({ ...state, origin: state.destination, destination: state.origin, pinMode: null });
-    case "SET_PROFILE":
-      return { ...state, profile: action.profile };
     case "SET_SCOPE":
       return { ...state, scope: action.scope };
     case "SET_MAX_EXTRA":
@@ -142,7 +137,7 @@ export function plannerReducer(state: PlannerState, action: PlannerAction): Plan
     case "SELECT_ROUTE":
       return { ...state, selectedRouteId: action.routeId };
     case "CLEAR_TRIP":
-      return { ...initialPlannerState, profile: state.profile, scope: state.scope, showCameras: state.showCameras, units: state.units, sheetExpanded: state.sheetExpanded, request: { status: "idle", error: null, sequence: state.request.sequence + 1 } };
+      return { ...initialPlannerState, scope: state.scope, showCameras: state.showCameras, units: state.units, sheetExpanded: state.sheetExpanded, request: { status: "idle", error: null, sequence: state.request.sequence + 1 } };
     case "TOGGLE_SHEET":
       return { ...state, sheetExpanded: !state.sheetExpanded };
     default:
