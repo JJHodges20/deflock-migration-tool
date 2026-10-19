@@ -23,6 +23,62 @@ export interface ManeuverOut {
   highway: boolean;
 }
 
+export type EncounterStatus = "associated" | "nearby_unresolved" | "no_longer_mapped" | "outside_envelope" | "beyond_radius" | "excluded_scope";
+
+export interface AssociationOut {
+  method: string;
+  radius_m: number;
+  graph_version: string;
+  nearest_way_id: number | null;
+  nearest_road_names: string[];
+  nearest_distance_m: number | null;
+  route_way_id: number | null;
+  route_road_names: string[];
+  route_way_distance_m: number | null;
+  candidates_within_radius: number;
+  same_road: boolean;
+  ambiguous: boolean;
+  grade_separated: boolean;
+}
+
+export interface EncounterOut {
+  source_key: string;
+  lat: number;
+  lon: number;
+  status: EncounterStatus;
+  reason: string;
+  distance_m: number;
+  position_m: number | null;
+  position_fraction: number | null;
+  pass_count: number;
+  site_group_id: string;
+  manufacturer: string | null;
+  is_flock: boolean;
+  lifecycle_state: string;
+  direction_raw: string | null;
+  direction_conflict: boolean;
+  heading_relation: string | null;
+  in_envelope: boolean;
+  source_url: string;
+  association: AssociationOut | null;
+}
+
+export interface AssessmentOut {
+  status: "complete" | "partial" | "not_assessed";
+  counting_method_version: string;
+  radius_m: number;
+  scope: string;
+  snapshot_id: string | null;
+  graph_version: string | null;
+  coverage_fraction: number | null;
+  matched_record_count: number | null;
+  uncertain_record_count: number | null;
+  sensitivity: { radius_m: number; records_within: number }[];
+  encounters: EncounterOut[];
+  warnings: string[];
+  meaning: string;
+}
+
 export interface RouteOptionOut {
   route_id: string;
   profiles: RouteProfileName[];
@@ -48,6 +104,7 @@ export interface RouteOptionOut {
   has_highway: boolean;
   has_toll: boolean;
   engine_candidate: string;
+  assessment: AssessmentOut | null;
 }
 
 export interface PlanRequest {

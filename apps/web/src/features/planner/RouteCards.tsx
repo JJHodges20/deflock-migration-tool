@@ -2,6 +2,7 @@
 
 import type { PlanResponse, RegionResponse, RouteOptionOut } from "@/lib/api/types";
 import { formatDistance, formatDuration, formatSignedDuration, formatTimestamp, type Units } from "@/lib/format";
+import { Encounters, summaryLine } from "./Encounters";
 
 interface Props {
   result: PlanResponse;
@@ -13,16 +14,6 @@ interface Props {
 
 const SNAP_NOTE_THRESHOLD_M = 50;
 
-function encounterText(option: RouteOptionOut): string {
-  if (option.assessment_coverage_status === "not_assessed" || option.matched_camera_record_count === null) {
-    return "Not assessed in this version";
-  }
-  if (option.matched_camera_record_count === 0) {
-    return "No mapped encounters detected by this assessment";
-  }
-  return `${option.matched_camera_record_count} mapped`;
-}
-
 function snapNotes(option: RouteOptionOut, units: Units): string[] {
   const notes: string[] = [];
   if (option.origin_snap_distance_meters > SNAP_NOTE_THRESHOLD_M) {
@@ -32,6 +23,13 @@ function snapNotes(option: RouteOptionOut, units: Units): string[] {
     notes.push(`The route ends ${formatDistance(option.destination_snap_distance_meters, units)} from your destination point, on the nearest drivable road.`);
   }
   return notes;
+}
+
+function coverageText(option: RouteOptionOut): string {
+  const a = option.assessment;
+  if (!a || a.status === "not_assessed") return a?.warnings[0] ?? "not assessed";
+  if (a.status === "partial") return `partial: ${Math.round((a.coverage_fraction ?? 0) * 100)}% of the route is inside the assessed data area; counts are not complete`;
+  return "complete: the whole route lies inside the assessed data area";
 }
 
 export function RouteCards({ result, region, selectedRouteId, units, onSelect }: Props) {
@@ -48,31 +46,34 @@ export function RouteCards({ result, region, selectedRouteId, units, onSelect }:
       {result.options.map((option) => {
         const selected = option.route_id === selectedRouteId;
         const notes = snapNotes(option, units);
+        const assessment = option.assessment;
         return (
-          <button key={option.route_id} type="button" className={`route-card${selected ? " selected" : ""}`} onClick={() => onSelect(option.route_id)} aria-pressed={selected} data-testid="route-card">
-            <div className="labels">
-              {option.profiles.map((profile) => (
-                <span key={profile} className="tag tag-accent">
-                  {region?.profiles[profile]?.label ?? profile}
-                </span>
-              ))}
-              {option.has_highway && <span className="tag">uses highway</span>}
-              {option.has_toll && <span className="tag">toll</span>}
-            </div>
-            <div className="metrics">
-              <div className="metric">
-                <span className="value">{formatDuration(option.estimated_duration_seconds)}</span>
-                <span className="label">estimated, no live traffic</span>
+          <div key={option.route_id} className={`route-card${selected ? " selected" : ""}`} data-testid="route-card">
+            <button type="button" className="route-card-select" onClick={() => onSelect(option.route_id)} aria-pressed={selected}>
+              <div className="labels">
+                {option.profiles.map((profile) => (
+                  <span key={profile} className="tag tag-accent">
+                    {region?.profiles[profile]?.label ?? profile}
+                  </span>
+                ))}
+                {option.has_highway && <span className="tag">uses highway</span>}
+                {option.has_toll && <span className="tag">toll</span>}
               </div>
-              <div className="metric">
-                <span className="value" data-testid="route-distance">{formatDistance(option.length_meters, units)}</span>
-                <span className="label">distance</span>
+              <div className="metrics">
+                <div className="metric">
+                  <span className="value">{formatDuration(option.estimated_duration_seconds)}</span>
+                  <span className="label">estimated, no live traffic</span>
+                </div>
+                <div className="metric">
+                  <span className="value" data-testid="route-distance">{formatDistance(option.length_meters, units)}</span>
+                  <span className="label">distance</span>
+                </div>
+                <div className="metric">
+                  <span className="value">{formatSignedDuration(option.extra_duration_seconds)}</span>
+                  <span className="label">versus standard</span>
+                </div>
               </div>
-              <div className="metric">
-                <span className="value">{formatSignedDuration(option.extra_duration_seconds)}</span>
-                <span className="label">versus standard</span>
-              </div>
-            </div>
+            </button>
             {notes.map((note) => (
               <span key={note} className="notice notice-info" data-testid="snap-note">
                 {note}
@@ -80,17 +81,20 @@ export function RouteCards({ result, region, selectedRouteId, units, onSelect }:
             ))}
             <dl className="kv">
               <dt>Mapped camera encounters</dt>
-              <dd>{encounterText(option)}</dd>
+              <dd data-testid="encounter-summary">{summaryLine(assessment)}</dd>
               <dt>Uncertain nearby matches</dt>
-              <dd>{option.uncertain_nearby_camera_count ?? "not assessed"}</dd>
+              <dd>{assessment && assessment.status !== "not_assessed" ? `${assessment.uncertain_record_count ?? 0} (different or ambiguous road, no longer mapped, or outside the assessed area)` : "not assessed"}</dd>
+              <dt>Records within 25 / 50 / 100 m</dt>
+              <dd>{assessment && assessment.status !== "not_assessed" ? assessment.sensitivity.map((s) => s.records_within).join(" / ") : "not assessed"}</dd>
               <dt>Assessment</dt>
-              <dd>{option.assessment_coverage_status.replace("_", " ")}</dd>
+              <dd>{coverageText(option)}</dd>
               <dt>Camera data</dt>
               <dd>{option.camera_snapshot_id ? `snapshot of ${formatTimestamp(option.camera_source_as_of)}` : "no snapshot loaded"}</dd>
               <dt>Road graph</dt>
               <dd>{option.road_graph_version}</dd>
             </dl>
-          </button>
+            {assessment && assessment.status !== "not_assessed" && <Encounters assessment={assessment} units={units} />}
+          </div>
         );
       })}
       <p className="disclaimer">{result.disclaimer}</p>

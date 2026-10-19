@@ -1,0 +1,6148 @@
+{
+ "route_geometry": {
+  "type": "LineString",
+  "coordinates": [
+   [
+    -104.999849,
+    39.75274
+   ],
+   [
+    -104.999827,
+    39.752758
+   ],
+   [
+    -104.999799,
+    39.75278
+   ],
+   [
+    -104.999728,
+    39.752839
+   ],
+   [
+    -104.999698,
+    39.752816
+   ],
+   [
+    -104.999626,
+    39.752761
+   ],
+   [
+    -104.999266,
+    39.752485
+   ],
+   [
+    -104.998916,
+    39.752215
+   ],
+   [
+    -104.998833,
+    39.752152
+   ],
+   [
+    -104.998753,
+    39.752091
+   ],
+   [
+    -104.998687,
+    39.75204
+   ],
+   [
+    -104.998487,
+    39.751887
+   ],
+   [
+    -104.998393,
+    39.751814
+   ],
+   [
+    -104.998085,
+    39.751579
+   ],
+   [
+    -104.998038,
+    39.751543
+   ],
+   [
+    -104.998015,
+    39.751525
+   ],
+   [
+    -104.997958,
+    39.751481
+   ],
+   [
+    -104.997915,
+    39.751448
+   ],
+   [
+    -104.997883,
+    39.751423
+   ],
+   [
+    -104.997828,
+    39.751382
+   ],
+   [
+    -104.997527,
+    39.751149
+   ],
+   [
+    -104.997182,
+    39.750882
+   ],
+   [
+    -104.997084,
+    39.750807
+   ],
+   [
+    -104.997014,
+    39.750754
+   ],
+   [
+    -104.996649,
+    39.750477
+   ],
+   [
+    -104.996504,
+    39.750367
+   ],
+   [
+    -104.996306,
+    39.750216
+   ],
+   [
+    -104.996204,
+    39.750139
+   ],
+   [
+    -104.996125,
+    39.750078
+   ],
+   [
+    -104.995999,
+    39.749982
+   ],
+   [
+    -104.99566,
+    39.749722
+   ],
+   [
+    -104.995507,
+    39.749605
+   ],
+   [
+    -104.995437,
+    39.749548
+   ],
+   [
+    -104.995331,
+    39.749469
+   ],
+   [
+    -104.995284,
+    39.749433
+   ],
+   [
+    -104.995258,
+    39.749414
+   ],
+   [
+    -104.994778,
+    39.749045
+   ],
+   [
+    -104.994531,
+    39.748858
+   ],
+   [
+    -104.994497,
+    39.748831
+   ],
+   [
+    -104.994453,
+    39.748796
+   ],
+   [
+    -104.994378,
+    39.748739
+   ],
+   [
+    -104.993879,
+    39.748356
+   ],
+   [
+    -104.9937,
+    39.748218
+   ],
+   [
+    -104.993597,
+    39.748139
+   ],
+   [
+    -104.993518,
+    39.748078
+   ],
+   [
+    -104.993169,
+    39.747811
+   ],
+   [
+    -104.992808,
+    39.747535
+   ],
+   [
+    -104.992718,
+    39.747465
+   ],
+   [
+    -104.992635,
+    39.747401
+   ],
+   [
+    -104.992288,
+    39.747134
+   ],
+   [
+    -104.991933,
+    39.746862
+   ],
+   [
+    -104.991887,
+    39.746825
+   ],
+   [
+    -104.991834,
+    39.746783
+   ],
+   [
+    -104.991762,
+    39.746729
+   ],
+   [
+    -104.991408,
+    39.746456
+   ],
+   [
+    -104.991232,
+    39.74632
+   ],
+   [
+    -104.991073,
+    39.746197
+   ],
+   [
+    -104.99099,
+    39.746133
+   ],
+   [
+    -104.990941,
+    39.746096
+   ],
+   [
+    -104.990914,
+    39.746075
+   ],
+   [
+    -104.99078,
+    39.745973
+   ],
+   [
+    -104.990546,
+    39.745791
+   ],
+   [
+    -104.990186,
+    39.745512
+   ],
+   [
+    -104.990105,
+    39.745452
+   ],
+   [
+    -104.990026,
+    39.745391
+   ],
+   [
+    -104.989723,
+    39.745158
+   ],
+   [
+    -104.989664,
+    39.745112
+   ],
+   [
+    -104.989311,
+    39.744839
+   ],
+   [
+    -104.989229,
+    39.744776
+   ],
+   [
+    -104.989152,
+    39.744716
+   ],
+   [
+    -104.988791,
+    39.744439
+   ],
+   [
+    -104.988439,
+    39.744171
+   ],
+   [
+    -104.988354,
+    39.744104
+   ],
+   [
+    -104.98828,
+    39.744048
+   ],
+   [
+    -104.98793,
+    39.743776
+   ],
+   [
+    -104.98759,
+    39.743512
+   ],
+   [
+    -104.987547,
+    39.743482
+   ],
+   [
+    -104.987395,
+    39.743364
+   ],
+   [
+    -104.987394,
+    39.743207
+   ],
+   [
+    -104.987395,
+    39.743023
+   ],
+   [
+    -104.987394,
+    39.742547
+   ],
+   [
+    -104.987393,
+    39.742459
+   ],
+   [
+    -104.987393,
+    39.742204
+   ],
+   [
+    -104.987392,
+    39.742141
+   ],
+   [
+    -104.987387,
+    39.741828
+   ],
+   [
+    -104.987387,
+    39.741815
+   ],
+   [
+    -104.987386,
+    39.741778
+   ],
+   [
+    -104.987387,
+    39.741688
+   ],
+   [
+    -104.987384,
+    39.74164
+   ],
+   [
+    -104.987387,
+    39.74156
+   ],
+   [
+    -104.987388,
+    39.741496
+   ],
+   [
+    -104.987389,
+    39.741415
+   ],
+   [
+    -104.987389,
+    39.741376
+   ],
+   [
+    -104.987389,
+    39.7413
+   ],
+   [
+    -104.987392,
+    39.741088
+   ],
+   [
+    -104.987393,
+    39.740877
+   ],
+   [
+    -104.987396,
+    39.740715
+   ],
+   [
+    -104.987397,
+    39.740629
+   ],
+   [
+    -104.987398,
+    39.740477
+   ],
+   [
+    -104.987401,
+    39.740211
+   ],
+   [
+    -104.987401,
+    39.740146
+   ],
+   [
+    -104.987401,
+    39.740008
+   ],
+   [
+    -104.987258,
+    39.740008
+   ],
+   [
+    -104.986856,
+    39.740005
+   ],
+   [
+    -104.986283,
+    39.740009
+   ],
+   [
+    -104.98613,
+    39.740009
+   ],
+   [
+    -104.986026,
+    39.740011
+   ],
+   [
+    -104.985497,
+    39.740017
+   ],
+   [
+    -104.985364,
+    39.740011
+   ],
+   [
+    -104.985003,
+    39.740016
+   ],
+   [
+    -104.984863,
+    39.740018
+   ],
+   [
+    -104.984742,
+    39.740019
+   ],
+   [
+    -104.984237,
+    39.740015
+   ],
+   [
+    -104.984144,
+    39.740016
+   ],
+   [
+    -104.983747,
+    39.740016
+   ],
+   [
+    -104.983595,
+    39.740014
+   ],
+   [
+    -104.983498,
+    39.740011
+   ],
+   [
+    -104.982958,
+    39.740009
+   ],
+   [
+    -104.982818,
+    39.740008
+   ],
+   [
+    -104.982453,
+    39.740006
+   ],
+   [
+    -104.98235,
+    39.740005
+   ],
+   [
+    -104.982247,
+    39.740004
+   ],
+   [
+    -104.981872,
+    39.740002
+   ],
+   [
+    -104.98177,
+    39.740001
+   ],
+   [
+    -104.981728,
+    39.74
+   ],
+   [
+    -104.981528,
+    39.739999
+   ],
+   [
+    -104.981226,
+    39.739996
+   ],
+   [
+    -104.981117,
+    39.739995
+   ],
+   [
+    -104.981011,
+    39.739995
+   ],
+   [
+    -104.980658,
+    39.739995
+   ],
+   [
+    -104.980493,
+    39.739994
+   ],
+   [
+    -104.980257,
+    39.739994
+   ],
+   [
+    -104.980016,
+    39.739994
+   ],
+   [
+    -104.97993,
+    39.739992
+   ],
+   [
+    -104.979835,
+    39.739992
+   ],
+   [
+    -104.979318,
+    39.739978
+   ],
+   [
+    -104.979036,
+    39.739976
+   ],
+   [
+    -104.978864,
+    39.739975
+   ],
+   [
+    -104.978762,
+    39.739978
+   ],
+   [
+    -104.978676,
+    39.739978
+   ],
+   [
+    -104.978239,
+    39.739978
+   ],
+   [
+    -104.978074,
+    39.739981
+   ],
+   [
+    -104.977723,
+    39.739987
+   ],
+   [
+    -104.977612,
+    39.739985
+   ],
+   [
+    -104.97753,
+    39.739985
+   ],
+   [
+    -104.977168,
+    39.739977
+   ],
+   [
+    -104.976944,
+    39.739976
+   ],
+   [
+    -104.976474,
+    39.739968
+   ],
+   [
+    -104.976194,
+    39.739968
+   ],
+   [
+    -104.975915,
+    39.739969
+   ],
+   [
+    -104.975565,
+    39.739965
+   ],
+   [
+    -104.975318,
+    39.739967
+   ],
+   [
+    -104.974918,
+    39.739967
+   ],
+   [
+    -104.974802,
+    39.739967
+   ],
+   [
+    -104.974635,
+    39.739973
+   ],
+   [
+    -104.974537,
+    39.739972
+   ],
+   [
+    -104.974158,
+    39.73997
+   ],
+   [
+    -104.973841,
+    39.739969
+   ],
+   [
+    -104.973479,
+    39.739971
+   ],
+   [
+    -104.973384,
+    39.73997
+   ],
+   [
+    -104.973035,
+    39.739973
+   ],
+   [
+    -104.97297,
+    39.739972
+   ],
+   [
+    -104.972862,
+    39.739976
+   ],
+   [
+    -104.972762,
+    39.739974
+   ],
+   [
+    -104.972585,
+    39.739974
+   ],
+   [
+    -104.972133,
+    39.73997
+   ],
+   [
+    -104.971869,
+    39.739972
+   ],
+   [
+    -104.971545,
+    39.739976
+   ],
+   [
+    -104.971303,
+    39.739976
+   ],
+   [
+    -104.971242,
+    39.739976
+   ],
+   [
+    -104.970923,
+    39.73997
+   ],
+   [
+    -104.9708,
+    39.739971
+   ],
+   [
+    -104.970716,
+    39.739974
+   ],
+   [
+    -104.970655,
+    39.739973
+   ],
+   [
+    -104.970394,
+    39.739971
+   ],
+   [
+    -104.970288,
+    39.739971
+   ],
+   [
+    -104.970141,
+    39.739969
+   ],
+   [
+    -104.969692,
+    39.739971
+   ],
+   [
+    -104.969546,
+    39.739971
+   ],
+   [
+    -104.969175,
+    39.739971
+   ],
+   [
+    -104.968633,
+    39.739969
+   ],
+   [
+    -104.968453,
+    39.73997
+   ],
+   [
+    -104.968354,
+    39.739969
+   ],
+   [
+    -104.96793,
+    39.739968
+   ],
+   [
+    -104.967849,
+    39.739968
+   ],
+   [
+    -104.967813,
+    39.739969
+   ],
+   [
+    -104.967707,
+    39.73997
+   ],
+   [
+    -104.967354,
+    39.73997
+   ],
+   [
+    -104.967226,
+    39.739971
+   ],
+   [
+    -104.967107,
+    39.739971
+   ],
+   [
+    -104.966958,
+    39.73997
+   ],
+   [
+    -104.966718,
+    39.739964
+   ],
+   [
+    -104.96662,
+    39.739965
+   ],
+   [
+    -104.966535,
+    39.739965
+   ],
+   [
+    -104.966463,
+    39.739963
+   ],
+   [
+    -104.966255,
+    39.739963
+   ],
+   [
+    -104.966092,
+    39.739963
+   ],
+   [
+    -104.966006,
+    39.739964
+   ],
+   [
+    -104.965914,
+    39.739964
+   ],
+   [
+    -104.965643,
+    39.739968
+   ],
+   [
+    -104.965391,
+    39.739966
+   ],
+   [
+    -104.965331,
+    39.739965
+   ],
+   [
+    -104.965166,
+    39.739964
+   ],
+   [
+    -104.964885,
+    39.739961
+   ],
+   [
+    -104.964774,
+    39.739957
+   ],
+   [
+    -104.964647,
+    39.739961
+   ],
+   [
+    -104.964405,
+    39.73996
+   ],
+   [
+    -104.964342,
+    39.73996
+   ],
+   [
+    -104.964128,
+    39.739959
+   ],
+   [
+    -104.963823,
+    39.739962
+   ],
+   [
+    -104.963598,
+    39.73996
+   ],
+   [
+    -104.963485,
+    39.739962
+   ],
+   [
+    -104.963358,
+    39.739961
+   ],
+   [
+    -104.962976,
+    39.739955
+   ],
+   [
+    -104.962876,
+    39.739957
+   ],
+   [
+    -104.962371,
+    39.739956
+   ],
+   [
+    -104.96225,
+    39.739957
+   ],
+   [
+    -104.962144,
+    39.739958
+   ],
+   [
+    -104.96163,
+    39.739957
+   ],
+   [
+    -104.96148,
+    39.739958
+   ],
+   [
+    -104.961138,
+    39.739957
+   ],
+   [
+    -104.96102,
+    39.739957
+   ],
+   [
+    -104.960915,
+    39.73996
+   ],
+   [
+    -104.960762,
+    39.739959
+   ],
+   [
+    -104.960543,
+    39.739959
+   ],
+   [
+    -104.9604,
+    39.739958
+   ],
+   [
+    -104.960229,
+    39.739959
+   ],
+   [
+    -104.959935,
+    39.739962
+   ],
+   [
+    -104.959895,
+    39.739962
+   ],
+   [
+    -104.959784,
+    39.73996
+   ],
+   [
+    -104.959693,
+    39.73996
+   ],
+   [
+    -104.959657,
+    39.739964
+   ],
+   [
+    -104.959581,
+    39.739965
+   ],
+   [
+    -104.959499,
+    39.739972
+   ],
+   [
+    -104.959434,
+    39.739981
+   ],
+   [
+    -104.959356,
+    39.739991
+   ],
+   [
+    -104.959308,
+    39.739999
+   ],
+   [
+    -104.959275,
+    39.740003
+   ],
+   [
+    -104.959132,
+    39.740024
+   ],
+   [
+    -104.95905,
+    39.740035
+   ],
+   [
+    -104.958891,
+    39.740054
+   ],
+   [
+    -104.958806,
+    39.740063
+   ],
+   [
+    -104.958797,
+    39.740153
+   ],
+   [
+    -104.958793,
+    39.740187
+   ],
+   [
+    -104.958794,
+    39.740227
+   ],
+   [
+    -104.958796,
+    39.740256
+   ],
+   [
+    -104.958804,
+    39.740315
+   ],
+   [
+    -104.958817,
+    39.740401
+   ],
+   [
+    -104.958834,
+    39.740481
+   ],
+   [
+    -104.958859,
+    39.740566
+   ],
+   [
+    -104.959076,
+    39.74097
+   ],
+   [
+    -104.959108,
+    39.74104
+   ],
+   [
+    -104.959139,
+    39.741138
+   ],
+   [
+    -104.959157,
+    39.741241
+   ],
+   [
+    -104.959161,
+    39.741343
+   ],
+   [
+    -104.959164,
+    39.741439
+   ],
+   [
+    -104.959163,
+    39.741535
+   ],
+   [
+    -104.959163,
+    39.741581
+   ],
+   [
+    -104.959163,
+    39.741622
+   ],
+   [
+    -104.959162,
+    39.74166
+   ],
+   [
+    -104.959162,
+    39.741713
+   ],
+   [
+    -104.959163,
+    39.741795
+   ],
+   [
+    -104.959166,
+    39.742515
+   ],
+   [
+    -104.959167,
+    39.742651
+   ],
+   [
+    -104.959166,
+    39.742876
+   ],
+   [
+    -104.959167,
+    39.742954
+   ],
+   [
+    -104.959168,
+    39.743011
+   ],
+   [
+    -104.959172,
+    39.743096
+   ],
+   [
+    -104.959177,
+    39.743169
+   ],
+   [
+    -104.95918,
+    39.743205
+   ],
+   [
+    -104.959189,
+    39.743277
+   ],
+   [
+    -104.959203,
+    39.74336
+   ],
+   [
+    -104.959218,
+    39.743452
+   ],
+   [
+    -104.959392,
+    39.743859
+   ],
+   [
+    -104.959429,
+    39.743961
+   ],
+   [
+    -104.959456,
+    39.744039
+   ],
+   [
+    -104.959473,
+    39.744092
+   ],
+   [
+    -104.959499,
+    39.744181
+   ],
+   [
+    -104.959543,
+    39.744357
+   ],
+   [
+    -104.959561,
+    39.744421
+   ],
+   [
+    -104.959572,
+    39.744454
+   ],
+   [
+    -104.959589,
+    39.744499
+   ],
+   [
+    -104.959611,
+    39.74455
+   ],
+   [
+    -104.959617,
+    39.744562
+   ],
+   [
+    -104.959633,
+    39.744588
+   ],
+   [
+    -104.959651,
+    39.744614
+   ],
+   [
+    -104.959666,
+    39.744634
+   ],
+   [
+    -104.959695,
+    39.744669
+   ],
+   [
+    -104.959712,
+    39.744688
+   ],
+   [
+    -104.959788,
+    39.744762
+   ],
+   [
+    -104.959788,
+    39.744907
+   ],
+   [
+    -104.95979,
+    39.745288
+   ],
+   [
+    -104.95979,
+    39.745489
+   ],
+   [
+    -104.95979,
+    39.745636
+   ],
+   [
+    -104.959791,
+    39.74598
+   ],
+   [
+    -104.959792,
+    39.746163
+   ],
+   [
+    -104.959793,
+    39.746703
+   ],
+   [
+    -104.959793,
+    39.746804
+   ],
+   [
+    -104.959794,
+    39.746947
+   ],
+   [
+    -104.959787,
+    39.748095
+   ],
+   [
+    -104.959786,
+    39.74818
+   ],
+   [
+    -104.959787,
+    39.748216
+   ],
+   [
+    -104.959786,
+    39.748311
+   ],
+   [
+    -104.959777,
+    39.749224
+   ],
+   [
+    -104.959776,
+    39.749364
+   ],
+   [
+    -104.959776,
+    39.749463
+   ],
+   [
+    -104.959775,
+    39.749559
+   ],
+   [
+    -104.959762,
+    39.750368
+   ],
+   [
+    -104.959755,
+    39.750619
+   ],
+   [
+    -104.959755,
+    39.750722
+   ],
+   [
+    -104.959617,
+    39.750722
+   ],
+   [
+    -104.959316,
+    39.750721
+   ],
+   [
+    -104.959027,
+    39.750697
+   ],
+   [
+    -104.958936,
+    39.750695
+   ],
+   [
+    -104.958854,
+    39.750697
+   ],
+   [
+    -104.958784,
+    39.7507
+   ],
+   [
+    -104.958371,
+    39.750753
+   ],
+   [
+    -104.957598,
+    39.750857
+   ],
+   [
+    -104.957485,
+    39.750872
+   ],
+   [
+    -104.957357,
+    39.750891
+   ],
+   [
+    -104.957209,
+    39.750918
+   ],
+   [
+    -104.956989,
+    39.750973
+   ],
+   [
+    -104.956805,
+    39.750993
+   ],
+   [
+    -104.956614,
+    39.751013
+   ],
+   [
+    -104.955646,
+    39.751114
+   ],
+   [
+    -104.955533,
+    39.751125
+   ],
+   [
+    -104.955358,
+    39.751141
+   ],
+   [
+    -104.955151,
+    39.751156
+   ],
+   [
+    -104.955096,
+    39.751159
+   ],
+   [
+    -104.954931,
+    39.751169
+   ],
+   [
+    -104.954734,
+    39.751175
+   ],
+   [
+    -104.954503,
+    39.751181
+   ],
+   [
+    -104.954268,
+    39.751183
+   ],
+   [
+    -104.954135,
+    39.751185
+   ],
+   [
+    -104.953132,
+    39.751189
+   ],
+   [
+    -104.953094,
+    39.751189
+   ],
+   [
+    -104.952449,
+    39.751194
+   ],
+   [
+    -104.952053,
+    39.751178
+   ],
+   [
+    -104.951746,
+    39.75117
+   ],
+   [
+    -104.951429,
+    39.751166
+   ],
+   [
+    -104.950815,
+    39.75117
+   ],
+   [
+    -104.95081,
+    39.751115
+   ],
+   [
+    -104.950811,
+    39.751082
+   ],
+   [
+    -104.950797,
+    39.750916
+   ],
+   [
+    -104.950794,
+    39.750879
+   ],
+   [
+    -104.950785,
+    39.75077
+   ],
+   [
+    -104.95077,
+    39.750635
+   ],
+   [
+    -104.950759,
+    39.750563
+   ],
+   [
+    -104.950743,
+    39.750529
+   ],
+   [
+    -104.950711,
+    39.750509
+   ],
+   [
+    -104.950677,
+    39.750496
+   ],
+   [
+    -104.950636,
+    39.750493
+   ],
+   [
+    -104.950604,
+    39.750489
+   ],
+   [
+    -104.950099,
+    39.75047
+   ]
+  ]
+ },
+ "trace": {
+  "edges": [
+   {
+    "way_id": 640085099,
+    "id": 1608364961169,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 2,
+    "begin_shape_index": 0,
+    "end_heading": 44,
+    "begin_heading": 44,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.005,
+    "source_percent_along": 0.953,
+    "names": [
+     "Wynkoop Street"
+    ]
+   },
+   {
+    "way_id": 640085099,
+    "id": 2610971389337,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 3,
+    "begin_shape_index": 2,
+    "end_heading": 43,
+    "begin_heading": 43,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.009,
+    "names": [
+     "Wynkoop Street"
+    ]
+   },
+   {
+    "way_id": 475723486,
+    "id": 2610702953881,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 4,
+    "begin_shape_index": 3,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.004,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 475723486,
+    "id": 2610837171609,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 5,
+    "begin_shape_index": 4,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.009,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 475723486,
+    "id": 2610904280473,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 6,
+    "begin_shape_index": 5,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.044,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 475723486,
+    "id": 2610501627289,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 7,
+    "begin_shape_index": 6,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.042,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 475723486,
+    "id": 2611843804569,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 8,
+    "begin_shape_index": 7,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130896235,
+    "id": 2612011576729,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 9,
+    "begin_shape_index": 8,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130896235,
+    "id": 2612246457753,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 12,
+    "begin_shape_index": 9,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.044,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130896235,
+    "id": 2610132528537,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 14,
+    "begin_shape_index": 12,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.043,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130896235,
+    "id": 2613924179353,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 15,
+    "begin_shape_index": 14,
+    "end_heading": 136,
+    "begin_heading": 136,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.003,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1449911128,
+    "id": 2613991288217,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 16,
+    "begin_shape_index": 15,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "tertiary",
+    "speed": 40,
+    "length": 0.007,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 27565955,
+    "id": 2614091951513,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 17,
+    "begin_shape_index": 16,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.005,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 27565955,
+    "id": 2614226169241,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 18,
+    "begin_shape_index": 17,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.004,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 27565955,
+    "id": 2614159060377,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 20,
+    "begin_shape_index": 18,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.043,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 27565955,
+    "id": 2614293278105,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 21,
+    "begin_shape_index": 20,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.042,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 27565955,
+    "id": 2614360386969,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 22,
+    "begin_shape_index": 21,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.012,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130888022,
+    "id": 2614494604697,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 23,
+    "begin_shape_index": 22,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.008,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130888022,
+    "id": 2614628822425,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 24,
+    "begin_shape_index": 23,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.044,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130888022,
+    "id": 2614561713561,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 25,
+    "begin_shape_index": 24,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.017,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1124103995,
+    "id": 2614695931289,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 26,
+    "begin_shape_index": 25,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.024,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1124103995,
+    "id": 2614897257881,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 27,
+    "begin_shape_index": 26,
+    "end_heading": 134,
+    "begin_heading": 134,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.012,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234082,
+    "id": 2615098584473,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 28,
+    "begin_shape_index": 27,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234082,
+    "id": 2615367019929,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 30,
+    "begin_shape_index": 28,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.056,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234085,
+    "id": 2588691246489,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 32,
+    "begin_shape_index": 30,
+    "end_heading": 136,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.027,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234085,
+    "id": 2588624137625,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 33,
+    "begin_shape_index": 32,
+    "end_heading": 134,
+    "begin_heading": 134,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.013,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130911262,
+    "id": 2589228117401,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 34,
+    "begin_shape_index": 33,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.006,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130911262,
+    "id": 2589429443993,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 35,
+    "begin_shape_index": 34,
+    "end_heading": 134,
+    "begin_heading": 134,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.003,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130911262,
+    "id": 2589496552857,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 36,
+    "begin_shape_index": 35,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.058,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234084,
+    "id": 2588489919897,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 37,
+    "begin_shape_index": 36,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.03,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234084,
+    "id": 2589832097177,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 38,
+    "begin_shape_index": 37,
+    "end_heading": 136,
+    "begin_heading": 136,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.004,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234084,
+    "id": 2589966314905,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 39,
+    "begin_shape_index": 38,
+    "end_heading": 136,
+    "begin_heading": 136,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.005,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234080,
+    "id": 2590167641497,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 40,
+    "begin_shape_index": 39,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.009,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234080,
+    "id": 2590368968089,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 41,
+    "begin_shape_index": 40,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.06,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1208967945,
+    "id": 2587550395801,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 42,
+    "begin_shape_index": 41,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.022,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1208967945,
+    "id": 2587617504665,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 43,
+    "begin_shape_index": 42,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.012,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234079,
+    "id": 2587349069209,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 44,
+    "begin_shape_index": 43,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234079,
+    "id": 2587080633753,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 45,
+    "begin_shape_index": 44,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.042,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234078,
+    "id": 2592248016281,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 46,
+    "begin_shape_index": 45,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.044,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1122234078,
+    "id": 2592717778329,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 47,
+    "begin_shape_index": 46,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.011,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130885095,
+    "id": 2592583560601,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 48,
+    "begin_shape_index": 47,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130885095,
+    "id": 2592919104921,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 49,
+    "begin_shape_index": 48,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.042,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130885095,
+    "id": 2592986213785,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 50,
+    "begin_shape_index": 49,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.043,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130885095,
+    "id": 2583658081689,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 52,
+    "begin_shape_index": 50,
+    "end_heading": 136,
+    "begin_heading": 136,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.012,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378967,
+    "id": 2583423200665,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 53,
+    "begin_shape_index": 52,
+    "end_heading": 134,
+    "begin_heading": 134,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.009,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378967,
+    "id": 2583121210777,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 54,
+    "begin_shape_index": 53,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.043,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378967,
+    "id": 2582986993049,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 55,
+    "begin_shape_index": 54,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.021,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378966,
+    "id": 2583054101913,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 56,
+    "begin_shape_index": 55,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.019,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378966,
+    "id": 2582919884185,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 57,
+    "begin_shape_index": 56,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 132261610,
+    "id": 2582718557593,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 59,
+    "begin_shape_index": 57,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.009,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 132261610,
+    "id": 2564733382041,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 61,
+    "begin_shape_index": 59,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.045,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 132261610,
+    "id": 2564800490905,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 62,
+    "begin_shape_index": 61,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.044,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 132261610,
+    "id": 2565807123865,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 63,
+    "begin_shape_index": 62,
+    "end_heading": 134,
+    "begin_heading": 134,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1051789263,
+    "id": 2565605797273,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 64,
+    "begin_shape_index": 63,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 1051789263,
+    "id": 2565337361817,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 65,
+    "begin_shape_index": 64,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.037,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 964937287,
+    "id": 2566008450457,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 66,
+    "begin_shape_index": 65,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.007,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 964937287,
+    "id": 2565136035225,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 67,
+    "begin_shape_index": 66,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.043,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 964937287,
+    "id": 2565068926361,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 68,
+    "begin_shape_index": 67,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378965,
+    "id": 2566142668185,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 69,
+    "begin_shape_index": 68,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.009,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378965,
+    "id": 2566209777049,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 70,
+    "begin_shape_index": 69,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.044,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 131612999,
+    "id": 2566276885913,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 71,
+    "begin_shape_index": 70,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.042,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 131612999,
+    "id": 2566343994777,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 72,
+    "begin_shape_index": 71,
+    "end_heading": 136,
+    "begin_heading": 136,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.01,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 646050152,
+    "id": 2566545321369,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 73,
+    "begin_shape_index": 72,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.009,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 646050152,
+    "id": 2568088825241,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 74,
+    "begin_shape_index": 73,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.043,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378964,
+    "id": 2568155934105,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 75,
+    "begin_shape_index": 74,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.041,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378964,
+    "id": 2568290151833,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 76,
+    "begin_shape_index": 75,
+    "end_heading": 132,
+    "begin_heading": 132,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.005,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 628378964,
+    "id": 2568223042969,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 77,
+    "begin_shape_index": 76,
+    "end_heading": 135,
+    "begin_heading": 135,
+    "road_class": "secondary",
+    "speed": 49,
+    "length": 0.018,
+    "names": [
+     "17th Street"
+    ]
+   },
+   {
+    "way_id": 130886459,
+    "id": 2133894126224,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 78,
+    "begin_shape_index": 77,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.018,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 130886459,
+    "id": 2133961235088,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 79,
+    "begin_shape_index": 78,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.02,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 131232828,
+    "id": 2134028343952,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 80,
+    "begin_shape_index": 79,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.053,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 131232828,
+    "id": 2134095452816,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 81,
+    "begin_shape_index": 80,
+    "end_heading": 179,
+    "begin_heading": 179,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 131232828,
+    "id": 2134162561680,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 82,
+    "begin_shape_index": 81,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.028,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 1049857917,
+    "id": 2134229670544,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 83,
+    "begin_shape_index": 82,
+    "end_heading": 179,
+    "begin_heading": 179,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 1049857917,
+    "id": 2139329944208,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 84,
+    "begin_shape_index": 83,
+    "end_heading": 179,
+    "begin_heading": 179,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.035,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 769415493,
+    "id": 2139397053072,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 86,
+    "begin_shape_index": 84,
+    "end_heading": 179,
+    "begin_heading": 179,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.006,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 769415493,
+    "id": 2139464161936,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 87,
+    "begin_shape_index": 86,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 132915796,
+    "id": 2139598379664,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 88,
+    "begin_shape_index": 87,
+    "end_heading": 177,
+    "begin_heading": 177,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.005,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 132915796,
+    "id": 2139531270800,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 89,
+    "begin_shape_index": 88,
+    "end_heading": 182,
+    "begin_heading": 182,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 132915796,
+    "id": 2139766151824,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 90,
+    "begin_shape_index": 89,
+    "end_heading": 181,
+    "begin_heading": 181,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 769415491,
+    "id": 2139699042960,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 91,
+    "begin_shape_index": 90,
+    "end_heading": 181,
+    "begin_heading": 181,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 769415492,
+    "id": 2139866815120,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 92,
+    "begin_shape_index": 91,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.004,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 769415492,
+    "id": 2139933923984,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 93,
+    "begin_shape_index": 92,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.008,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 628398047,
+    "id": 2140001032848,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 94,
+    "begin_shape_index": 93,
+    "end_heading": 181,
+    "begin_heading": 181,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.024,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 628398047,
+    "id": 2138793073296,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 95,
+    "begin_shape_index": 94,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.024,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 628398047,
+    "id": 2138860182160,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 96,
+    "begin_shape_index": 95,
+    "end_heading": 181,
+    "begin_heading": 181,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.018,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 647582786,
+    "id": 2139061508752,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 97,
+    "begin_shape_index": 96,
+    "end_heading": 181,
+    "begin_heading": 181,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 628398048,
+    "id": 2139128617616,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 98,
+    "begin_shape_index": 97,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.017,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 970104138,
+    "id": 2139262835344,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 99,
+    "begin_shape_index": 98,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.03,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 970104138,
+    "id": 2138256202384,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 100,
+    "begin_shape_index": 99,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 450174379,
+    "id": 2138155539088,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 101,
+    "begin_shape_index": 100,
+    "end_heading": 180,
+    "begin_heading": 180,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.015,
+    "names": [
+     "North Broadway"
+    ]
+   },
+   {
+    "way_id": 100397028,
+    "id": 2137887103632,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 102,
+    "begin_shape_index": 101,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 100397028,
+    "id": 2137316678288,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 103,
+    "begin_shape_index": 102,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.034,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545938,
+    "id": 2137182460560,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 104,
+    "begin_shape_index": 103,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.049,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545938,
+    "id": 2136444263056,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 105,
+    "begin_shape_index": 104,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.013,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600546000,
+    "id": 2136612035216,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 106,
+    "begin_shape_index": 105,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600546000,
+    "id": 2136310045328,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 107,
+    "begin_shape_index": 106,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.045,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 702462465,
+    "id": 2136041609872,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 108,
+    "begin_shape_index": 107,
+    "end_heading": 93,
+    "begin_heading": 93,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 100397027,
+    "id": 2136108718736,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 109,
+    "begin_shape_index": 108,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.031,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 100397027,
+    "id": 2135571847824,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 110,
+    "begin_shape_index": 109,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545925,
+    "id": 2135303412368,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 111,
+    "begin_shape_index": 110,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545925,
+    "id": 2135370521232,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 113,
+    "begin_shape_index": 111,
+    "end_heading": 90,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.051,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545932,
+    "id": 2147852769936,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 114,
+    "begin_shape_index": 113,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.034,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545932,
+    "id": 2147718552208,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 115,
+    "begin_shape_index": 114,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.013,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545988,
+    "id": 2147450116752,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 116,
+    "begin_shape_index": 115,
+    "end_heading": 92,
+    "begin_heading": 92,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.008,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545988,
+    "id": 2147584334480,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 117,
+    "begin_shape_index": 116,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.046,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545934,
+    "id": 2147383007888,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 118,
+    "begin_shape_index": 117,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600546003,
+    "id": 2147248790160,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 119,
+    "begin_shape_index": 118,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.031,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600546003,
+    "id": 2147181681296,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 120,
+    "begin_shape_index": 119,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643783,
+    "id": 2146913245840,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 121,
+    "begin_shape_index": 120,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643783,
+    "id": 2146980354704,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 122,
+    "begin_shape_index": 121,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.032,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 130886458,
+    "id": 2146779028112,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 124,
+    "begin_shape_index": 122,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 130886458,
+    "id": 2146711919248,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 125,
+    "begin_shape_index": 124,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.017,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643782,
+    "id": 2146644810384,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 126,
+    "begin_shape_index": 125,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.026,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643782,
+    "id": 2146577701520,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 127,
+    "begin_shape_index": 126,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643780,
+    "id": 2146443483792,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 128,
+    "begin_shape_index": 127,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643780,
+    "id": 2146309266064,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 130,
+    "begin_shape_index": 128,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.044,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643780,
+    "id": 2146175048336,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 132,
+    "begin_shape_index": 130,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.041,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643780,
+    "id": 2144161782416,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 133,
+    "begin_shape_index": 132,
+    "end_heading": 92,
+    "begin_heading": 92,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365613,
+    "id": 2144262445712,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 134,
+    "begin_shape_index": 133,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.008,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365613,
+    "id": 2144497326736,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 135,
+    "begin_shape_index": 134,
+    "end_heading": 92,
+    "begin_heading": 92,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.044,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365613,
+    "id": 2144564435600,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 136,
+    "begin_shape_index": 135,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.024,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365613,
+    "id": 2144631544464,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 137,
+    "begin_shape_index": 136,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.015,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365614,
+    "id": 2144799316624,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 138,
+    "begin_shape_index": 137,
+    "end_heading": 88,
+    "begin_heading": 88,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365614,
+    "id": 2144698653328,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 139,
+    "begin_shape_index": 138,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365614,
+    "id": 2145101306512,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 140,
+    "begin_shape_index": 139,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.037,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365614,
+    "id": 2145906612880,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 142,
+    "begin_shape_index": 140,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.044,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365614,
+    "id": 2145772395152,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 143,
+    "begin_shape_index": 142,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2145839504016,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 144,
+    "begin_shape_index": 143,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2145503959696,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 145,
+    "begin_shape_index": 144,
+    "end_heading": 92,
+    "begin_heading": 92,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.031,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2145436850832,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 146,
+    "begin_shape_index": 145,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.019,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2145168415376,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 147,
+    "begin_shape_index": 146,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.04,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2150268689040,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 149,
+    "begin_shape_index": 147,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.048,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2150067362448,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 150,
+    "begin_shape_index": 149,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.03,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2149866035856,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 151,
+    "begin_shape_index": 150,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.021,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2149933144720,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 152,
+    "begin_shape_index": 151,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.034,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 1536365609,
+    "id": 2149664709264,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 153,
+    "begin_shape_index": 152,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 57,
+    "length": 0.01,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643759,
+    "id": 2149731818128,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 154,
+    "begin_shape_index": 153,
+    "end_heading": 87,
+    "begin_heading": 87,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.014,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 628643759,
+    "id": 2149798926992,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 156,
+    "begin_shape_index": 154,
+    "end_heading": 90,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.041,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545930,
+    "id": 2150470015632,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 158,
+    "begin_shape_index": 156,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.058,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545930,
+    "id": 2150537124496,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 160,
+    "begin_shape_index": 158,
+    "end_heading": 89,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.038,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 582269521,
+    "id": 2150805559952,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 161,
+    "begin_shape_index": 160,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.006,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 582269521,
+    "id": 2150738451088,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 164,
+    "begin_shape_index": 161,
+    "end_heading": 90,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.032,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545944,
+    "id": 2149463382672,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 165,
+    "begin_shape_index": 164,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.039,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545997,
+    "id": 2149262056080,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 166,
+    "begin_shape_index": 165,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.023,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545997,
+    "id": 2149329164944,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 168,
+    "begin_shape_index": 166,
+    "end_heading": 90,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.048,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545997,
+    "id": 2149127838352,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 169,
+    "begin_shape_index": 168,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.005,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545995,
+    "id": 2149194947216,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 170,
+    "begin_shape_index": 169,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.027,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545914,
+    "id": 2148993620624,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 171,
+    "begin_shape_index": 170,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545914,
+    "id": 2148926511760,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 172,
+    "begin_shape_index": 171,
+    "end_heading": 87,
+    "begin_heading": 87,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545928,
+    "id": 2148859402896,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 173,
+    "begin_shape_index": 172,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.005,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 903684446,
+    "id": 2148523858576,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 174,
+    "begin_shape_index": 173,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.022,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545916,
+    "id": 2148456749712,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 176,
+    "begin_shape_index": 174,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.022,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545916,
+    "id": 2148255423120,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 178,
+    "begin_shape_index": 176,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.051,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545916,
+    "id": 2148188314256,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 179,
+    "begin_shape_index": 178,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.032,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 791808877,
+    "id": 2147986987664,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 180,
+    "begin_shape_index": 179,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.046,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 791808877,
+    "id": 2173320583824,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 181,
+    "begin_shape_index": 180,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.015,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2173253474960,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 182,
+    "begin_shape_index": 181,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.008,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2173186366096,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 184,
+    "begin_shape_index": 182,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.043,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2172850821776,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 186,
+    "begin_shape_index": 184,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2172783712912,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 188,
+    "begin_shape_index": 186,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.041,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2172649495184,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 191,
+    "begin_shape_index": 188,
+    "end_heading": 92,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.044,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2172448168592,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 192,
+    "begin_shape_index": 191,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.008,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2172381059728,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 194,
+    "begin_shape_index": 192,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.013,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2172313950864,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 196,
+    "begin_shape_index": 194,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.032,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545936,
+    "id": 2171844188816,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 197,
+    "begin_shape_index": 196,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545931,
+    "id": 2171978406544,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 198,
+    "begin_shape_index": 197,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.008,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545931,
+    "id": 2171911297680,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 200,
+    "begin_shape_index": 198,
+    "end_heading": 91,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.045,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545931,
+    "id": 2171777079952,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 203,
+    "begin_shape_index": 200,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.043,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545931,
+    "id": 2171575753360,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 204,
+    "begin_shape_index": 203,
+    "end_heading": 93,
+    "begin_heading": 93,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545935,
+    "id": 2169562487440,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 205,
+    "begin_shape_index": 204,
+    "end_heading": 88,
+    "begin_heading": 88,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545935,
+    "id": 2169461824144,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 208,
+    "begin_shape_index": 205,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.044,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545935,
+    "id": 2169797368464,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 209,
+    "begin_shape_index": 208,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.026,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545935,
+    "id": 2170065803920,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 210,
+    "begin_shape_index": 209,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.019,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545935,
+    "id": 2170367793808,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 211,
+    "begin_shape_index": 210,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2170300684944,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 212,
+    "begin_shape_index": 211,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2170434902672,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 214,
+    "begin_shape_index": 212,
+    "end_heading": 90,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.041,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2171374426768,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 215,
+    "begin_shape_index": 214,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.043,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2171240209040,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 216,
+    "begin_shape_index": 215,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2171173100176,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 217,
+    "begin_shape_index": 216,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2171307317904,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 218,
+    "begin_shape_index": 217,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.044,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2170904664720,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 219,
+    "begin_shape_index": 218,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.013,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2170837555856,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 221,
+    "begin_shape_index": 219,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.039,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2170569120400,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 225,
+    "begin_shape_index": 221,
+    "end_heading": 90,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.053,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545940,
+    "id": 2175736502928,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 226,
+    "begin_shape_index": 225,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.015,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545921,
+    "id": 2175669394064,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 228,
+    "begin_shape_index": 226,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.029,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545921,
+    "id": 2175266740880,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 229,
+    "begin_shape_index": 228,
+    "end_heading": 91,
+    "begin_heading": 91,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600515777,
+    "id": 2175333849744,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 230,
+    "begin_shape_index": 229,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.008,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600515777,
+    "id": 2175400958608,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 235,
+    "begin_shape_index": 230,
+    "end_heading": 82,
+    "begin_heading": 84,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.029,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545926,
+    "id": 2175065414288,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 237,
+    "begin_shape_index": 235,
+    "end_heading": 79,
+    "begin_heading": 79,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545926,
+    "id": 2175199632016,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 238,
+    "begin_shape_index": 237,
+    "end_heading": 79,
+    "begin_heading": 79,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545998,
+    "id": 2174998305424,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 240,
+    "begin_shape_index": 238,
+    "end_heading": 81,
+    "begin_heading": 81,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.021,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 600545998,
+    "id": 2175937829520,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 241,
+    "begin_shape_index": 240,
+    "end_heading": 82,
+    "begin_heading": 82,
+    "road_class": "primary",
+    "speed": 48,
+    "length": 0.007,
+    "names": [
+     "East Colfax Avenue",
+     "I 70 BUS",
+     "US 40",
+     "US 287"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2401189080473,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 242,
+    "begin_shape_index": 241,
+    "end_heading": 4,
+    "begin_heading": 4,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2401021308313,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 245,
+    "begin_shape_index": 242,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2401256189337,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 248,
+    "begin_shape_index": 245,
+    "end_heading": 352,
+    "begin_heading": 353,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.025,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2401323298201,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 251,
+    "begin_shape_index": 248,
+    "end_heading": 339,
+    "begin_heading": 342,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.067,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2403638554009,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 255,
+    "begin_shape_index": 251,
+    "end_heading": 358,
+    "begin_heading": 349,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.045,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2403571445145,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 256,
+    "begin_shape_index": 255,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2403034574233,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 257,
+    "begin_shape_index": 256,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.005,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2403437227417,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 258,
+    "begin_shape_index": 257,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.005,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2403303009689,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 259,
+    "begin_shape_index": 258,
+    "end_heading": 1,
+    "begin_heading": 1,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.004,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2403101683097,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 260,
+    "begin_shape_index": 259,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.006,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2401960832409,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 261,
+    "begin_shape_index": 260,
+    "end_heading": 359,
+    "begin_heading": 359,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.009,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 223788829,
+    "id": 2401893723545,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 262,
+    "begin_shape_index": 261,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.08,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 427711560,
+    "id": 2388740386201,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 263,
+    "begin_shape_index": 262,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.015,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 427711560,
+    "id": 2388807495065,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 264,
+    "begin_shape_index": 263,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.025,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 427711560,
+    "id": 2388673277337,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 271,
+    "begin_shape_index": 264,
+    "end_heading": 354,
+    "begin_heading": 359,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.054,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 427711560,
+    "id": 2387700198809,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 272,
+    "begin_shape_index": 271,
+    "end_heading": 353,
+    "begin_heading": 353,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 427711561,
+    "id": 2387532426649,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 275,
+    "begin_shape_index": 272,
+    "end_heading": 345,
+    "begin_heading": 342,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.068,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 619602111,
+    "id": 2387331100057,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 289,
+    "begin_shape_index": 275,
+    "end_heading": 325,
+    "begin_heading": 347,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.087,
+    "names": [
+     "North Josephine Street"
+    ]
+   },
+   {
+    "way_id": 1392507651,
+    "id": 2387029110169,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 290,
+    "begin_shape_index": 289,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.016,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1392507651,
+    "id": 2387196882329,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 291,
+    "begin_shape_index": 290,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.042,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1392507651,
+    "id": 2386257358233,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 292,
+    "begin_shape_index": 291,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.022,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1392507651,
+    "id": 2386324467097,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 293,
+    "begin_shape_index": 292,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.016,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 596718939,
+    "id": 2386391575961,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 294,
+    "begin_shape_index": 293,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.038,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 596718939,
+    "id": 2386458684825,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 295,
+    "begin_shape_index": 294,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.02,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 596718939,
+    "id": 2386056031641,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 296,
+    "begin_shape_index": 295,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.06,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1382732995,
+    "id": 2386156694937,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 298,
+    "begin_shape_index": 296,
+    "end_heading": 360,
+    "begin_heading": 360,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.027,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1382732994,
+    "id": 2386190249369,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 299,
+    "begin_shape_index": 298,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.128,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1382732994,
+    "id": 2385921813913,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 301,
+    "begin_shape_index": 299,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.014,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1436919057,
+    "id": 2385888259481,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 302,
+    "begin_shape_index": 301,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.01,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1436919057,
+    "id": 2385988922777,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 303,
+    "begin_shape_index": 302,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.102,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1436919058,
+    "id": 2385619824025,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 304,
+    "begin_shape_index": 303,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.016,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 1436919058,
+    "id": 2385653378457,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 305,
+    "begin_shape_index": 304,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 628159785,
+    "id": 2385720487321,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 306,
+    "begin_shape_index": 305,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 628159785,
+    "id": 2385787596185,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 307,
+    "begin_shape_index": 306,
+    "end_heading": 1,
+    "begin_heading": 1,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.09,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 628159786,
+    "id": 2847563689369,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 308,
+    "begin_shape_index": 307,
+    "end_heading": 1,
+    "begin_heading": 1,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.028,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 628159786,
+    "id": 2847328808345,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 309,
+    "begin_shape_index": 308,
+    "end_heading": 0,
+    "begin_heading": 0,
+    "road_class": "secondary",
+    "speed": 48,
+    "length": 0.011,
+    "names": [
+     "North York Street"
+    ]
+   },
+   {
+    "way_id": 231111498,
+    "id": 2847261699481,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 310,
+    "begin_shape_index": 309,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.012,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 231111498,
+    "id": 2847496580505,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 311,
+    "begin_shape_index": 310,
+    "end_heading": 90,
+    "begin_heading": 90,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.026,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 628159806,
+    "id": 2846926155161,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 312,
+    "begin_shape_index": 311,
+    "end_heading": 96,
+    "begin_heading": 96,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.025,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 628159805,
+    "id": 2846724828569,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 316,
+    "begin_shape_index": 312,
+    "end_heading": 81,
+    "begin_heading": 89,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.057,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277481396,
+    "id": 2847664352665,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 317,
+    "begin_shape_index": 316,
+    "end_heading": 80,
+    "begin_heading": 80,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.067,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277481396,
+    "id": 2847731461529,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 321,
+    "begin_shape_index": 317,
+    "end_heading": 72,
+    "begin_heading": 80,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.054,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277766243,
+    "id": 2850482924953,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 322,
+    "begin_shape_index": 321,
+    "end_heading": 82,
+    "begin_heading": 82,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.016,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277766243,
+    "id": 2850315152793,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 325,
+    "begin_shape_index": 322,
+    "end_heading": 83,
+    "begin_heading": 82,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.11,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277766243,
+    "id": 2850248043929,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 328,
+    "begin_shape_index": 325,
+    "end_heading": 85,
+    "begin_heading": 84,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.038,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277766243,
+    "id": 2850180935065,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 329,
+    "begin_shape_index": 328,
+    "end_heading": 85,
+    "begin_heading": 85,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.014,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277766243,
+    "id": 2850583588249,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 332,
+    "begin_shape_index": 329,
+    "end_heading": 89,
+    "begin_heading": 88,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.057,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 277766243,
+    "id": 2850650697113,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "both",
+    "end_shape_index": 336,
+    "begin_shape_index": 332,
+    "end_heading": 89,
+    "begin_heading": 89,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.156,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 628159800,
+    "id": 2850818469273,
+    "bridge": false,
+    "tunnel": false,
+    "use": "road",
+    "traversability": "forward",
+    "end_shape_index": 340,
+    "begin_shape_index": 336,
+    "end_heading": 90,
+    "begin_heading": 93,
+    "road_class": "tertiary",
+    "speed": 48,
+    "length": 0.14,
+    "names": [
+     "East 23rd Avenue"
+    ]
+   },
+   {
+    "way_id": 279465840,
+    "id": 1926802130018,
+    "bridge": false,
+    "tunnel": false,
+    "use": "driveway",
+    "traversability": "both",
+    "end_shape_index": 341,
+    "begin_shape_index": 340,
+    "end_heading": 176,
+    "begin_heading": 176,
+    "road_class": "service_other",
+    "speed": 10,
+    "length": 0.006
+   },
+   {
+    "way_id": 279465840,
+    "id": 1926869238882,
+    "bridge": false,
+    "tunnel": false,
+    "use": "driveway",
+    "traversability": "both",
+    "end_shape_index": 343,
+    "begin_shape_index": 341,
+    "end_heading": 176,
+    "begin_heading": 178,
+    "road_class": "service_other",
+    "speed": 10,
+    "length": 0.022
+   },
+   {
+    "way_id": 1041819918,
+    "id": 1927171228770,
+    "bridge": false,
+    "tunnel": false,
+    "use": "driveway",
+    "traversability": "both",
+    "end_shape_index": 344,
+    "begin_shape_index": 343,
+    "end_heading": 176,
+    "begin_heading": 176,
+    "road_class": "service_other",
+    "speed": 10,
+    "length": 0.004
+   },
+   {
+    "way_id": 1041819918,
+    "id": 1927238337634,
+    "bridge": false,
+    "tunnel": false,
+    "use": "driveway",
+    "traversability": "both",
+    "end_shape_index": 345,
+    "begin_shape_index": 344,
+    "end_heading": 176,
+    "begin_heading": 176,
+    "road_class": "service_other",
+    "speed": 10,
+    "length": 0.012
+   },
+   {
+    "way_id": 279465844,
+    "id": 1927339000930,
+    "bridge": false,
+    "tunnel": false,
+    "use": "driveway",
+    "traversability": "both",
+    "end_shape_index": 353,
+    "begin_shape_index": 345,
+    "end_heading": 93,
+    "begin_heading": 175,
+    "road_class": "service_other",
+    "speed": 10,
+    "length": 0.084
+   }
+  ],
+  "units": "kilometers"
+ }
+}

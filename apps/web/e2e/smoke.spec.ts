@@ -29,11 +29,18 @@ test("plans a standard route through the containers and shows directions", async
   expect(response.status()).toBe(200);
   const body = await response.json();
   expect(body.options.length).toBeGreaterThanOrEqual(1);
-  expect(body.options[0].matched_camera_record_count).toBeNull();
+  const option = body.options[0];
+  expect(["complete", "partial", "not_assessed"]).toContain(option.assessment_coverage_status);
+  if (option.assessment_coverage_status === "not_assessed") {
+    expect(option.matched_camera_record_count).toBeNull(); // never zero when nothing was assessed
+  } else {
+    expect(typeof option.matched_camera_record_count).toBe("number");
+    expect(option.assessment.encounters.every((e: { status: string }) => typeof e.status === "string")).toBe(true);
+  }
 
   await expect(page.getByTestId("route-cards")).toBeVisible();
   await expect(page.getByTestId("route-card").first()).toContainText("Standard route");
-  await expect(page.getByTestId("route-card").first()).toContainText("Not assessed in this version");
+  await expect(page.getByTestId("encounter-summary").first()).toContainText(/mapped record|No mapped encounters|Not assessed/);
   const directions = page.getByTestId("directions");
   await expect(directions).toBeVisible();
   await expect(directions.locator("li").first()).toContainText(/Drive|Head|Start/);

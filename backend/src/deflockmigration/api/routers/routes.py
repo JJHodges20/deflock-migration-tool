@@ -4,16 +4,32 @@ import logging
 
 from fastapi import APIRouter, Request
 
-from deflockmigration.api.schemas import DISCLAIMER, MANEUVER_TYPE_NAMES, ManeuverOut, PlanRequest, PlanResponse, RouteOptionOut
+from deflockmigration.api.schemas import (
+    DISCLAIMER,
+    MANEUVER_TYPE_NAMES,
+    AssessmentOut,
+    AssociationOut,
+    EncounterOut,
+    ManeuverOut,
+    PlanRequest,
+    PlanResponse,
+    RouteOptionOut,
+    SensitivityOut,
+)
 from deflockmigration.application.plan_trip import PlanTripService
 from deflockmigration.core.clock import isoformat_z
 from deflockmigration.core.errors import VALIDATION_ERROR, AppError
+from deflockmigration.domain.assessment import AssessmentResult
 from deflockmigration.domain.routes import LatLon
 from deflockmigration.geospatial.polyline import to_geojson_linestring
 from deflockmigration.storage.repositories import SnapshotRepository
 
 router = APIRouter(tags=["routes"])
 log = logging.getLogger(__name__)
+ASSESSMENT_MEANING = (
+    "Counts are mapped OpenStreetMap records associated with roads the route traverses, within the counting radius; "
+    "they are not observed recordings, people, or plates, and unmapped or mislocated cameras may still be present."
+)
 
 
 def _active_snapshot_versions(session_factory, region_id: str) -> tuple[str | None, str | None, str | None]:
@@ -31,23 +47,53 @@ def _active_snapshot_versions(session_factory, region_id: str) -> tuple[str | No
     return snapshot.snapshot_id, as_of, isoformat_z(snapshot.downloaded_at_end)
 
 
+def _assessment_out(a: AssessmentResult) -> AssessmentOut:
+    return AssessmentOut(
+        status=a.status,
+        counting_method_version=a.counting_method_version,
+        radius_m=a.radius_m,
+        scope=a.scope,
+        snapshot_id=a.snapshot_id,
+        graph_version=a.graph_version,
+        coverage_fraction=a.coverage_fraction,
+        matched_record_count=a.matched_record_count,
+        uncertain_record_count=a.uncertain_record_count,
+        sensitivity=[SensitivityOut(radius_m=s.radius_m, records_within=s.records_within) for s in a.sensitivity],
+        encounters=[
+            EncounterOut(
+                source_key=e.source_key, lat=e.lat, lon=e.lon, status=e.status.value, reason=e.reason, distance_m=e.distance_m,
+                position_m=e.position_m, position_fraction=e.position_fraction, pass_count=e.pass_count, site_group_id=e.site_group_id,
+                manufacturer=e.manufacturer, is_flock=e.is_flock, lifecycle_state=e.lifecycle_state, direction_raw=e.direction_raw,
+                direction_conflict=e.direction_conflict, heading_relation=e.heading_relation, in_envelope=e.in_envelope, source_url=e.source_url,
+                association=AssociationOut(**{k: v for k, v in e.association.__dict__.items() if k != "reason"}) if e.association else None,
+            )
+            for e in a.encounters
+        ],
+        warnings=a.warnings,
+        meaning=ASSESSMENT_MEANING,
+    )
+
+
 @router.post("/routes/plan", response_model=PlanResponse)
 def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
     state = request.app.state
     config = state.config
     if body.region_id != config.region.region_id:
         raise AppError(VALIDATION_ERROR, "Unknown region.", details={"region_id": body.region_id})
-    service = PlanTripService(config, state.routing)
+    snapshot_id, as_of, downloaded_at = _active_snapshot_versions(state.session_factory, config.region.region_id)
+    assessor = getattr(state, "assessor", None)
+    service = PlanTripService(config, state.routing, assessor)
     result = service.plan(
         LatLon(body.origin.lat, body.origin.lon),
         LatLon(body.destination.lat, body.destination.lon),
         profiles=body.profiles,
         camera_scope=body.camera_scope,
+        snapshot_id=snapshot_id,
     )
-    snapshot_id, as_of, downloaded_at = _active_snapshot_versions(state.session_factory, config.region.region_id)
     options = []
     for option in result.options:
         route = option.route
+        assessment = option.assessment
         options.append(RouteOptionOut(
             route_id=option.route_id,
             profiles=[p.value for p in option.profiles],
@@ -58,15 +104,15 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
             extra_distance_meters=round(option.extra_distance_m, 1),
             origin_snap_distance_meters=option.origin_snap_m,
             destination_snap_distance_meters=option.destination_snap_m,
-            matched_camera_record_count=None,
-            uncertain_nearby_camera_count=None,
-            counting_method_version=None,
+            matched_camera_record_count=assessment.matched_record_count if assessment else None,
+            uncertain_nearby_camera_count=assessment.uncertain_record_count if assessment else None,
+            counting_method_version=assessment.counting_method_version if assessment and assessment.status != "not_assessed" else None,
             camera_scope=body.camera_scope.value,
             camera_snapshot_id=snapshot_id,
             camera_source_as_of=as_of,
             camera_downloaded_at=downloaded_at,
-            road_graph_version=config.region.routing_graph.id,
-            assessment_coverage_status=result.assessment_coverage_status.value,
+            road_graph_version=assessment.graph_version if assessment and assessment.graph_version else config.region.routing_graph.id,
+            assessment_coverage_status=assessment.status if assessment else "not_assessed",
             search_status=result.search_status,
             warnings=route.warnings,
             maneuvers=[
@@ -90,6 +136,7 @@ def plan_route(body: PlanRequest, request: Request) -> PlanResponse:
             has_highway=route.has_highway,
             has_toll=route.has_toll,
             engine_candidate=route.engine_route_id,
+            assessment=_assessment_out(assessment) if assessment else None,
         ))
     return PlanResponse(
         request_id=result.request_id,

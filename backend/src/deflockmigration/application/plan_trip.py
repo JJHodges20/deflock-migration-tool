@@ -1,24 +1,27 @@
-"""Plan-trip use case, M3 scope: validate, obtain baseline candidates, return the Standard route with
-endpoint-snapping and alignment disclosures.
+"""Plan-trip use case, M4 scope: validate, obtain baseline candidates, return the Standard route with
+endpoint-snapping and alignment disclosures and its encounter assessment.
 
-No camera assessment happens yet (M4/M5). Counts are therefore reported as null with
-assessment_coverage_status = not_assessed, never as zero.
+Camera-aware candidate generation and comparison arrive in M5. When the assessment cannot run, the
+result says `not_assessed` with null counts, never zero.
 """
 
 from __future__ import annotations
 
 import logging
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 
 from deflockmigration.core.config_loader import AppConfig
 from deflockmigration.core.errors import OUTSIDE_SERVICE_AREA, ROUTER_UNAVAILABLE, VALIDATION_ERROR, AppError
+from deflockmigration.domain.assessment import AssessmentResult
 from deflockmigration.domain.routes import AssessmentCoverage, CameraScope, EngineRoute, LatLon, RouteProfile
 from deflockmigration.routing.candidates import alignment_warnings, choose_standard, dedupe, haversine_m, snap_distances_m, validate_maneuvers
 from deflockmigration.routing.provider import RoutingProvider
 
 log = logging.getLogger(__name__)
 MIN_TRIP_DISTANCE_M = 25.0
+Assessor = Callable[[EngineRoute, CameraScope, str | None], AssessmentResult]
 
 
 @dataclass(frozen=True)
@@ -30,6 +33,7 @@ class PlannedOption:
     extra_distance_m: float
     origin_snap_m: float
     destination_snap_m: float
+    assessment: AssessmentResult | None
 
 
 @dataclass(frozen=True)
@@ -44,11 +48,12 @@ class PlanResult:
 
 
 class PlanTripService:
-    def __init__(self, config: AppConfig, routing: RoutingProvider):
+    def __init__(self, config: AppConfig, routing: RoutingProvider, assessor: Assessor | None = None):
         self._config = config
         self._routing = routing
+        self._assessor = assessor
 
-    def plan(self, origin: LatLon, destination: LatLon, *, profiles: list[RouteProfile], camera_scope: CameraScope) -> PlanResult:
+    def plan(self, origin: LatLon, destination: LatLon, *, profiles: list[RouteProfile], camera_scope: CameraScope, snapshot_id: str | None = None) -> PlanResult:
         request_id = uuid.uuid4().hex
         boundary = self._config.service_boundary
         outside = [name for name, point in (("origin", origin), ("destination", destination)) if not boundary.contains(point.lat, point.lon)]
@@ -74,6 +79,16 @@ class PlanTripService:
         if standard.source != "primary":
             warnings.append("Standard route is the fastest baseline candidate by reported time; it differs from the engine's primary result.")
         origin_snap, destination_snap = snap_distances_m(standard, origin, destination)
+
+        assessment = self._assessor(standard, camera_scope, snapshot_id) if self._assessor else None
+        if assessment is not None:
+            warnings.extend(assessment.warnings)
+        coverage = AssessmentCoverage.NOT_ASSESSED
+        if assessment is not None and assessment.status == "complete":
+            coverage = AssessmentCoverage.COMPLETE
+        elif assessment is not None and assessment.status == "partial":
+            coverage = AssessmentCoverage.PARTIAL
+
         option = PlannedOption(
             route_id=uuid.uuid4().hex,
             profiles=[RouteProfile.STANDARD],
@@ -82,6 +97,7 @@ class PlanTripService:
             extra_distance_m=0.0,
             origin_snap_m=origin_snap,
             destination_snap_m=destination_snap,
+            assessment=assessment,
         )
         return PlanResult(
             request_id=request_id,
@@ -89,6 +105,6 @@ class PlanTripService:
             reference_duration_s=standard.duration_s,
             candidates_evaluated=len(valid),
             search_status="completed",
-            warnings=warnings,
-            assessment_coverage_status=AssessmentCoverage.NOT_ASSESSED,
+            warnings=list(dict.fromkeys(warnings)),
+            assessment_coverage_status=coverage,
         )

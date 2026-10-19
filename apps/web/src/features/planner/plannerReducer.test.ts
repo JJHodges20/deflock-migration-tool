@@ -40,6 +40,7 @@ function fakeResult(id = "r1"): PlanResponse {
         has_highway: false,
         has_toll: false,
         engine_candidate: "alternate-2",
+        assessment: null,
       },
     ],
   };

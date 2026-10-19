@@ -13,6 +13,7 @@ from fastapi.responses import JSONResponse
 
 from deflockmigration import __version__
 from deflockmigration.api.routers import cameras, geocode, health, region, routes
+from deflockmigration.application.assessment_service import AssessmentService
 from deflockmigration.core.config_loader import AppConfig, load_app_config
 from deflockmigration.core.errors import INTERNAL_ERROR, VALIDATION_ERROR, AppError
 from deflockmigration.core.logging import configure_logging
@@ -20,6 +21,7 @@ from deflockmigration.core.settings import Settings
 from deflockmigration.geocoding.nominatim_local import NominatimLocalGeocoder
 from deflockmigration.geocoding.provider import Geocoder, NullGeocoder
 from deflockmigration.routing.provider import RoutingProvider
+from deflockmigration.routing.road_locator import ValhallaRoadLocator
 from deflockmigration.routing.valhalla import ValhallaProvider
 from deflockmigration.storage.db import SessionFactory, make_engine, make_session_factory
 
@@ -43,6 +45,7 @@ def create_app(
     routing: RoutingProvider | None = None,
     geocoder: Geocoder | None = None,
     session_factory: SessionFactory | None = None,
+    assessor=None,
 ) -> FastAPI:
     settings = settings or Settings()
     configure_logging(settings.log_level)
@@ -64,6 +67,10 @@ def create_app(
             geocoder = NullGeocoder()
     if session_factory is None and settings.database_url:
         session_factory = make_session_factory(make_engine(settings.database_url))
+    if assessor is None and session_factory is not None:
+        locator = ValhallaRoadLocator(settings.valhalla_url, connect_timeout=settings.router_connect_timeout_seconds, read_timeout=settings.router_read_timeout_seconds)
+        service = AssessmentService(config, session_factory, routing, locator)
+        assessor = lambda route, scope, snapshot_id: service.assess(route, scope=scope, snapshot_id=snapshot_id)  # noqa: E731
 
     app = FastAPI(title="DeFlockMigration API", version=__version__, docs_url="/api/docs" if settings.app_env != "production" else None, redoc_url=None, openapi_url="/api/openapi.json")
     app.state.settings = settings
@@ -71,6 +78,7 @@ def create_app(
     app.state.routing = routing
     app.state.geocoder = geocoder
     app.state.session_factory = session_factory
+    app.state.assessor = assessor
 
     if settings.cors_origins:
         app.add_middleware(CORSMiddleware, allow_origins=settings.cors_origins, allow_methods=["GET", "POST"], allow_headers=["Content-Type"], max_age=600)

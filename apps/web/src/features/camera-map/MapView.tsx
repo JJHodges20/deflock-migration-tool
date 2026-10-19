@@ -6,7 +6,7 @@ import { layers, namedFlavor } from "@protomaps/basemaps";
 import { Protocol } from "pmtiles";
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/lib/api/client";
-import type { CameraScope, GeocodeCandidate, RegionResponse, RouteOptionOut } from "@/lib/api/types";
+import type { CameraScope, EncounterOut, GeocodeCandidate, RegionResponse, RouteOptionOut } from "@/lib/api/types";
 import { clampBbox } from "@/lib/format";
 import { emptySummary, summarizeCameraFeatures, type CameraSummary } from "./cameraSummary";
 
@@ -19,6 +19,7 @@ interface Props {
   showCameras: boolean;
   scope: CameraScope;
   highlightRange: [number, number] | null;
+  encounters: EncounterOut[] | null;
   onPinPlaced: (lat: number, lon: number) => void;
   onStatus: (status: "ready" | "failed") => void;
 }
@@ -91,7 +92,27 @@ function popupElement(properties: Record<string, unknown>): HTMLElement {
   return root;
 }
 
-export function MapView({ region, route, origin, destination, pinMode, showCameras, scope, highlightRange, onPinPlaced, onStatus }: Props) {
+function encounterPopup(properties: Record<string, unknown>): HTMLElement {
+  const root = document.createElement("div");
+  root.className = "camera-popup";
+  const title = document.createElement("strong");
+  title.textContent = `${properties.status_label ?? properties.status}`;
+  const reason = document.createElement("p");
+  reason.textContent = String(properties.reason ?? "");
+  root.append(title, reason);
+  const url = String(properties.source_url ?? "");
+  if (url.startsWith(OSM_URL_PREFIX)) {
+    const link = document.createElement("a");
+    link.href = url;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = "View this record on OpenStreetMap";
+    root.append(link);
+  }
+  return root;
+}
+
+export function MapView({ region, route, origin, destination, pinMode, showCameras, scope, highlightRange, encounters, onPinPlaced, onStatus }: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<MapLibreMap | null>(null);
   const markersRef = useRef<{ origin?: Marker; destination?: Marker }>({});
@@ -152,6 +173,24 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
             "circle-stroke-width": ["case", ["==", ["get", "in_envelope"], false], 0, 1.5],
           },
         });
+        map.addSource("encounters", { type: "geojson", data: { type: "FeatureCollection", features: [] } });
+        map.addLayer({
+          id: "encounters-ring",
+          type: "circle",
+          source: "encounters",
+          paint: {
+            "circle-radius": 11,
+            "circle-color": "rgba(0,0,0,0)",
+            "circle-stroke-width": ["case", ["==", ["get", "status"], "associated"], 3, 2],
+            "circle-stroke-color": ["case", ["==", ["get", "status"], "associated"], "#b3261e", ["==", ["get", "status"], "beyond_radius"], "#8a949e", "#c77a00"],
+            "circle-stroke-opacity": 0.95,
+          },
+        });
+        map.on("click", "encounters-ring", (event) => {
+          const feature = event.features?.[0];
+          if (!feature) return;
+          new Popup({ closeButton: true, maxWidth: "320px" }).setLngLat(event.lngLat).setDOMContent(encounterPopup(feature.properties as Record<string, unknown>)).addTo(map);
+        });
         map.on("click", "cameras-circle", (event) => {
           const feature = event.features?.[0];
           if (!feature) return;
@@ -207,6 +246,21 @@ export function MapView({ region, route, origin, destination, pinMode, showCamer
       source.setData({ type: "FeatureCollection", features: [] });
     }
   }, [route, loaded]);
+
+  // Encounter rings for the selected route's assessment (counted = red, uncertain = orange, beyond radius = grey).
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !loaded) return;
+    const source = map.getSource("encounters") as GeoJSONSource | undefined;
+    if (!source) return;
+    const labels: Record<string, string> = { associated: "Counted", nearby_unresolved: "Uncertain", no_longer_mapped: "Uncertain (no longer mapped)", outside_envelope: "Uncertain (outside assessed area)", beyond_radius: "Beyond counting radius", excluded_scope: "Not in scope" };
+    source.setData({
+      type: "FeatureCollection",
+      features: (encounters ?? [])
+        .filter((e) => e.status !== "excluded_scope")
+        .map((e) => ({ type: "Feature", geometry: { type: "Point", coordinates: [e.lon, e.lat] }, properties: { status: e.status, status_label: labels[e.status] ?? e.status, reason: e.reason, source_url: e.source_url } })),
+    });
+  }, [encounters, loaded]);
 
   // Highlight the maneuver the user points at in the directions list (instruction-to-geometry alignment).
   useEffect(() => {

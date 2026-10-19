@@ -75,8 +75,13 @@ try {
   $body = @{ origin = @{ lat = 39.7530; lon = -105.0002 }; destination = @{ lat = 39.7503; lon = -104.9500 } } | ConvertTo-Json -Compress
   $plan = Invoke-RestMethod -Method Post -Uri "$base/api/v1/routes/plan" -ContentType "application/json" -Body $body -TimeoutSec 30
   $opt = $plan.options[0]
-  $ok = ($plan.options.Count -ge 1) -and ($opt.maneuvers.Count -gt 2) -and ($opt.assessment_coverage_status -eq "not_assessed") -and ($null -eq $opt.matched_camera_record_count)
-  Report $ok ("routing request through edge -> api -> valhalla: " + $opt.maneuvers.Count + " maneuvers, " + [math]::Round($opt.estimated_duration_seconds / 60) + " min, " + [math]::Round($opt.length_meters / 1000, 1) + " km (Union Station to Denver Zoo)")
+  $status = [string]$opt.assessment_coverage_status
+  $countsOk = $false
+  if ($status -eq "not_assessed") { $countsOk = ($null -eq $opt.matched_camera_record_count) }
+  elseif ($status -eq "complete" -or $status -eq "partial") { $countsOk = ($null -ne $opt.matched_camera_record_count) }
+  $ok = ($plan.options.Count -ge 1) -and ($opt.maneuvers.Count -gt 2) -and $countsOk
+  $counts = if ($status -eq "not_assessed") { "not assessed" } else { "" + $opt.matched_camera_record_count + " mapped record encounters, " + $opt.uncertain_nearby_camera_count + " uncertain, assessment " + $status }
+  Report $ok ("routing request through edge -> api -> valhalla: " + $opt.maneuvers.Count + " maneuvers, " + [math]::Round($opt.estimated_duration_seconds / 60) + " min, " + [math]::Round($opt.length_meters / 1000, 1) + " km (Union Station to Denver Zoo); " + $counts)
 } catch { Report $false ("routing request: " + $_.Exception.Message) }
 
 try {

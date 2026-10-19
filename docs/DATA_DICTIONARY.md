@@ -49,6 +49,19 @@ A record stays `no_longer_mapped` for `data_quality.snapshot_validation.retain_m
 | `added_count`, `changed_count`, `missing_count`, `reappeared_count`, `carried_count`, `expired_count` | exact counts: newly mapped keys; same key with a new version; present before, absent now; previously missing, present again; missing keys carried as uncertain; carried keys dropped after retention |
 | `added_keys`, `changed`, `missing_keys` | key lists bounded by `retention.max_diff_keys_stored` |
 
+## `camera_road_associations` - cached nearest-road candidates per record and graph version (M4)
+
+| Column | Meaning |
+|---|---|
+| `source_key`, `graph_version`, `radius_m` | unique key; `graph_version` is `<routing graph id>@<tileset build time>` so associations never outlive a graph |
+| `method` | `valhalla_locate_nearest_way` |
+| `computed_at` | when the engine was asked |
+| `nearest_way_id`, `nearest_road_names`, `nearest_distance_m` | the record's most plausible road (nearest drivable way within the radius) |
+| `candidate_count`, `ambiguous` | how many ways lie within the radius; whether a different road (by name set, or way id when unnamed) is within 10 m of being as close; informational, the assessment recomputes the verdict from `candidates` |
+| `candidates` | one entry per way: id, names, distance, road class, use, bridge, tunnel, correlated point, side of street |
+
+Associations are explanations, not truths: the route assessment reports why a record was or was not counted (`docs/ROUTING_METHOD.md`).
+
 ## `sync_jobs` - every refresh attempt and review action
 
 | Column | Meaning |

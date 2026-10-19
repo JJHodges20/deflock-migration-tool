@@ -105,6 +105,30 @@ class SnapshotDiff(Base):
     created_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
 
 
+class CameraRoadAssociation(Base):
+    """Cached nearest-road candidates for a camera record on one routing-graph version (roadmap section 7).
+    Associations are graph-version specific and rebuilt after the graph changes."""
+
+    __tablename__ = "camera_road_associations"
+    __table_args__ = (
+        UniqueConstraint("source_key", "graph_version", "radius_m", name="uq_camera_road_assoc"),
+        Index("ix_camera_road_assoc_graph", "graph_version"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    source_key: Mapped[str] = mapped_column(String(60), nullable=False)
+    graph_version: Mapped[str] = mapped_column(String(160), nullable=False)
+    radius_m: Mapped[int] = mapped_column(Integer, nullable=False)
+    method: Mapped[str] = mapped_column(String(60), nullable=False)
+    computed_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    nearest_way_id: Mapped[int | None] = mapped_column(BigInteger)
+    nearest_road_names: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+    nearest_distance_m: Mapped[float | None] = mapped_column(Float)
+    candidate_count: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    ambiguous: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    candidates: Mapped[list] = mapped_column(JSON, nullable=False, default=list)
+
+
 class SyncJob(Base):
     __tablename__ = "sync_jobs"
 

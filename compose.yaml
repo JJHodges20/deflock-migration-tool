@@ -241,6 +241,18 @@ services:
       db:
         condition: service_healthy
 
+  associate-cameras:
+    <<: *backend-image
+    profiles: ["setup"]
+    command: ["deflock-associate-cameras"]
+    environment:
+      <<: *backend-env
+    depends_on:
+      db:
+        condition: service_healthy
+      valhalla:
+        condition: service_healthy
+
   # ---- tests (profile "test") ----
   api-tests:
     <<: *backend-image

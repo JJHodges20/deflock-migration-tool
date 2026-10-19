@@ -2,6 +2,44 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 - M4: encounter assessment and road-association validation
+
+### Built
+
+- **Stage A (meters):** PostGIS geography finds the active snapshot's ALPR records within 100 m of the route line and measures the fraction of the route inside the camera-data envelope. An in-memory metric index with the same interface drives the fixture tests, and an integration test shows the two agree within a metre.
+- **Stage B (roads):** for each nearby record the engine's `/locate` service lists drivable roads within 50 m (one candidate per OpenStreetMap way, nearest first); `/trace_attributes` with `edge_walk` lists the roads the route traverses. A record is counted only when its nearest road is one the route uses and no other road is about as close. Parallel or frontage roads, grade-separated crossings (bridge/tunnel mismatch), ambiguous placements, carried "no longer mapped" records, and records outside the envelope stay visible as uncertainties with a written reason.
+- **Counting rules:** each record once; repeated passes reported; site groups for records within 10 m; direction tags reported, never used to exclude; sensitivity counts at 25/50/100 m; partial coverage when the route leaves the envelope; `not_assessed` with null counts when any dependency is missing (never zero).
+- **Contract:** route options carry `matched_camera_record_count`, `uncertain_nearby_camera_count`, `counting_method_version` (`assess-1.0`), the graph version, and a full `assessment` block with per-record explanations and association details. Migration 0003 adds the `camera_road_associations` cache (graph-version specific); `deflock-associate-cameras` / `scripts/associate_cameras.ps1` precompute it and the bootstrap runs it after the first snapshot.
+- **UI:** route cards show the headline count with the honest zero wording, uncertain matches, sensitivity, coverage, and an expandable "Camera evidence" list; the map draws rings for counted, uncertain, and beyond-radius records with popups; `docs/ROUTING_METHOD.md` documents the method.
+
+### Verification (2026-10-19)
+
+- Backend in the container: 116 passed, including the 17-case assessment matrix on a synthetic metric street (camera on the traversed road, parallel and frontage roads, grade-separated crossing, ambiguous placement, split segments of one street, a same-named street elsewhere on the route, an unnamed cross way, no road within the radius, beyond the radius, Flock-only scope, no-longer-mapped and outside-envelope records, loops counted once, site groups, direction never excludes, missing snapshot or graph gives not-assessed), the recorded `locate` and `trace_attributes` fixtures, the PostGIS proximity test (geography distances within a metre of the metric index; coverage as a length fraction), the association-cache round trip, pruning, and recompute clearing, and the live Denver cases. Host: 95 passed, 21 skipped (integration cases need the container database).
+- Frontend: type check clean; 24 Vitest tests passed (route-card wording for the zero, matched, uncertain, sensitivity, and not-assessed states; reducer; planner shell). No frontend file changed after the web image was built.
+- Browser (Playwright, three viewports): 30 passed; the routing smoke accepts `complete`, `partial`, and `not_assessed` and asserts the encounter summary text.
+- `scripts/smoke_test.ps1 -CheckRestart`: passed. The Union Station to Denver Zoo request reported "0 mapped record encounters, 4 uncertain, assessment complete"; the snapshot and graph survived the restart.
+- Migration 0003 applied live. `scripts/associate_cameras.ps1 -Recompute` associated all 1,285 in-envelope ALPR records on graph `colorado-geofabrik-2026-10-14@2026-10-15T23:22:43Z` in 11.2 s with 0 failures: 1 record has no drivable road within 50 m, 8.7 candidate ways per record on average, the nearest road 6.4 m away on average, and 860 records have a different road within 10 m of being as close (mostly at intersections).
+- Live assessments of the five reviewed trips, all `complete` with coverage 1.0, through the edge with a warm cache (39 to 218 ms per plan):
+  - Union Station to Zoo: matched 0, uncertain 4. The four records at the Capitol corner sit 2 to 11 m from the route on East Colfax Avenue with Pearl Street about as close, so all four stay ambiguous with that reason.
+  - Capitol to Washington Park: 0 and 0. Downtown one-way grid: 0 and 0.
+  - Union Station to DEN: matched 4, uncertain 3, sensitivity 6 / 7 / 10. Four records on I-70 and Peña Boulevard are on the roads the route traverses; two I-70 records are ambiguous against unnamed adjacent ways (ramps); one record at the terminal is nearest an unnamed way while the route passes 41 m away on Terminal East; three records between 50 and 100 m are listed for sensitivity only.
+  - Cherry Creek to Highlands: matched 0, uncertain 4, sensitivity 4 / 4 / 8.
+
+### Gate check (roadmap M4)
+
+- A reviewer can inspect why each camera is or is not counted: every encounter carries its status, distance in meters, position along the route, nearest road and distance, the route's road at that point, the ambiguity and grade-separation flags, the mapped direction next to the travel heading (information only), the source link, and a written reason. The UI lists them under "Camera evidence" and the map rings them.
+- Direction never excludes a record: matrix test, and the `heading_relation` wording says "not used for counting".
+- Missing data is uncertainty, never zero: `not_assessed` with null counts when the snapshot, graph, database, or engine edge services are missing (contract and matrix tests); partial coverage is flagged when a route leaves the envelope.
+- Known false-association risks are reported, not hidden: parallel and frontage roads, grade-separated crossings, and intersection ambiguity each have a status and a reason, and the Capitol corner and the I-70 ramps show them live.
+- Distances are meters on the spheroid: PostGIS geography and the metric index agree within a metre; nothing is compared in degrees.
+
+### Observations
+
+- Real example found while probing: three Axon ALPR records within a metre of each other at the Capitol with directions 0°, 185°, and 99° (one pole, three cameras). They are counted individually and grouped as one site.
+- The engine's locate service returns several sub-edges per way (both directions and splits); the adapter keeps one candidate per way at its minimum distance, which is what road association needs.
+- **Road identity refined after the first live run.** Comparing roads by OpenStreetMap way id flagged 969 of 1,285 records as ambiguous, because one street is split into many consecutive ways and a record's nearest way was often the neighbouring segment of the street the route was on. Roads are now identified by their name set (way id only when unnamed) and compared against the route edges within 150 m along the route of the pass, with tests for split segments, a same-named street elsewhere on the route, and an unnamed cross way. Union Station to DEN went from 3 matched / 4 uncertain to 4 matched / 3 uncertain. The cache stores raw candidates and the verdict is recomputed from them, so cached rows stay valid across rule changes; `-Recompute` was added for a clean rebuild.
+- **Most records stay ambiguous at intersections (860 of 1,285).** Cameras are usually mapped at corners, where the cross street is within 10 m of being as close as the street the route uses. The assessment keeps those uncertain rather than guessing, so the headline matched count is conservative and the uncertain count carries most of the signal. Whether to keep the 10 m margin and whether M5's comparison should rank by matched plus uncertain are owner decisions before M5.
+
 ## 2026-10-19 - M3: standard route and usable address entry
 
 ### Built

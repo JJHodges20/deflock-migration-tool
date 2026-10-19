@@ -65,6 +65,7 @@ Invoke-Step "Build the routing graph inside the Valhalla container" { docker com
 Invoke-Step "Extract the Denver basemap (about 90 MB)" { docker compose --profile setup run --rm basemap-extract }
 Invoke-Step "Download basemap fonts and sprites" { docker compose --profile setup run --rm basemap-assets }
 Invoke-Step "Publish the first camera snapshot (one bounded Overpass query)" { docker compose --profile setup run --rm camera-sync-once }
+Invoke-Step "Precompute camera road associations on the routing graph" { docker compose --profile setup run --rm associate-cameras }
 
 if ($SkipGeocoder) {
   # The geocoder is a default service; scale it to zero for this run only. A later `docker compose up`

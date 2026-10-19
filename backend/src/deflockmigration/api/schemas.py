@@ -65,6 +65,65 @@ class ManeuverOut(BaseModel):
     highway: bool
 
 
+class AssociationOut(BaseModel):
+    method: str
+    radius_m: float
+    graph_version: str
+    nearest_way_id: int | None
+    nearest_road_names: list[str]
+    nearest_distance_m: float | None
+    route_way_id: int | None
+    route_road_names: list[str]
+    route_way_distance_m: float | None
+    candidates_within_radius: int
+    same_road: bool
+    ambiguous: bool
+    grade_separated: bool
+
+
+class EncounterOut(BaseModel):
+    source_key: str
+    lat: float
+    lon: float
+    status: str
+    reason: str
+    distance_m: float
+    position_m: float | None
+    position_fraction: float | None
+    pass_count: int
+    site_group_id: str
+    manufacturer: str | None
+    is_flock: bool
+    lifecycle_state: str
+    direction_raw: str | None
+    direction_conflict: bool
+    heading_relation: str | None
+    in_envelope: bool
+    source_url: str
+    association: AssociationOut | None
+
+
+class SensitivityOut(BaseModel):
+    radius_m: int
+    records_within: int
+
+
+class AssessmentOut(BaseModel):
+    status: str
+    counting_method_version: str
+    radius_m: float
+    scope: str
+    snapshot_id: str | None
+    graph_version: str | None
+    coverage_fraction: float | None
+    matched_record_count: int | None
+    uncertain_record_count: int | None
+    sensitivity: list[SensitivityOut]
+    encounters: list[EncounterOut]
+    warnings: list[str]
+    meaning: str
+
+
 class RouteOptionOut(BaseModel):
     route_id: str
     profiles: list[str]
@@ -90,6 +149,7 @@ class RouteOptionOut(BaseModel):
     has_highway: bool
     has_toll: bool
     engine_candidate: str
+    assessment: AssessmentOut | None = None
 
 
 class PlanResponse(BaseModel):

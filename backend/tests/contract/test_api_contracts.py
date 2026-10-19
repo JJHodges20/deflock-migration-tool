@@ -122,6 +122,35 @@ def test_cameras_without_database_and_bad_bbox(client: TestClient):
     assert client.get("/api/v1/cameras", params={"bbox": "-104.9,39.8,-105.0,39.7"}).status_code == 400
 
 
+def test_plan_without_database_is_not_assessed_with_null_counts(client: TestClient):
+    body = client.post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO}).json()
+    option = body["options"][0]
+    assert option["assessment"] is None and option["matched_camera_record_count"] is None
+    assert body["assessment_coverage_status"] == "not_assessed"
+
+
+def test_plan_maps_a_complete_assessment(settings, app_config, valhalla_fixture_payload):
+    from deflockmigration.domain.assessment import AssessmentResult, Association, Encounter, EncounterStatus, SensitivityCount
+
+    def fake_assessor(route, scope, snapshot_id):
+        association = Association("valhalla_locate_nearest_way", 50.0, "g@2026", 1, ["Main Street"], 4.0, 1, ["Main Street"], 4.0, 1, True, False, False, "nearest road traversed")
+        encounter = Encounter("osm:node:1", 39.75, -104.99, EncounterStatus.ASSOCIATED, 4.0, 0.5, 3200.0, 1, "osm:node:1", "flock_safety", True, "mapped", "90", False, "mapped direction 90°", True, "https://www.openstreetmap.org/node/1", association, "nearest road traversed")
+        uncertain = Encounter("osm:node:2", 39.76, -104.98, EncounterStatus.NEARBY_UNRESOLVED, 30.0, 0.7, 4500.0, 1, "osm:node:2", None, False, "mapped", None, False, None, True, "https://www.openstreetmap.org/node/2", None, "parallel road")
+        return AssessmentResult("complete", "assess-1.0", 50.0, scope.value, "snap-1", "g@2026", 1, 1, 1.0, [encounter, uncertain], [SensitivityCount(25, 1), SensitivityCount(50, 2), SensitivityCount(100, 2)], [])
+
+    app = create_app(settings, config=app_config, routing=FakeRoutingProvider(valhalla_fixture_payload), geocoder=NullGeocoder(), assessor=fake_assessor)
+    body = TestClient(app).post("/api/v1/routes/plan", json={"origin": UNION_STATION, "destination": ZOO, "camera_scope": "flock_only"}).json()
+    option = body["options"][0]
+    assert option["matched_camera_record_count"] == 1 and option["uncertain_nearby_camera_count"] == 1
+    assert option["assessment_coverage_status"] == "complete" and body["assessment_coverage_status"] == "complete"
+    assert option["counting_method_version"] == "assess-1.0" and option["road_graph_version"] == "g@2026"
+    assessment = option["assessment"]
+    assert assessment["scope"] == "flock_only" and [s["records_within"] for s in assessment["sensitivity"]] == [1, 2, 2]
+    assert assessment["encounters"][0]["status"] == "associated" and assessment["encounters"][0]["association"]["same_road"] is True
+    assert assessment["encounters"][1]["status"] == "nearby_unresolved" and assessment["encounters"][1]["association"] is None
+    assert "not observed recordings" in assessment["meaning"]
+
+
 def test_camera_record_endpoint_contract(client: TestClient):
     resp = client.get("/api/v1/cameras/record", params={"source_key": "not-a-key"})
     assert resp.status_code == 400 and resp.json()["error"]["code"] == "VALIDATION_ERROR"

@@ -290,6 +290,7 @@ export function Planner() {
             showCameras={state.showCameras}
             scope={state.scope}
             highlightRange={highlightRange}
+            encounters={route?.assessment?.encounters ?? null}
             onPinPlaced={onPinPlaced}
             onStatus={setMapStatus}
           />
