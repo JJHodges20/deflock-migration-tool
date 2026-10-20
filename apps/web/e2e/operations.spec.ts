@@ -8,7 +8,7 @@ const DENVER_ZOO = "39.7503, -104.9500";
 test("data health shows the scheduler, the source policy, snapshot history, and metrics without trip data", async ({ page }) => {
   await page.goto("/");
   await page.getByText("Data health").click();
-  await expect(page.getByTestId("scheduler")).toContainText(/every 6 h while the stack runs/);
+  await expect(page.getByTestId("scheduler")).toContainText(/every [0-9]+ h while the stack runs/);
   await expect(page.getByTestId("scheduler")).toContainText(/on schedule|due now|overdue|as soon as the worker runs/);
   await expect(page.getByTestId("provider-policy")).toContainText("never derived from a trip");
   await expect(page.getByTestId("diff-history").locator("li").first()).toBeVisible();

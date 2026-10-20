@@ -1,6 +1,7 @@
 """Camera inventory refresh (roadmap section 8).
 
-Fixed region, never a trip. Steps: lock, fetch with the policy-aware client, validate, normalize,
+Fixed region, never a trip. Steps: lock, fetch from the configured source (the policy-aware Overpass client or,
+since M10, the local extract kept current with the publisher's change files), validate, normalize,
 check the envelope, carry over records that vanished from the source as "no longer mapped" (uncertain,
 for a bounded time), store the raw snapshot and a diff, quarantine suspicious results, promote
 atomically, prune old snapshots. Failures keep the last known good snapshot.
@@ -18,7 +19,7 @@ from sqlalchemy import text
 
 from deflockmigration.core.clock import Clock, isoformat_z, utc_now
 from deflockmigration.core.config_loader import AppConfig
-from deflockmigration.data_sources.overpass import OverpassClient
+from deflockmigration.data_sources.overpass import OverpassClient, OverpassSource
 from deflockmigration.domain.cameras import LifecycleState
 from deflockmigration.ingestion.diff import compute_diff
 from deflockmigration.ingestion.normalize import normalize_elements
@@ -49,10 +50,12 @@ def _lock_key(region_id: str) -> int:
     return int(hashlib.sha256(f"camera-sync:{region_id}".encode()).hexdigest()[:15], 16)
 
 
-def _carry_row(previous_row: dict, new_snapshot_id: str, missing_since: dt.datetime, last_seen: str) -> dict:
+def _carry_row(previous_row: dict, new_snapshot_id: str, missing_since: dt.datetime, last_seen: str, in_envelope: bool | None = None) -> dict:
     row = {k: v for k, v in previous_row.items() if k not in ("id", "lat", "lon")}
     row["snapshot_id"] = new_snapshot_id
     row["geom"] = f"SRID=4326;POINT({previous_row['lon']} {previous_row['lat']})"
+    if in_envelope is not None:
+        row["in_envelope"] = in_envelope  # judged against the current envelope, which may differ from the one the row was stored under
     row["lifecycle_state"] = str(LifecycleState.NO_LONGER_MAPPED)
     row["lifecycle_evidence"] = f"absent from the source query since {isoformat_z(missing_since)}; last seen in {last_seen}"
     warnings = [w for w in (previous_row.get("parse_warnings") or []) if w != CARRY_WARNING]
@@ -65,7 +68,7 @@ def _carry_row(previous_row: dict, new_snapshot_id: str, missing_since: dt.datet
 def run_sync(
     config: AppConfig,
     session_factory: SessionFactory,
-    client: OverpassClient,
+    source: object,
     *,
     snapshot_dir: Path,
     trigger: str = "scheduled",
@@ -73,7 +76,12 @@ def run_sync(
     force: bool = False,
 ) -> SyncOutcome:
     """One refresh of the fixed region. Concurrent runs coalesce on the region lock (the second one is skipped and
-    the running sync's result applies); manual refreshes share a cooldown unless `force` is set."""
+    the running sync's result applies); manual refreshes share a cooldown unless `force` is set.
+
+    `source` is a camera source (`OverpassSource` or the M10 `ExtractSource`); a bare `OverpassClient` is accepted and bound
+    to the configured query for compatibility."""
+    if isinstance(source, OverpassClient):
+        source = OverpassSource(source, config.camera_query_text or "")
     region = config.region
     region_id = region.region_id
     quality_cfg = config.data_quality.snapshot_validation
@@ -94,7 +102,7 @@ def run_sync(
                 if active is not None and (now - active.downloaded_at_end).total_seconds() < cooldown_s:
                     age_min = (now - active.downloaded_at_end).total_seconds() / 60
                     message = (f"manual refresh skipped: the active snapshot was downloaded {age_min:.0f} min ago and operator refreshes share a "
-                               f"{quality_cfg.manual_refresh_cooldown_minutes} min cooldown (use --force to query the public instance anyway)")
+                               f"{quality_cfg.manual_refresh_cooldown_minutes} min cooldown (use --force to refresh anyway)")
                     session.add(SyncJob(region_id=region_id, trigger=trigger, started_at=now, finished_at=clock(), status="skipped", snapshot_id=active.snapshot_id, attempts=0, message=message[:400]))
                     session.commit()
                     log.info("%s", message)
@@ -102,7 +110,7 @@ def run_sync(
             job = jobs.start(region_id, trigger, now)
             session.commit()
 
-            result = client.fetch(config.camera_query_text)
+            result = source.fetch()
             job.attempts = result.attempts
             job.http_status = result.http_status
             if not result.ok or result.payload is None:
@@ -115,7 +123,8 @@ def run_sync(
             elements = payload.get("elements") or []
             base_ts = (payload.get("osm3s") or {}).get("timestamp_osm_base")
             base_dt = dt.datetime.fromisoformat(base_ts.replace("Z", "+00:00")) if base_ts else None
-            snapshot_id = f"ovp-{region_id}-{(base_dt or now).strftime('%Y%m%dT%H%M%SZ')}-{result.sha256[:8]}"
+            content_hash = result.data_sha256 or result.sha256 or ""
+            snapshot_id = f"{source.id_prefix}-{region_id}-{(base_dt or now).strftime('%Y%m%dT%H%M%SZ')}-{content_hash[:8]}"
 
             if snapshots.get(snapshot_id) is not None:
                 job.status, job.finished_at, job.snapshot_id, job.message = "succeeded", clock(), snapshot_id, "identical snapshot already stored"
@@ -153,16 +162,16 @@ def run_sync(
                 last_seen = row.get("last_seen_snapshot_id") or (previous.snapshot_id if previous else snapshot_id)
                 age = (now - missing_since).total_seconds()
                 if quality_cfg.unresolved_disappearance == "retain_as_uncertain" and age < retain_seconds:
-                    carried_rows.append(_carry_row(row, snapshot_id, missing_since, last_seen))
+                    carried_rows.append(_carry_row(row, snapshot_id, missing_since, last_seen, in_envelope=envelope.contains(row["lat"], row["lon"])))
                 else:
                     expired += 1
 
             snapshot = CameraSnapshot(
                 snapshot_id=snapshot_id,
                 region_id=region_id,
-                source="OpenStreetMap via Overpass API",
-                endpoint=client._endpoint,  # noqa: SLF001 - recorded for provenance
-                query_sha256=hashlib.sha256(config.camera_query_text.encode("utf-8")).hexdigest(),
+                source=source.source_name,
+                endpoint=source.endpoint,
+                query_sha256=source.query_sha256,
                 query_bbox=",".join(str(v) for v in region.camera_source.query_bbox_swne),
                 generator=payload.get("generator"),
                 timestamp_osm_base=base_dt,
@@ -180,6 +189,7 @@ def run_sync(
                 raw_path=str(raw_path),
                 parser_version=PARSER_VERSION,
                 quality=verdict.report,
+                source_details=payload.get("source_details"),
                 promotion_state="staged",
                 created_at=now,
             )

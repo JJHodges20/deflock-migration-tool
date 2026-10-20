@@ -31,9 +31,9 @@ def test_colorado_service_boundary_contains_the_state_and_not_its_neighbours(app
 
 def test_colorado_envelope_contains_the_boundary_and_stays_inside_the_graph(app_config):
     env = app_config.envelope
-    assert env.boundary_id == "colorado-envelope-v1-20km"
+    assert env.boundary_id == "colorado-envelope-v2-extract"
     assert env.geometry.contains(app_config.service_boundary.geometry)
-    assert env.contains(*CHEYENNE_WY)  # within 20 km of the state line: cameras there are assessed, trips cannot start there
+    assert not env.contains(*CHEYENNE_WY)  # beyond the publisher's outline: the extract holds no records there, so the v2 envelope stops at the state line (M10)
     west, south, east, north = env.bbox_wsen
     assert west >= -109.5 and east <= -101.5 and south >= 36.75 and north <= 41.5  # the routing graph's tileset extent
 

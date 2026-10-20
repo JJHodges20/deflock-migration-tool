@@ -10,6 +10,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app/backend
 
+# pyosmium (regional extract processing, M10) needs the expat shared library at runtime.
+RUN apt-get update && apt-get install -y --no-install-recommends libexpat1 && rm -rf /var/lib/apt/lists/*
+
 # Dependencies first for layer caching.
 COPY backend/requirements.txt /app/backend/requirements.txt
 RUN pip install -r /app/backend/requirements.txt
@@ -23,12 +26,12 @@ RUN pip install --no-deps /app/backend
 
 # Region configuration and public boundary data.
 COPY configs /app/configs
-COPY data/boundaries/denver_service_boundary_v1.geojson data/boundaries/denver_camera_envelope_v1.geojson data/boundaries/colorado_service_boundary_v1.geojson data/boundaries/colorado_camera_envelope_v1.geojson /app/data/boundaries/
+COPY data/boundaries/denver_service_boundary_v1.geojson data/boundaries/denver_camera_envelope_v1.geojson data/boundaries/colorado_service_boundary_v1.geojson data/boundaries/colorado_camera_envelope_v1.geojson data/boundaries/colorado_camera_envelope_v2.geojson data/boundaries/geofabrik_colorado_outline_v1.geojson /app/data/boundaries/
 COPY data/raw/overpass/denver_alpr_envelope_query.overpassql data/raw/overpass/colorado_alpr_envelope_query.overpassql /app/data/raw/overpass/
 COPY data/fixtures/pilot_trips.json /app/data/fixtures/
 
 RUN useradd --system --uid 10001 --create-home deflock \
-    && mkdir -p /var/lib/deflock/snapshots \
+    && mkdir -p /var/lib/deflock/snapshots /var/lib/deflock/extracts \
     && chown -R deflock:deflock /var/lib/deflock /app/backend
 USER deflock
 

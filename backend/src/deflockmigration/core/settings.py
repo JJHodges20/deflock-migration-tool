@@ -25,6 +25,8 @@ class Settings(BaseSettings):
     overpass_url: str = "https://overpass-api.de/api/interpreter"
     user_agent: str = "DeFlockMigration/1.0.0rc1 (local pilot; fixed-region camera sync)"
     snapshot_dir: Path = Path("/var/lib/deflock/snapshots")
+    camera_extract_dir: Path = Path("/var/lib/deflock/extracts")  # the sync worker's own copy of the regional extract (M10)
+    graph_extract_path: Path | None = Path("/pbf/colorado-latest.osm.pbf")  # seed for that copy when present (read-only mount); None disables seeding
 
     log_level: str = "INFO"
     cors_origins: list[str] = Field(default_factory=list)

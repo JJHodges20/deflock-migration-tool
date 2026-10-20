@@ -2,6 +2,47 @@
 
 Newest first. Every entry records what was executed, what was only inspected, and what remains unverified.
 
+## 2026-10-19 / 2026-10-20 - M10: camera inventory from the Geofabrik extract with daily change files
+
+### Built
+
+- **Decision 0004:** the Colorado configuration's camera source is the Geofabrik Colorado extract kept current with the publisher's daily change files; the public Overpass instance is no longer queried for Colorado (the Denver pilot configuration keeps the bounded query, and the Colorado query file stays on disk as a documented fallback).
+- **Extract reader (`data_sources/extract_elements.py`):** the Overpass query's tag filters applied to every node, way, and relation of the extract with pyosmium (a key filter evaluated in C++, then the regex checks in Python; a second pass only when ways or relations matched, to collect their node points). Output elements have the Overpass `out meta geom` shape minus contributor names and ids, so the normalizer, the diff, the quality rules, quarantine, promotion, retention, and the review tools are untouched.
+- **Source adapter (`data_sources/osm_extract.py`):** seeds the worker's copy from the routing graph's extract (no second download), reads the Osmosis replication header, asks the change-file service for its state, applies new change files with pyosmium's replication client in steps of at most 256 MB and replaces the file atomically, and hands the filtered elements to the sync. Politeness as disclosed: identifying User-Agent, one request at a time, 30 s pause after HTTP 429/503, three attempts with backoff, no retries inside the HTTP library, no endpoint rotation. A missing change file inside the publisher's retention window is treated as transient; beyond it the copy is re-seeded from a newer graph extract or one fresh extract is downloaded (checksum verified), at most once per run.
+- **Sync pipeline:** `run_sync` takes a camera source (`OverpassSource` or `ExtractSource`; a bare Overpass client still works); snapshot ids carry the source prefix (`ext-` or `ovp-`), the identical-snapshot check hashes the data part only, and a new `source_details` column (migration 0004) keeps the replication state, the extraction statistics, and the filter version. Carried "no longer mapped" rows are judged against the current envelope.
+- **Configuration:** `camera_source.adapter: geofabrik_extract` with an `extract` block (url, file, replication_url, outline_file, coverage note) and a 24 h interval in `configs/regions/colorado.yaml`; the replication client's limits in `configs/providers.yaml` (`camera_extract`); `DEFLOCK_CAMERA_EXTRACT_DIR` and `DEFLOCK_GRAPH_EXTRACT_PATH` in the settings; the worker chooses the source from the region configuration.
+- **Camera-data envelope v2 (`colorado-envelope-v2-extract`):** the publisher's outline (`colorado.poly`, 15 vertices) follows the state line within about 300 m, so the extract holds no standalone records in neighbouring states. The 20 km envelope v1 would have treated that strip as covered; v2 is v1 limited to the outline with a 500 m metric margin (271,739.7 km², 61 vertices, built in PostGIS, contains the service boundary). Routes that leave the state are assessed only for the part inside and are not ranked for privacy.
+- **Runtime:** the backend image installs pyosmium 4.3.2 (with `requests`) and the `libexpat1` library; the worker mounts a new `camera_extracts` volume for its copy and the `osm_extracts` volume read-only as the seed; its memory limit is 1 GB.
+- **Disclosure:** Data Health's `camera_source` carries the extract block and the coverage note, `provider_policy` the replication client's limits, and the snapshot its source and `source_details`; the Data Health panel shows the camera source with the change-file sequence; the browser smoke spec accepts either snapshot prefix.
+- **Documents:** decision 0004; data source register sections 1 and 2; attribution; privacy flows; operations runbook (scheduler, policy, outcomes, disk, troubleshooting for the extract source); user guide; test plan; implementation plan; project context; audit note; README; `scripts\sync_cameras.ps1` wording.
+
+### Verification (2026-10-19 to 2026-10-20)
+
+- Probes on the pilot machine before building: the extract in the volume carries the replication header (`colorado-updates`, sequence 4945, 2026-10-18T20:25:06Z); one key-filtered pass over the 385 MB file 4.4 s with 82,781 objects reaching Python and 2,875 nodes plus 1 way matching, the node-location pass 0.8 s, 192 MB resident; applying three real change files (4943 to 4945) and rewriting the file with pyosmium 13 s at 309 MB resident.
+- Backend in the container: 207 passed in 19 s after three rounds of fixes (a temporary file name pyosmium could not type, two test expectations that misread the normalizer's evidence rules, a layer-boundary rule that moved the extract reader and the download function into `data_sources`, and a contract test that hard-coded the 6 h interval). The new tests write tiny extracts with pyosmium and drive the adapter against a fake change-file service; the PostGIS round trip covers the `ext-` snapshot, envelope v2 flags, the identical-data skip, and a change file that removes and adds records. The Overpass tests still run unchanged.
+- Frontend: type check clean; 52 Vitest tests passed.
+- Browser (Playwright, three viewports): 78 passed in 1.9 min with no page errors, after one spec fix (the operations spec hard-coded the 6 h interval; it now accepts the configured interval) and a new check that the Data Health panel names the camera source. A first run before the fix failed that one test at all three viewports and passed the other 75.
+- `scripts\smoke_test.ps1 -CheckRestart`: passed on the M10 images: the `ext-` snapshot (2,766 mapped ALPR records) and the graph survived the restart; the basemap check reads the path from the region endpoint.
+- Migration 0004 applied to the live database (`db-migrate`).
+- Live first extract sync (`scripts\sync_cameras.ps1`, 2026-10-20T00:09:53Z): the worker copied the graph's extract in about a second, found the publisher's state at 4945 (up to date), read 2,876 elements in 5.6 s, and promoted `ext-colorado-20261018T202506Z-11935e75`: 2,766 ALPR records, all inside envelope v2, 2,168 Flock, 238 unknown manufacturer; diff against the Overpass snapshot: 4 added, 1 changed, 139 missing and carried as no longer mapped. The 139 are the records across the state line that the Overpass box included (77 outside envelope v1, 58 in the 20 km strip) plus edits of 2026-10-19, which the extract (data up to 2026-10-18T20:25Z) does not yet have; they age out after 72 h. The job took 133 s against 71 s for the Overpass job; a forced rerun with the copy in place and the publisher unchanged took 7 s (one state request plus the 5.6 s read) and ended as "identical snapshot already stored", so the first run's time was the database stage (inserting 2,876 records, carrying 139 rows, diffing against the 3,011 previous rows).
+- The worker restarted on the new image without querying: "active snapshot is fresh; next scheduled sync in 1309 minutes".
+- The publisher had not released the change file for 2026-10-19 by 2026-10-20T00:30Z (state still 4945), so the first live application of a change file by the worker happens at the next scheduled run; the real change-file path was exercised by the probe above and the adapter's loop by the fake-server tests.
+
+### Gate check (M10 as proposed on 2026-10-19)
+
+- The Colorado planner no longer depends on a shared public endpoint for its camera inventory: the recurring external traffic is one state request per day plus the day's change file from the publisher that already supplies the road data.
+- Daily cadence, politeness, and the full-download rule are configuration and are disclosed in Data Health; the camera source is still fixed by configuration and never derived from a trip.
+- Coverage is stated honestly: envelope v2 stops at the publisher's outline, and the coverage note appears in Data Health and the documents.
+- No public deployment, no paid service, no new host software: pyosmium runs inside the backend image.
+- Rollback is documented: switch the adapter back to `overpass_bounded`; the `ovp-` snapshots remain retained.
+
+### Observations
+
+- The extract (data up to 2026-10-18T20:25Z) was a day older than the Overpass snapshot it replaced, so "source data as of" moved back by a day until the publisher's next change file; the staleness rule (48 h) still reported the inventory as fresh.
+- Geofabrik's outline is a coarse polygon that only slightly exceeds the state, which is why the envelope had to change; the register's M0 statement that the outline "fully contains the 20 km Denver envelope" remains true for Denver only.
+- The sync's time is dominated by the database stage, not by reading the extract (5.6 s); worth a look in a later milestone, since the record count is now statewide.
+- `ruff check` reports many pre-existing line-length findings across the project; it is not part of the verification gate and was left as is.
+
 ## 2026-10-19 - M9: Colorado service area
 
 ### Built

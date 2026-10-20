@@ -98,6 +98,8 @@ services:
       <<: *backend-env
     volumes:
       - camera_snapshots:/var/lib/deflock/snapshots
+      - camera_extracts:/var/lib/deflock/extracts
+      - osm_extracts:/pbf:ro
     depends_on:
       db:
         condition: service_healthy
@@ -107,7 +109,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 1G   # applying change files rewrites the 385 MB extract (about 310 MB resident on the pilot machine)
 
   db:
     networks:
@@ -282,6 +284,8 @@ services:
       <<: *backend-env
     volumes:
       - camera_snapshots:/var/lib/deflock/snapshots
+      - camera_extracts:/var/lib/deflock/extracts
+      - osm_extracts:/pbf:ro
     depends_on:
       db:
         condition: service_healthy
@@ -356,4 +360,5 @@ volumes:
   basemap:
   geocoder_db:
   camera_snapshots:
+  camera_extracts:
   e2e_node_modules:

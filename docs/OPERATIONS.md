@@ -13,21 +13,21 @@ Everything here was executed on the pilot machine (Windows 11, Docker Desktop wi
 
 ## 2. The single scheduler
 
-- One `camera-sync` container is the only scheduler. It queries the public Overpass instance for the fixed Colorado envelope (statewide bounding box) every 6 hours **while the stack is up**. The statewide query is heavier than the Denver one and the shared instance sometimes answers 502/504 under load; the worker then keeps the last good snapshot and tries again at the next interval (a manual retry is `scripts\sync_cameras.ps1`), and M10 moves ingestion to the Geofabrik extract. No sync runs when the stack is down.
+- One `camera-sync` container is the only scheduler. With the Colorado configuration (M10, decision 0004) it keeps its own copy of the Geofabrik Colorado extract current: once every 24 hours **while the stack is up** it asks the publisher's change-file service for its state, applies the change files that are new (one per day), reads the camera records from the file again, and publishes a validated snapshot. The copy is seeded from the routing graph's extract (no second download); a full download happens only when no seed exists or the change files the file needs are no longer published. A failure keeps the last good snapshot and the next interval tries again (a manual retry is `scripts\sync_cameras.ps1`). The Denver pilot configuration still runs the bounded Overpass query every 6 hours. No sync runs when the stack is down.
 - On start it reads the active snapshot's download time and waits for the remainder of the interval instead of querying again (`seconds_until_due`), so repeated `docker compose up` cycles do not hammer the shared instance. A stack that was down for a day catches up with **one** query.
 - Concurrent runs coalesce: a region lock lets exactly one sync run; a second runner reports "skipped" and the running sync's result applies.
 - Data Health shows the next due time, whether the scheduler is overdue (interval plus a one-hour grace), and the last trigger. "Overdue" with the stack up means the worker container is not running: `docker compose ps camera-sync`, `docker compose logs camera-sync`.
 
-Provider policy as implemented: one request at a time, an identifying User-Agent, a 180 s query timeout, a 30 s pause after HTTP 429/406, bounded retries with backoff on 502/503/504, detection of HTML challenge pages and error remarks, no endpoint rotation. Before any public rollout the ingestion must move to the Geofabrik extract plus diffs (decision 0001 D7).
+Provider policy as implemented for the extract source: one request at a time, an identifying User-Agent, a 120 s download timeout, a 30 s pause after HTTP 429/503, three attempts with backoff, change files held in memory in steps of at most 256 MB, at most one full download per run, no endpoint rotation; Data Health shows these values. For the Overpass source (Denver configuration): one request at a time, an identifying User-Agent, a 180 s query timeout, a 30 s pause after HTTP 429/406, bounded retries with backoff on 502/503/504, detection of HTML challenge pages and error remarks, no endpoint rotation. Before any public rollout the ingestion must move to the Geofabrik extract plus diffs (decision 0001 D7).
 
 ## 3. Manual refresh and its cooldown
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1          # respects the shared 30 min cooldown
-powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1 -Force   # queries now anyway
+powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1 -Force   # refreshes now anyway
 ```
 
-A refresh within 30 minutes of the active snapshot's download is skipped and recorded as a `skipped` sync job (visible in Data Health), so repeated clicks by several operators cost the public instance nothing. `-Force` is for a known upstream change you want to pick up immediately. The scheduled worker is never subject to the cooldown.
+A refresh within 30 minutes of the active snapshot's download is skipped and recorded as a `skipped` sync job (visible in Data Health), so repeated clicks by several operators cost the publisher nothing. `-Force` is for a known upstream change you want to pick up immediately. The scheduled worker is never subject to the cooldown.
 
 ## 4. What a sync can do, and what it never does
 
@@ -36,7 +36,7 @@ A refresh within 30 minutes of the active snapshot's download is skipped and rec
 | `succeeded` | validated snapshot promoted atomically; diff stored; old snapshots pruned by the retention policy | the new snapshot |
 | `succeeded` (identical) | the source answered with the same content as a stored snapshot | unchanged |
 | `quarantined` | empty result or a drop of more than 50 % in ALPR records; review required | the last good snapshot |
-| `failed` | outage, rate limit after retries, HTML page, malformed or truncated JSON, error remark | the last good snapshot |
+| `failed` | outage, rate limit after retries, an unreachable change-file service, a change file no longer published, HTML page, malformed or truncated JSON, error remark | the last good snapshot |
 | `skipped` | region lock held by another run, or manual cooldown | unchanged |
 
 A failure never overwrites good data: the raw file is written first, rows are inserted under the new snapshot id, and promotion is the last step of one transaction. The M2 and M7 integration matrices prove outage, rate limit, truncated response, concurrent runs, and quarantine paths against a real PostGIS database.
@@ -87,11 +87,12 @@ The rebuild needs internet access twice: the Geofabrik extract and the timezone 
 | `geocoder_db` | self-hosted Nominatim import of Colorado | 9.5 GB (import about 17 min, 5.2 GiB peak) |
 | `valhalla_tiles` | routing graph (tiles, tar, databases) | 1.1 GB per graph |
 | `basemap` | Protomaps extract, fonts, sprites | 102 MB |
-| `camera_snapshots` | raw Overpass responses (about 1 MB each, pruned with retention) | 4.7 MB |
+| `camera_snapshots` | raw snapshots: the filtered elements as JSON (about 1 MB each, pruned with retention) | 4.7 MB |
 | `osm_extracts` | Geofabrik Colorado extract | about 385 MB |
+| `camera_extracts` | the sync worker's copy of the extract, kept current with change files (M10) | about 385 MB, briefly twice while a change file is applied |
 | `pgdata` | PostGIS: snapshots, records, diffs, associations, jobs | tens of MB |
 
-Memory limits in `compose.yaml`: database 1 GB, routing 2 GB, geocoder 6 GB, graph build 6 GB. The graph build and the geocoder import must not run at the same time.
+Memory limits in `compose.yaml`: database 1 GB, routing 2 GB, geocoder 6 GB, graph build 6 GB, camera sync 1 GB (applying a change file rewrites the extract; about 310 MB resident measured). The graph build and the geocoder import must not run at the same time.
 
 ## 11. Backups and restore
 
@@ -118,3 +119,11 @@ Only public data and job history exist, so a backup is optional. `docker compose
 | Route engine unavailable | `docker compose logs valhalla` | the graph may still be loading; after a failed rebuild run `scripts\rollback_graph.ps1` |
 | Address search unavailable | `docker compose logs -f geocoder` | the first import takes about 17 minutes; if it was interrupted it starts over. Right after a restart the first searches can take several seconds while the database cache warms; the health check runs a real search every 30 s, and the API waits up to 15 s |
 | Results look outdated | the notice names the newer snapshot or graph | plan again |
+
+### The extract source (M10)
+
+- **"change file N unavailable ... retrying at the next interval"**: the publisher's service answered but one change file was missing; the worker treats a gap inside the retention window as transient and keeps the file. Nothing to do unless it repeats for days.
+- **"change file N is no longer published"**: the worker's copy fell behind the publisher's retention (about 100 days, for example after a long shutdown). The worker re-seeds from the routing graph's extract when that is newer (run `scripts\import_region.ps1` first to refresh it) or downloads one fresh extract (checksum verified), then continues.
+- **"no replication information"**: the extract file carries no Osmosis header; delete the worker's copy (`docker compose run --rm camera-sync rm /var/lib/deflock/extracts/colorado-cameras.osm.pbf`) so the next run seeds it again.
+- **Switching back to Overpass:** set `adapter: overpass_bounded` with `endpoint` and `query_file` in `configs/regions/colorado.yaml` (the query file is still on disk), rebuild the backend image, and restart; the `ovp-` snapshots of M9 remain retained for rollback.
+- The first extract snapshot after the switch lists records across the state line (which the Overpass box included but the extract does not) as "no longer mapped"; they age out after the retention period.

@@ -39,7 +39,7 @@ The project's own license has not been chosen by the owner; until it is, the rep
 | Service | Policy | What the pilot does |
 |---|---|---|
 | Overpass API (overpass-api.de) | shared resource; identify the application; keep load low; no end-user backend use at scale; no rotation to evade limits | one fixed envelope query every 6 hours while the stack runs (4 per day), operator refreshes share a 30 min cooldown, one request at a time, an identifying User-Agent, a 30 s pause after HTTP 429/406, bounded retries, no endpoint rotation; the register notes the move to the Geofabrik extract before any public rollout |
-| Geofabrik downloads | public extracts, be reasonable | one 385 MB download per weekly rebuild, checksum verified |
+| Geofabrik downloads | public extracts and change files, be reasonable | one 385 MB download per weekly rebuild, checksum verified; since M10 one state request and the day's change file per day for the camera inventory (the worker seeds its copy from the graph's extract) |
 | Protomaps build server, GitHub (basemap assets, timezone boundaries) | public downloads | one-time setup downloads and one per graph rebuild; no runtime traffic |
 | OpenStreetMap Foundation Nominatim and tile servers | usage policies forbid heavy or application-backend use | not used at all; the planner reaches only this computer |
 | U.S. Census Bureau TIGERweb (Colorado boundary) | public data service; no key or agreement needed for one download | one download per boundary version; attributed |

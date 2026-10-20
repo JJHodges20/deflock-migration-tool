@@ -27,10 +27,10 @@ def test_settings_reject_unknown_env(monkeypatch):
 def test_repo_config_loads(app_config):
     assert app_config.region.region_id == "colorado"
     assert app_config.region.service_boundary.id == app_config.service_boundary.boundary_id == "colorado-service-v1"
-    assert app_config.envelope.boundary_id == "colorado-envelope-v1-20km"
+    assert app_config.envelope.boundary_id == "colorado-envelope-v2-extract"
     assert "standard" in app_config.route_profiles.profiles
     assert app_config.providers.geocoding.provider == "nominatim_local"
-    assert "[bbox:" in app_config.camera_query_text
+    assert app_config.region.camera_source.adapter == "geofabrik_extract" and app_config.camera_query_text is None
     assert all(v is False for v in app_config.privacy.model_dump().values())
 
 

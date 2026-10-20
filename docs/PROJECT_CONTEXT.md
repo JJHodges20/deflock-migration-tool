@@ -6,7 +6,7 @@ It is an independent project with no affiliation to DeFlock, Flock Safety, OpenS
 
 ## Confirmed by the owner
 
-- Exact name DeFlockMigration; Denver pilot first, expanded to all of Colorado in M9 (decision 0003, 2026-10-19); web trip planning before any live navigation.
+- Exact name DeFlockMigration; Denver pilot first, expanded to all of Colorado in M9 (decision 0003, 2026-10-19); camera inventory from the Geofabrik extract with daily change files since M10 (decision 0004); web trip planning before any live navigation.
 - No public use for now and a separate approval before any public deployment; the owner tests personally (decision 0003).
 - Start and destination can be typed; map pins are an additional option.
 - Camera records come from permitted open sources (OpenStreetMap) and refresh on a schedule.
@@ -20,7 +20,7 @@ It is an independent project with no affiliation to DeFlock, Flock Safety, OpenS
 | Topic | Where |
 |---|---|
 | Roadmap and milestone gates | `docs/plans/DeFlockMigration_Claude_Build_Roadmap.md` |
-| Decisions | `docs/decisions/0001-denver-pilot.md`, `docs/decisions/0002-docker-compose-primary-runtime.md`, `docs/decisions/0003-colorado-service-area.md` |
+| Decisions | `docs/decisions/0001-denver-pilot.md`, `docs/decisions/0002-docker-compose-primary-runtime.md`, `docs/decisions/0003-colorado-service-area.md`, `docs/decisions/0004-extract-based-camera-ingestion.md` |
 | Feasibility evidence (M0) | `docs/FEASIBILITY_REPORT.md`, `docs/evidence/`, `spikes/` |
 | Sources, licenses, policies | `docs/DATA_SOURCE_REGISTER.md` |
 | Region geometry and versions | `configs/regions/colorado.yaml` (default since M9) and `configs/regions/denver.yaml` (pilot area), `data/boundaries/`, `data/manifests/` |

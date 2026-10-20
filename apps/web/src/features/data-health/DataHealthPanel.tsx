@@ -62,6 +62,8 @@ export function DataHealthPanel() {
   const recentSyncs = health?.recent_syncs ?? [];
   const scheduler = health?.scheduler;
   const policy = health?.provider_policy;
+  const replicationSequence = snapshot?.source_details?.replication_sequence;
+  const extractCoverage = (health?.camera_source as { extract?: { coverage_note?: string } } | undefined)?.extract?.coverage_note;
   const planRequests = metrics?.requests["/api/v1/routes/plan"];
   return (
     <details className="section" data-testid="data-health">
@@ -94,6 +96,12 @@ export function DataHealthPanel() {
         <dl className="kv">
           <dt>Camera snapshot</dt>
           <dd>{snapshot ? snapshot.snapshot_id : "none loaded yet"}</dd>
+          <dt>Camera source</dt>
+          <dd data-testid="camera-source">
+            {snapshot?.source ?? "n/a"}
+            {typeof replicationSequence === "number" ? ` · change file ${replicationSequence} applied` : ""}
+            {extractCoverage ? ` · ${extractCoverage}` : ""}
+          </dd>
           <dt>Source data as of</dt>
           <dd>{snapshot ? formatTimestamp(snapshot.timestamp_osm_base) : "n/a"}</dd>
           <dt>Downloaded</dt>

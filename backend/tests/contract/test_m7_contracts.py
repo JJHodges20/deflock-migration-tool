@@ -28,7 +28,7 @@ def test_data_health_reports_scheduler_and_provider_policy_without_database(clie
     body = client.get("/api/v1/health/data").json()
     scheduler = body["scheduler"]
     assert scheduler["overdue"] is True and scheduler["next_due_at"] is None and scheduler["runs_only_while_stack_is_up"] is True
-    assert scheduler["interval_hours"] == 6 and scheduler["manual_refresh_cooldown_minutes"] == 30
+    assert scheduler["interval_hours"] == client.app.state.config.region.camera_source.refresh_interval_hours and scheduler["manual_refresh_cooldown_minutes"] == 30
     policy = body["provider_policy"]
     assert policy["one_request_at_a_time"] is True and policy["no_endpoint_rotation"] is True
     assert policy["pause_after_rate_limit_seconds"] >= 30 and policy["max_attempts"] >= 1 and "never derived from a trip" in policy["query"]

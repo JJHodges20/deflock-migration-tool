@@ -55,7 +55,7 @@ def get_region(request: Request) -> RegionResponse:
             "geocoder_configured": request.app.state.geocoder.name != "none",
             "geocoder_provider": request.app.state.geocoder.name,
             "routing_provider": providers.routing.provider,
-            "camera_source_adapter": providers.camera_source.adapter,
+            "camera_source_adapter": config.region.camera_source.adapter,
             "camera_assessment": "road_association assess-1.0; bounded candidate search search-1.0",
             "coordinate_input": True,
             "map_pins": True,

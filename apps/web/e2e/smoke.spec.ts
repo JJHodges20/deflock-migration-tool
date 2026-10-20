@@ -91,6 +91,7 @@ test("data health panel reports the published snapshot and graph", async ({ page
   await page.goto("/");
   await page.getByText("Data health").click();
   await expect(page.getByTestId("data-health")).toContainText("Camera snapshot");
-  await expect(page.getByTestId("data-health")).toContainText(/ovp-[a-z]+-[0-9]{8}T[0-9]{6}Z|none loaded yet/);
+  await expect(page.getByTestId("data-health")).toContainText(/(?:ovp|ext)-[a-z]+-[0-9]{8}T[0-9]{6}Z|none loaded yet/);
+  await expect(page.getByTestId("camera-source")).toContainText(/Geofabrik extract and daily diffs|Overpass API|n\/a/);
   await expect(page.getByTestId("data-health")).toContainText(/Routing graph/);
 });

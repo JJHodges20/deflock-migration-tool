@@ -71,7 +71,7 @@ docker compose up
 
 | Task | Command |
 |---|---|
-| Refresh the camera inventory now | `powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1` (the worker also runs every 6 hours while the stack is up; operator refreshes share a 30 min cooldown, `-Force` overrides it) |
+| Refresh the camera inventory now | `powershell -ExecutionPolicy Bypass -File scripts\sync_cameras.ps1` (the worker also runs once a day while the stack is up, every 6 hours under the Denver configuration; operator refreshes share a 30 min cooldown, `-Force` overrides it) |
 | Roll the camera inventory back to a previous snapshot | `powershell -ExecutionPolicy Bypass -File scripts\review_snapshot.ps1 rollback -Note "<why>"` (or `rollback <snapshot_id> -Note ...`); nothing is deleted, and the replaced snapshot can be restored the same way |
 | Put the previous routing graph back | `powershell -ExecutionPolicy Bypass -File scripts\rollback_graph.ps1` (the rebuild keeps the last-good graph in the volume; running it again undoes the rollback) |
 | See the operating state and service metrics | the Data health panel in the app, or `GET http://127.0.0.1:3000/api/v1/health/data`, `.../health/metrics`, `.../cameras/diffs`; the full runbook is `docs/OPERATIONS.md` |

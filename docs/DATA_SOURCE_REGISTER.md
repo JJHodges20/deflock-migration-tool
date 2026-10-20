@@ -7,7 +7,7 @@ Nothing in this register is a complete camera inventory, a deployment plan, or a
 
 ---
 
-## 1. OpenStreetMap ALPR records via the Overpass API - *executed (one bounded query)*
+## 1. OpenStreetMap ALPR records via the Overpass API - *executed (M0 to M9); the Colorado configuration moved to section 2 in M10*
 
 - **Endpoint used:** `https://overpass-api.de/api/interpreter` (main public instance, Overpass API 0.7.62.11).
 - **Policy pages:** https://dev.overpass-api.de/overpass-doc/en/preface/commons.html and https://wiki.openstreetmap.org/wiki/Overpass_API
@@ -22,7 +22,9 @@ Nothing in this register is a complete camera inventory, a deployment plan, or a
 - **M0 usage record:** query file `data/raw/overpass/denver_alpr_envelope_query.overpassql`; first attempt 2026-10-15T20:18:05Z returned HTTP 502 from the instance's nginx; second attempt 20:19:15Z to 20:20:26Z succeeded; 1,591 nodes, 785,686 bytes; `timestamp_osm_base` 2026-10-15T20:18:00Z; raw SHA-256 `6ffd2e80...2802c79d` (full value in `data/manifests/overpass_snapshot_2026-10-15.json`). User-Agent identified the project. No contributor identity fields are kept in committed fixtures.
 - **Pilot design decision:** a fixed-region sync every 6 hours (4 queries/day, under 1 MB each) sits far below the "divide by 100" ceiling and is acceptable for development and an invited pilot. Public rollout must move the inventory to the Geofabrik extract pipeline (section 2) or a self-hosted Overpass instance. Never derive the query from a user's trip; never rotate endpoints to evade limits; honor the 30-second pause rule on 429/406.
 
-## 2. Geofabrik Colorado extract and daily diffs - *executed (download + checksum)*
+- **M10 (decision 0004):** the Colorado configuration no longer queries this instance; the camera inventory comes from the Geofabrik extract and its change files (section 2). The Denver pilot configuration still runs the bounded query, and the Colorado query file stays on disk as a documented fallback.
+
+## 2. Geofabrik Colorado extract and daily diffs - *executed (download + checksum; change files applied since M10)*
 
 - **Pages:** https://download.geofabrik.de/north-america/us/colorado.html , https://download.geofabrik.de/technical.html , https://download.geofabrik.de/north-america/us/colorado-updates/
 - **License:** page footer "Data processed by Geofabrik GmbH and created by OpenStreetMap Contributors | License: ODbL 1.0". No stated rate limit or fair-use quota; robots.txt only blocks crawlers from the data files.
@@ -30,6 +32,7 @@ Nothing in this register is a complete camera inventory, a deployment plan, or a
 - **Diffs:** daily `.osc.gz` files exist (`state.txt`: `timestamp=2026-10-14T20:21:12Z`, `sequenceNumber=4941`); "Diff files are kept for 100 days and then deleted." "The user, uid and changeset fields are missing in these files since May 3, 2018."
 - **Use:** routing-graph input (Valhalla) and the planned scale adapter for camera records. Outline `colorado.poly` fetched; it fully contains the 20 km Denver envelope with a 102 km margin.
 - **Plan:** one extract download per graph rebuild; diffs at most once per day, matching Geofabrik's cadence.
+- **M10 usage (decision 0004):** the camera-sync worker copies the routing graph's extract as its seed and applies the daily change files with pyosmium 4.3.2 (`ReplicationServer`: identifying User-Agent, one request at a time, 30 s pause after HTTP 429/503, three attempts, no retries inside the HTTP library). Probe on 2026-10-19: the extract header carries `osmosis_replication_base_url` `.../colorado-updates`, sequence 4945, timestamp 2026-10-18T20:25:06Z; applying three change files and rewriting the 385 MB file took 13 s at 309 MB resident; reading the camera records from the file takes about 5 s. The outline `colorado.poly` (15 vertices, kept under `data/boundaries/raw/` and as `data/boundaries/geofabrik_colorado_outline_v1.geojson`) follows the state line within about 300 m, which is why the camera-data envelope v2 stops there. Cadence: one state request per day plus the day's change file; a full download only when no seed exists or the needed change files are gone (kept about 100 days).
 
 ## 3. OSM tagging documentation for ALPR cameras - *inspected*
 

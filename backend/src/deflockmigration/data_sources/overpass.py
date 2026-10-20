@@ -31,6 +31,7 @@ class FetchResult:
     attempts: int
     error: str | None
     sha256: str | None
+    data_sha256: str | None = None  # hash of the data part only, when the body also carries run-specific details (M10 extract source)
 
     @property
     def element_count(self) -> int | None:
@@ -115,3 +116,28 @@ class OverpassClient:
             return FetchResult(True, resp.status_code, body, payload, started, finished, attempts, None, hashlib.sha256(body).hexdigest())
         finished = self._clock()
         return FetchResult(False, last_status, None, None, started, finished, attempts, last_error or "unknown failure", None)
+
+
+class OverpassSource:
+    """The Overpass client bound to the configured fixed query: the camera-source shape the sync pipeline consumes."""
+
+    id_prefix = "ovp"
+    source_name = "OpenStreetMap via Overpass API"
+
+    def __init__(self, client: OverpassClient, query_text: str):
+        self._client = client
+        self._query_text = query_text
+
+    @property
+    def endpoint(self) -> str:
+        return self._client._endpoint  # noqa: SLF001 - recorded for provenance
+
+    @property
+    def query_sha256(self) -> str:
+        return hashlib.sha256(self._query_text.encode("utf-8")).hexdigest()
+
+    def fetch(self) -> FetchResult:
+        return self._client.fetch(self._query_text)
+
+    def close(self) -> None:
+        self._client.close()

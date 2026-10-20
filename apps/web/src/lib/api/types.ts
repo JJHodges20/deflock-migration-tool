@@ -260,6 +260,7 @@ export interface ProviderPolicyView {
   max_attempts: number;
   backoff_seconds: number;
   no_endpoint_rotation: boolean;
+  full_download_policy?: string;
 }
 
 export interface SnapshotDiffHistoryItem {
@@ -327,6 +328,8 @@ export interface DataHealth {
     parser_version: string;
     quality: Record<string, unknown>;
     review_note: string | null;
+    source?: string;
+    source_details?: Record<string, unknown> | null;
     diff: SnapshotDiffView | null;
     counts_meaning: string;
   } | null;

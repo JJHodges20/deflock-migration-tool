@@ -1,10 +1,11 @@
-# DeFlockMigration region configuration - Colorado service area (M9, approved by the owner on 2026-10-19)
+# DeFlockMigration region configuration - Colorado service area (M9, approved by the owner on 2026-10-19;
+# camera source moved to the Geofabrik extract with daily change files in M10, decision 0004)
 # Three boundaries are kept separately on purpose. None of them claims camera coverage.
 # The Denver pilot configuration (denver.yaml) remains available through DEFLOCK_REGION_CONFIG.
 
 region_id: colorado
 display_name: "Colorado"
-config_version: 2
+config_version: 3
 
 service_boundary:
   id: colorado-service-v1
@@ -19,25 +20,30 @@ service_boundary:
   purpose: "Where trip origins and destinations may be placed."
 
 camera_data_envelope:
-  id: colorado-envelope-v1-20km
-  file: data/boundaries/colorado_camera_envelope_v1.geojson
+  id: colorado-envelope-v2-extract
+  file: data/boundaries/colorado_camera_envelope_v2.geojson
   based_on: colorado-service-v1
   buffer_m: 20000
-  buffer_method: "metric buffer in EPSG:26913, simplified 25 m, clipped to the routing graph tileset extent, reprojected to EPSG:4326 (built in PostGIS)"
-  bbox_wsen: [-109.2889956, 36.8122307, -101.8139749, 41.1835420]
-  area_km2: 311081.0
+  buffer_method: "envelope v1 (metric 20 km buffer in EPSG:26913, simplified 25 m, clipped to the routing graph tileset extent) limited to the Geofabrik Colorado extract outline with a 500 m metric margin; built in PostGIS (M10)"
+  bbox_wsen: [-109.0688075, 36.9849254, -102.0298860, 41.0083804]
+  area_km2: 271739.7
   purpose: "Every route candidate is assessed against all camera records inside this envelope. A candidate leaving it is not ranked for privacy."
-  review_note: "The envelope reaches 20 km into neighbouring states so that records just across the state line are assessed; the graph extent clips it where the Colorado extract ends."
+  review_note: "Since M10 the camera inventory comes from the Geofabrik Colorado extract, which holds no standalone records beyond the publisher's outline, so the envelope stops about 500 m beyond the state line instead of 20 km (v1, kept on file). A route that leaves the state is assessed only for the part inside the envelope and is not ranked for privacy."
 
 camera_source:
-  adapter: overpass_bounded
-  endpoint: https://overpass-api.de/api/interpreter
-  query_file: data/raw/overpass/colorado_alpr_envelope_query.overpassql
-  query_bbox_swne: [36.70, -109.40, 41.30, -101.70]   # contains the 20 km envelope with margin
-  refresh_interval_hours: 6
+  adapter: geofabrik_extract
+  query_bbox_swne: [36.70, -109.40, 41.30, -101.70]   # the box the inventory is meant to cover (contains the envelope)
+  refresh_interval_hours: 24                          # the publisher issues one change file per day
   min_pause_after_429_seconds: 30
-  user_agent: "DeFlockMigration/<version> (local camera sync; fixed Colorado envelope)"
-  later_adapter: geofabrik_colorado_extract_with_daily_diffs   # M10
+  user_agent: "DeFlockMigration/<version> (local camera sync; fixed Colorado extract)"
+  extract:
+    url: https://download.geofabrik.de/north-america/us/colorado-latest.osm.pbf
+    file: colorado-cameras.osm.pbf                    # the worker's own copy, seeded from the routing graph's extract
+    replication_url: https://download.geofabrik.de/north-america/us/colorado-updates
+    outline_file: data/boundaries/geofabrik_colorado_outline_v1.geojson
+    coverage_note: "The extract is cut along the publisher's Colorado outline (about 300 m beyond the state line); records in neighbouring states are not in this inventory, which is why camera-data envelope v2 stops at the outline."
+  # The bounded Overpass query of M9 stays on file as the Denver configuration's source and as a documented fallback:
+  # adapter overpass_bounded, endpoint https://overpass-api.de/api/interpreter, query_file data/raw/overpass/colorado_alpr_envelope_query.overpassql.
 
 routing_graph:
   id: colorado-geofabrik-2026-10-14

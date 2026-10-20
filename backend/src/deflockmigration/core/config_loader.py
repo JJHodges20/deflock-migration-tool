@@ -44,15 +44,34 @@ class EnvelopeConfig(_Strict):
     review_note: str | None = None
 
 
+class CameraExtractConfig(_Strict):
+    """The regional extract behind the `geofabrik_extract` adapter (M10)."""
+
+    url: str  # the full extract; downloaded only when no seed can be copied or the change files the file needs are gone
+    file: str  # file name inside the worker's extract directory (DEFLOCK_CAMERA_EXTRACT_DIR)
+    replication_url: str  # the publisher's change-file service (also recorded in the extract header)
+    outline_file: Path | None = None  # the publisher's clipping polygon: what the inventory covers
+    coverage_note: str | None = None
+
+
 class CameraSourceConfig(_Strict):
-    adapter: Literal["overpass_bounded"]
-    endpoint: str
-    query_file: Path
-    query_bbox_swne: list[float]
+    adapter: Literal["overpass_bounded", "geofabrik_extract"]
+    endpoint: str | None = None  # overpass_bounded
+    query_file: Path | None = None  # overpass_bounded
+    query_bbox_swne: list[float]  # the box the inventory is meant to cover (contains the envelope)
     refresh_interval_hours: float = 6
     min_pause_after_429_seconds: int = 30
     user_agent: str | None = None
     later_adapter: str | None = None
+    extract: CameraExtractConfig | None = None  # geofabrik_extract
+
+    @model_validator(mode="after")
+    def _fields_for_adapter(self):
+        if self.adapter == "overpass_bounded" and not (self.endpoint and self.query_file):
+            raise ValueError("the overpass_bounded adapter needs endpoint and query_file")
+        if self.adapter == "geofabrik_extract" and self.extract is None:
+            raise ValueError("the geofabrik_extract adapter needs an extract block")
+        return self
 
 
 class RoutingGraphConfig(_Strict):
@@ -100,6 +119,17 @@ class CameraSourceProvider(_Strict):
     backoff_seconds: int = 5
 
 
+class CameraExtractProvider(_Strict):
+    """Limits of the extract adapter's replication client (the disclosed source policy)."""
+
+    timeout_seconds: int = 120
+    pause_after_rate_limit_seconds: int = 30
+    max_attempts: int = 3
+    backoff_seconds: int = 5
+    max_diff_megabytes: int = 256  # change files held in memory per apply step; larger backlogs are applied in several steps
+    allow_full_download: bool = True  # one full extract download per run when no seed exists or the change files are gone
+
+
 class RoutingProviderConfig(_Strict):
     provider: Literal["valhalla"]
     image: str
@@ -124,6 +154,7 @@ class BasemapProviderConfig(_Strict):
 
 class ProvidersConfig(_Strict):
     camera_source: CameraSourceProvider
+    camera_extract: CameraExtractProvider = CameraExtractProvider()
     routing: RoutingProviderConfig
     geocoding: GeocodingProviderConfig
     basemap: BasemapProviderConfig
@@ -219,7 +250,7 @@ class AppConfig(BaseModel):
     privacy: PrivacyConfig
     service_boundary: Boundary
     envelope: Boundary
-    camera_query_text: str
+    camera_query_text: str | None  # None for the extract adapter
 
 
 class ConfigError(RuntimeError):
@@ -262,17 +293,18 @@ def load_app_config(settings: Settings) -> AppConfig:
 
     boundary_path = settings.resolve(region.service_boundary.file)
     envelope_path = settings.resolve(region.camera_data_envelope.file)
-    query_path = settings.resolve(region.camera_source.query_file)
-    for path in (boundary_path, envelope_path, query_path):
-        if not path.exists():
+    query_path = settings.resolve(region.camera_source.query_file) if region.camera_source.query_file else None
+    outline_path = settings.resolve(region.camera_source.extract.outline_file) if region.camera_source.extract and region.camera_source.extract.outline_file else None
+    for path in (boundary_path, envelope_path, query_path, outline_path):
+        if path is not None and not path.exists():
             raise ConfigError(f"referenced data file not found: {path}")
 
     service_boundary = load_boundary(boundary_path, expected_id=region.service_boundary.id)
     envelope = load_boundary(envelope_path, expected_id=region.camera_data_envelope.id)
     if not envelope.geometry.contains(service_boundary.geometry):
         raise ConfigError("camera-data envelope does not contain the service boundary")
-    query_text = query_path.read_text(encoding="utf-8")
-    if "bbox:" not in query_text:
+    query_text = query_path.read_text(encoding="utf-8") if query_path else None
+    if region.camera_source.adapter == "overpass_bounded" and (query_text is None or "bbox:" not in query_text):
         raise ConfigError("camera source query must be a fixed bounded query ([bbox:...])")
 
     return AppConfig(

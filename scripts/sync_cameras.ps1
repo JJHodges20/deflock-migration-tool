@@ -1,7 +1,9 @@
 <#
 .SYNOPSIS
-  Operator-triggered camera inventory refresh: one bounded Overpass query for the fixed Denver
-  envelope, validated and promoted atomically. The scheduled worker does the same every 6 hours
+  Operator-triggered camera inventory refresh for the fixed region: with the Colorado configuration (M10)
+  the worker applies the publisher's new change files to its copy of the regional extract and re-reads the
+  camera records from it; with the Denver configuration it runs the one bounded Overpass query. Either way
+  the result is validated and promoted atomically. The scheduled worker does the same once per interval
   while the stack runs; this script is for a manual refresh.
 #>
 [CmdletBinding()]

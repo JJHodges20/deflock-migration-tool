@@ -37,6 +37,59 @@ class DataHealth:
     database: dict = field(default_factory=dict)
 
 
+def _camera_source_view(region) -> dict:
+    source = region.camera_source
+    view = {
+        "adapter": source.adapter,
+        "refresh_interval_hours": source.refresh_interval_hours,
+        "query_bbox_swne": source.query_bbox_swne,
+        "license": "ODbL 1.0 (OpenStreetMap contributors)",
+    }
+    if source.adapter == "geofabrik_extract" and source.extract is not None:
+        view["extract"] = {
+            "url": source.extract.url,
+            "file": source.extract.file,
+            "replication_url": source.extract.replication_url,
+            "outline_file": str(source.extract.outline_file) if source.extract.outline_file else None,
+            "coverage_note": source.extract.coverage_note,
+            "cadence": "the publisher issues one change file per day; the worker checks once per interval and applies what is new",
+        }
+    return view
+
+
+def _provider_policy_view(config) -> dict:
+    source = config.region.camera_source
+    if source.adapter == "geofabrik_extract" and source.extract is not None:
+        limits = config.providers.camera_extract
+        return {
+            "endpoint": source.extract.replication_url,
+            "query": "the publisher's regional extract kept current with its daily change files; one fixed region, never derived from a trip",
+            "one_request_at_a_time": True,
+            "refresh_interval_hours": source.refresh_interval_hours,
+            "identifies_application": True,
+            "timeout_seconds": limits.timeout_seconds,
+            "pause_after_rate_limit_seconds": max(limits.pause_after_rate_limit_seconds, source.min_pause_after_429_seconds),
+            "max_attempts": limits.max_attempts,
+            "backoff_seconds": limits.backoff_seconds,
+            "no_endpoint_rotation": True,
+            "full_download_policy": ("one full extract download only when no seed can be copied or the needed change files are no longer published"
+                                     if limits.allow_full_download else "full downloads disabled"),
+        }
+    limits = config.providers.camera_source
+    return {
+        "endpoint": source.endpoint,
+        "query": "one fixed query over the camera-data envelope; never derived from a trip",
+        "one_request_at_a_time": True,
+        "refresh_interval_hours": source.refresh_interval_hours,
+        "identifies_application": True,
+        "timeout_seconds": limits.timeout_seconds,
+        "pause_after_rate_limit_seconds": max(limits.pause_after_rate_limit_seconds, source.min_pause_after_429_seconds),
+        "max_attempts": limits.max_attempts,
+        "backoff_seconds": limits.backoff_seconds,
+        "no_endpoint_rotation": True,
+    }
+
+
 def _job_view(job) -> dict | None:
     if job is None:
         return None
@@ -133,30 +186,13 @@ def build_data_health(
 ) -> DataHealth:
     region = config.region
     quality = config.data_quality
-    source_cfg = config.providers.camera_source
     health = DataHealth(
         region_id=region.region_id,
         service_boundary_id=region.service_boundary.id,
         envelope_id=region.camera_data_envelope.id,
         config_version=region.config_version,
-        camera_source={
-            "adapter": region.camera_source.adapter,
-            "refresh_interval_hours": region.camera_source.refresh_interval_hours,
-            "query_bbox_swne": region.camera_source.query_bbox_swne,
-            "license": "ODbL 1.0 (OpenStreetMap contributors)",
-        },
-        provider_policy={
-            "endpoint": region.camera_source.endpoint,
-            "query": "one fixed query over the camera-data envelope; never derived from a trip",
-            "one_request_at_a_time": True,
-            "refresh_interval_hours": region.camera_source.refresh_interval_hours,
-            "identifies_application": True,
-            "timeout_seconds": source_cfg.timeout_seconds,
-            "pause_after_rate_limit_seconds": max(source_cfg.pause_after_rate_limit_seconds, region.camera_source.min_pause_after_429_seconds),
-            "max_attempts": source_cfg.max_attempts,
-            "backoff_seconds": source_cfg.backoff_seconds,
-            "no_endpoint_rotation": True,
-        },
+        camera_source=_camera_source_view(region),
+        provider_policy=_provider_policy_view(config),
         inventory={
             "retain_missing_hours": quality.snapshot_validation.retain_missing_hours,
             "unresolved_disappearance": quality.snapshot_validation.unresolved_disappearance,
@@ -211,6 +247,8 @@ def build_data_health(
                         "parser_version": snapshot.parser_version,
                         "quality": snapshot.quality,
                         "review_note": snapshot.review_note,
+                        "source": snapshot.source,
+                        "source_details": snapshot.source_details,
                         "diff": {
                             "added": diff.added_count,
                             "changed": diff.changed_count,

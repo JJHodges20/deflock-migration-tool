@@ -39,6 +39,7 @@ class CameraSnapshot(Base):
     parser_version: Mapped[str] = mapped_column(String(40), nullable=False)
     license: Mapped[str] = mapped_column(String(120), nullable=False, default="ODbL 1.0 (OpenStreetMap contributors)")
     quality: Mapped[dict] = mapped_column(JSON, nullable=False, default=dict)
+    source_details: Mapped[dict | None] = mapped_column(JSON)  # M10: replication state, extraction statistics, filter version
     promotion_state: Mapped[str] = mapped_column(String(20), nullable=False)  # staged | active | superseded | quarantined | rejected
     previous_active_snapshot_id: Mapped[str | None] = mapped_column(String(120))
     promoted_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True))

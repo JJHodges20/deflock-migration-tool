@@ -10,6 +10,8 @@ alembic==1.20.0
 httpx==0.28.1
 shapely==2.2.0
 pyyaml==6.0.3
+osmium==4.3.2
+requests==2.34.2
 # dev
 pytest==9.1.1
 ruff==0.17.1

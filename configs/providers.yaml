@@ -7,6 +7,17 @@ camera_source:
   max_attempts: 3
   backoff_seconds: 5
 
+camera_extract:
+  # Limits of the extract adapter's replication client (M10, decision 0004). The worker copies the routing graph's
+  # extract as its seed and then applies the publisher's daily change files; a full download happens only when no
+  # seed exists or the change files the file needs are no longer published (Geofabrik keeps about 100 days).
+  timeout_seconds: 120
+  pause_after_rate_limit_seconds: 30
+  max_attempts: 3
+  backoff_seconds: 5
+  max_diff_megabytes: 256
+  allow_full_download: true
+
 routing:
   provider: valhalla
   image: ghcr.io/valhalla/valhalla:3.9.1
